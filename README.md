@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kirtee & Associates — Architectural Luminaire Platform
 
-## Getting Started
+A production-grade web application and Content Management System built for **Kirtee & Associates** architectural lighting and bespoke luminaire engineering.
 
-First, run the development server:
+Built in strict compliance with:
+- `Website brief 2026.pdf` (Client Requirement Specification)
+- `kirteeandassoc.pdf` (Master Production Brief 2026)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🏛️ Architecture & Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org) (App Router, Server Components by default)
+- **Language**: TypeScript (strict type checking)
+- **CMS / Backend**: [Payload CMS](https://payloadcms.com) v3 with PostgreSQL adapter
+- **Database**: PostgreSQL (UUID identifiers, relational foreign keys, structured schemas)
+- **Styling**: Centralized Design System (`styles/tokens.css` & `styles/globals.css`) with zero hardcoded values
+- **Icons**: Accessible SVGs and Lucide icons
+- **SEO & Schema**: JSON-LD Structured Data (`Organization`, `Product`, `WebSite`, `BreadcrumbList`), dynamic XML sitemap (`/sitemap.xml`), and `robots.txt`
+- **Email & Validation**: Server-side validation with spam honeypot defense
+
+---
+
+## 📁 Project Directory Structure
+
+```text
+kirteeandassoc/
+├── app/                      # Next.js App Router
+│   ├── api/contact/          # Production contact inquiry API route
+│   ├── contact/              # Page 03: Contact Page
+│   ├── products/             # Catalogue listing page
+│   │   └── [slug]/           # Page 02: Master Reusable Product Page template
+│   ├── not-found.tsx         # Architectural 404 page
+│   ├── error.tsx             # 500 error boundary
+│   ├── layout.tsx            # Root layout, Header, Footer, Organization Schema
+│   ├── page.tsx              # Page 01: Home page
+│   ├── robots.ts             # Robots.txt generator
+│   └── sitemap.ts            # Dynamic XML Sitemap generator
+├── components/               # Modular component hierarchy
+│   ├── contact/              # ContactForm component
+│   ├── home/                 # Homepage sections (Hero, Intro, Featured, Storytelling, CTA)
+│   ├── layout/               # Header, Footer, Navigation
+│   ├── products/             # ProductCard, ProductGrid, ProductGallery, ProductSpecsTable, ProductDownloads
+│   ├── seo/                  # JsonLd structured data generator
+│   └── ui/                   # Reusable Button, Badge, Icons
+├── config/                   # Centralized configuration & site metadata
+│   ├── designTokens.ts       # Design system token definitions
+│   └── site.ts               # Brand, contact, and navigation configuration
+├── lib/                      # Core business logic & repositories
+│   └── data/                 # Product catalogue & CMS initial content
+├── payload/                  # Payload CMS collections & globals
+│   ├── collections/          # Users, Products, Categories, Media, Submissions
+│   └── globals/              # SiteSettings, HomePage, ContactPage
+├── styles/                   # Centralized Design Tokens & Typography
+│   ├── tokens.css            # CSS variables for colors, typography, spacing, shadows
+│   └── globals.css           # Global stylesheet and architectural utilities
+├── types/                    # Strict TypeScript type definitions
+│   ├── cms.ts                # CMS section & navigation data types
+│   └── product.ts            # Product, category, spec, and download data types
+├── payload.config.ts         # Payload CMS configuration
+├── REQUIREMENTS-CHECKLIST.md # Master 73-section requirements checklist
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Environment Configuration
+Copy `.env.example` to `.env.local` and configure your credentials:
+```bash
+cp .env.example .env.local
+```
 
-## Learn More
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Start Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Build for Production
+```bash
+npm run build
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📋 Primary Endpoints
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Homepage**: `/`
+- **Product Catalogue**: `/products`
+- **Product Inner Page (Master Template)**: `/products/[slug]` (e.g. `/products/ingraze-frame-1000`)
+- **Contact Page**: `/contact` (Primary representative: Divvya — `7096962640`)
+- **Contact Form Submission API**: `POST /api/contact`
+- **Dynamic XML Sitemap**: `/sitemap.xml`
+- **Robots Specification**: `/robots.txt`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🔒 Security & Verification
+
+- Rate limiting and honeypot bot trap on contact inquiries
+- No sensitive keys or database credentials exposed to client bundles
+- WCAG 2.2 AA compliant focus states, accessible form labels, and skip-to-content links
+- Complete requirements verified in [REQUIREMENTS-CHECKLIST.md](file:///home/aayush/imp/imp/kirteeandassoc/REQUIREMENTS-CHECKLIST.md).
