@@ -1,216 +1,208 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
-import { defaultFooter, siteConfig } from '@/config/site';
-import { ArrowUpRight } from 'lucide-react';
-import { InstagramIcon, LinkedinIcon, YoutubeIcon } from '@/components/ui/Icons';
+import { LinkedinIcon, InstagramIcon } from '@/components/ui/Icons';
 
 export const Footer: React.FC = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer
       style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        borderTop: '1px solid var(--color-border)',
-        paddingTop: '5rem',
-        paddingBottom: '3rem',
-        marginTop: 'auto',
+        backgroundColor: '#0c0d10',
+        color: '#ffffff',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        paddingTop: 'clamp(4rem, 6vw, 6rem)',
+        paddingBottom: '2.5rem',
       }}
     >
       <div className="container">
-        {/* Main Grid */}
+        {/* Top Row: Brand & Main Navigation */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
             gap: '3rem',
-            marginBottom: '4rem',
+            paddingBottom: 'clamp(3rem, 5vw, 4.5rem)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           }}
         >
-          {/* Brand Column */}
-          <div style={{ maxWidth: '380px' }}>
-            <span
-              style={{
-                fontFamily: 'var(--font-serif)',
-                fontSize: '1.25rem',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                display: 'block',
-                marginBottom: '0.25rem',
-              }}
-            >
-              Kirtee &amp; Associates
-            </span>
-            <span
-              style={{
-                fontSize: '0.6875rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.2em',
-                color: 'var(--color-accent)',
-                display: 'block',
-                marginBottom: '1.25rem',
-              }}
-            >
-              Architectural Luminaires
-            </span>
-            <p style={{ fontSize: '0.875rem', lineHeight: '1.7', marginBottom: '1.5rem' }}>
-              {defaultFooter.tagline}
-            </p>
-            <div style={{ display: 'flex', gap: '0.875rem' }}>
-              <a
-                href={siteConfig.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: 'var(--radius-xs)',
-                  border: '1px solid var(--color-border)',
-                  color: 'var(--color-text-secondary)',
-                  transition: 'all var(--transition-fast)',
-                }}
-              >
-                <InstagramIcon size={16} />
-              </a>
-              <a
-                href={siteConfig.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: 'var(--radius-xs)',
-                  border: '1px solid var(--color-border)',
-                  color: 'var(--color-text-secondary)',
-                  transition: 'all var(--transition-fast)',
-                }}
-              >
-                <LinkedinIcon size={16} />
-              </a>
-              <a
-                href={siteConfig.social.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: 'var(--radius-xs)',
-                  border: '1px solid var(--color-border)',
-                  color: 'var(--color-text-secondary)',
-                  transition: 'all var(--transition-fast)',
-                }}
-              >
-                <YoutubeIcon size={16} />
-              </a>
-            </div>
-          </div>
-
-          {/* Quick Links Column */}
+          {/* Brand Monogram */}
           <div>
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: '0.75rem',
-                fontWeight: 600,
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                letterSpacing: '0.14em',
+                color: '#ffffff',
                 textTransform: 'uppercase',
-                letterSpacing: '0.18em',
-                color: 'var(--color-accent)',
                 display: 'block',
-                marginBottom: '1.5rem',
+                marginBottom: '0.4rem',
+              }}
+            >
+              ZENVORA
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '0.6875rem',
+                fontWeight: 500,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: 'rgba(255, 255, 255, 0.5)',
+                display: 'block',
               }}
             >
               Architectural Systems
             </span>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {defaultFooter.quickLinks.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    style={{
-                      fontSize: '0.875rem',
-                      color: 'var(--color-text-secondary)',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                    }}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
 
-          {/* Studio & Specification Contact */}
-          <div>
-            <span
+          {/* Links & Social */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '3rem' }}>
+            <nav
+              aria-label="Footer Navigation"
               style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.18em',
-                color: 'var(--color-accent)',
-                display: 'block',
-                marginBottom: '1.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '2rem',
               }}
             >
-              Specification Contact
-            </span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', fontSize: '0.875rem' }}>
-              <p style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>
-                Primary Contact: {siteConfig.contactPerson}
-              </p>
-              <a
-                href={`tel:${siteConfig.phone}`}
-                style={{ color: 'var(--color-text-secondary)' }}
+              <Link
+                href="/products"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.16em',
+                  color: 'rgba(255, 255, 255, 0.75)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
               >
-                Direct: {siteConfig.formattedPhone}
+                COLLECTIONS
+              </Link>
+              <Link
+                href="/#projects"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.16em',
+                  color: 'rgba(255, 255, 255, 0.75)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
+              >
+                PROJECTS
+              </Link>
+              <Link
+                href="/#difference"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.16em',
+                  color: 'rgba(255, 255, 255, 0.75)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
+              >
+                ABOUT
+              </Link>
+              <Link
+                href="/contact"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.16em',
+                  color: 'rgba(255, 255, 255, 0.75)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
+              >
+                CONTACT
+              </Link>
+            </nav>
+
+            {/* Social Icons */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <a
+                href="https://linkedin.com/company/zenvora"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                style={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'color 0.2s ease' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)')}
+              >
+                <LinkedinIcon size={16} />
               </a>
               <a
-                href={`mailto:${siteConfig.email}`}
-                style={{ color: 'var(--color-accent)' }}
+                href="https://instagram.com/zenvora"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                style={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'color 0.2s ease' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)')}
               >
-                {siteConfig.email}
+                <InstagramIcon size={16} />
               </a>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>
-                {defaultFooter.addressLines.join(' • ')}
-              </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Sub-bar */}
         <div
           style={{
-            borderTop: '1px solid var(--color-border)',
             paddingTop: '2rem',
             display: 'flex',
             flexWrap: 'wrap',
-            alignItems: 'center',
             justifyContent: 'space-between',
+            alignItems: 'center',
             gap: '1rem',
             fontSize: '0.75rem',
-            color: 'var(--color-text-muted)',
+            color: 'rgba(255, 255, 255, 0.45)',
           }}
         >
-          <span>{defaultFooter.copyright}</span>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
-            {defaultFooter.legalLinks.map((item) => (
-              <Link key={item.label} href={item.href} style={{ color: 'var(--color-text-muted)' }}>
-                {item.label}
-              </Link>
-            ))}
+          <span>&copy; {currentYear} Zenvora. All rights reserved.</span>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <Link
+              href="/privacy"
+              style={{ color: 'inherit', textDecoration: 'none' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.45)')}
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              style={{ color: 'inherit', textDecoration: 'none' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.45)')}
+            >
+              Terms of Use
+            </Link>
+            <span style={{ color: 'rgba(255, 255, 255, 0.3)' }}>|</span>
+            <span>Made for exceptional spaces.</span>
           </div>
         </div>
       </div>

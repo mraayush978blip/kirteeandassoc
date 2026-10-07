@@ -1,34 +1,35 @@
 import React from 'react';
-import { initialHomePageData } from '@/lib/data/cms';
-import { getFeaturedProducts } from '@/lib/data/products';
-import { HeroSection } from '@/components/home/HeroSection';
-import { BrandIntroSection } from '@/components/home/BrandIntroSection';
-import { FeaturedProductsSection } from '@/components/home/FeaturedProductsSection';
-import { StorytellingSection } from '@/components/home/StorytellingSection';
-import { CtaSection } from '@/components/home/CtaSection';
+import { HeroSwipeSection } from '@/components/home/HeroSwipeSection';
+import { DifferenceSection } from '@/components/home/DifferenceSection';
+import { CollectionsSection } from '@/components/home/CollectionsSection';
+import { BespokeInteractiveSection } from '@/components/home/BespokeInteractiveSection';
+import { ProjectsSwipeSection } from '@/components/home/ProjectsSwipeSection';
+import { StatsSection } from '@/components/home/StatsSection';
+import { ProjectCtaSection } from '@/components/home/ProjectCtaSection';
 
 export default function HomePage() {
-  const featuredProducts = getFeaturedProducts();
-
   return (
     <>
-      {/* 1. Hero Section */}
-      <HeroSection data={initialHomePageData.hero} />
+      {/* 1. Hero Section with Touch & Drag Right/Left Image Swiping */}
+      <HeroSwipeSection />
 
-      {/* 2. Brand Intro & Philosophy */}
-      <BrandIntroSection data={initialHomePageData.intro} />
+      {/* 2. The Zenvora Difference: 4 Strategic Editorial Pillars */}
+      <DifferenceSection />
 
-      {/* 3. Featured Master Families */}
-      <FeaturedProductsSection
-        data={initialHomePageData.featuredProducts}
-        products={featuredProducts}
-      />
+      {/* 3. Our Collections: Dry Goods & Wet Goods */}
+      <CollectionsSection />
 
-      {/* 4. Storytelling / Bespoke Commissions */}
-      <StorytellingSection data={initialHomePageData.storytelling} />
+      {/* 4. Bespoke by Design: 4-Step Process & Interactive Annotated Luminaire */}
+      <BespokeInteractiveSection />
 
-      {/* 5. Direct Specification Consultation CTA */}
-      <CtaSection data={initialHomePageData.cta} />
+      {/* 5. Featured Projects: Spaces That Inspire (Swipeable Carousel) */}
+      <ProjectsSwipeSection />
+
+      {/* 6. Architectural Scale: Curved Gallery Image & Global Statistics */}
+      <StatsSection />
+
+      {/* 7. Specification Partnership CTA Showcase */}
+      <ProjectCtaSection />
     </>
   );
 }

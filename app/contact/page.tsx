@@ -1,18 +1,17 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { initialContactPageData } from '@/lib/data/cms';
-import { siteConfig } from '@/config/site';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { Phone, Mail, MapPin, Clock, ArrowUpRight } from 'lucide-react';
-import { InstagramIcon, LinkedinIcon, YoutubeIcon } from '@/components/ui/Icons';
+import { siteConfig } from '@/config/site';
+import { Mail, Phone, MapPin, MessageSquare } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: initialContactPageData.seo.title,
-  description: initialContactPageData.seo.description,
+  title: 'Contact us | ZENVORA',
+  description:
+    'Our Zenvora team will be delighted to assist you with commercial inquiries, photometric data, or technical support.',
   openGraph: {
-    title: initialContactPageData.seo.title,
-    description: initialContactPageData.seo.description,
+    title: 'Contact us | ZENVORA',
+    description: 'Get in touch with the Zenvora architectural lighting engineering team.',
   },
 };
 
@@ -27,192 +26,180 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   return (
     <div
       style={{
-        paddingTop: 'calc(var(--header-height) + 3rem)',
-        paddingBottom: '6rem',
-        backgroundColor: 'var(--color-bg-primary)',
-        flexGrow: 1,
+        backgroundColor: '#ffffff',
+        minHeight: '100vh',
+        paddingTop: 'calc(var(--header-height) + 3.5rem)',
+        paddingBottom: '7rem',
       }}
     >
       <div className="container">
-        {/* Page Heading */}
-        <div style={{ marginBottom: '3.5rem' }}>
-          <span className="eyebrow">Project Consultations</span>
-          <h1
-            style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: 'var(--font-size-h2)',
-              marginBottom: '1rem',
-            }}
-          >
-            {initialContactPageData.heading}
-          </h1>
-          <p style={{ maxWidth: '680px', fontSize: '1.0625rem', color: 'var(--color-text-secondary)' }}>
-            {initialContactPageData.subheading}
-          </p>
-        </div>
-
-        {/* Split Grid: Information Column + Contact Form */}
+        {/* Onok Lighting Two-Column Layout (PDF Page 4) */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: 'clamp(2.5rem, 5vw, 5rem)',
+            gridTemplateColumns: 'repeat(12, 1fr)',
+            gap: 'clamp(2.5rem, 6vw, 5.5rem)',
             alignItems: 'start',
           }}
         >
-          {/* Left Column: Direct Studio & Person Contacts */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-            {/* Primary Contact Card */}
-            <div
+          {/* Left Column: Contact Information */}
+          <div
+            style={{
+              gridColumn: 'span 12',
+            }}
+            className="lg:col-span-5"
+          >
+            <h1
               style={{
-                backgroundColor: 'var(--color-bg-surface)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-xs)',
-                padding: '2rem',
+                fontFamily: 'var(--font-sans)',
+                fontSize: 'clamp(2.75rem, 5.5vw, 4rem)',
+                fontWeight: 700,
+                color: '#111111',
+                marginBottom: '2rem',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
               }}
             >
-              <span
-                style={{
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.14em',
-                  color: 'var(--color-accent)',
-                  display: 'block',
-                  marginBottom: '1rem',
-                }}
-              >
-                Key Representative
-              </span>
-              <h3
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.5rem',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                {initialContactPageData.contactDetails.primaryContactPerson}
-              </h3>
-              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
-                Senior Specification Specialist &amp; Architectural Project Coordinator
-              </p>
+              Contact us
+            </h1>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.875rem' }}>
-                <a
-                  href={`tel:${siteConfig.phone}`}
+            <p
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '1.125rem',
+                lineHeight: 1.65,
+                color: '#374151',
+                marginBottom: '1.5rem',
+                fontWeight: 400,
+              }}
+            >
+              Our Zenvora team will be delighted to assist you.
+            </p>
+
+            <p
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '0.9375rem',
+                lineHeight: 1.7,
+                color: '#6b7280',
+                marginBottom: '3rem',
+              }}
+            >
+              If you would like more information about our products or services, or wish to make a technical or commercial
+              enquiry, please contact us using the form below.
+            </p>
+
+            {/* Direct Contact Items with Icons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div
                   style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    backgroundColor: '#f3f4f6',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.75rem',
-                    color: 'var(--color-text-primary)',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    color: '#111111',
                   }}
                 >
-                  <Phone size={16} color="var(--color-accent)" />
-                  <span>Direct: {siteConfig.formattedPhone}</span>
-                </a>
-
+                  <Mail size={16} />
+                </div>
                 <a
                   href={`mailto:${siteConfig.email}`}
+                  className="contact-link"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    color: 'var(--color-accent)',
+                    fontSize: '0.9375rem',
+                    color: '#111111',
+                    textDecoration: 'none',
+                    fontWeight: 500,
                   }}
                 >
-                  <Mail size={16} color="var(--color-accent)" />
-                  <span>{siteConfig.email}</span>
+                  {siteConfig.email}
                 </a>
               </div>
-            </div>
 
-            {/* Studio Hours & Address */}
-            <div
-              style={{
-                backgroundColor: 'var(--color-bg-surface)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-xs)',
-                padding: '2rem',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                <MapPin size={18} color="var(--color-accent)" style={{ marginTop: '0.2rem', flexShrink: 0 }} />
-                <div>
-                  <h4 style={{ fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
-                    Design &amp; Demonstration Lab
-                  </h4>
-                  {initialContactPageData.contactDetails.officeAddress.map((line, idx) => (
-                    <p key={idx} style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-                      {line}
-                    </p>
-                  ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    backgroundColor: '#f3f4f6',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    color: '#111111',
+                  }}
+                >
+                  <Phone size={16} />
                 </div>
+                <a
+                  href={`tel:${siteConfig.phone}`}
+                  className="contact-link"
+                  style={{
+                    fontSize: '0.9375rem',
+                    color: '#111111',
+                    textDecoration: 'none',
+                    fontWeight: 500,
+                  }}
+                >
+                  {siteConfig.formattedPhone}
+                </a>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderTop: '1px solid var(--color-border-subtle)', paddingTop: '1.25rem' }}>
-                <Clock size={16} color="var(--color-accent)" style={{ flexShrink: 0 }} />
-                <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
-                  {initialContactPageData.contactDetails.businessHours}
-                </span>
-              </div>
-            </div>
-
-            {/* Social Channels */}
-            <div>
-              <span
-                style={{
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.14em',
-                  color: 'var(--color-text-muted)',
-                  display: 'block',
-                  marginBottom: '1rem',
-                }}
-              >
-                Studio Broadcasts &amp; Media
-              </span>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <a
-                  href={siteConfig.social.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-secondary"
-                  style={{ padding: '0.625rem 1rem', fontSize: '0.75rem' }}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    backgroundColor: '#f3f4f6',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    color: '#111111',
+                    marginTop: '0.15rem',
+                  }}
                 >
-                  <InstagramIcon size={14} />
-                  <span>Instagram</span>
-                </a>
-                <a
-                  href={siteConfig.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-secondary"
-                  style={{ padding: '0.625rem 1rem', fontSize: '0.75rem' }}
-                >
-                  <LinkedinIcon size={14} />
-                  <span>LinkedIn</span>
-                </a>
-                <a
-                  href={siteConfig.social.youtube}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-secondary"
-                  style={{ padding: '0.625rem 1rem', fontSize: '0.75rem' }}
-                >
-                  <YoutubeIcon size={14} />
-                  <span>YouTube</span>
-                </a>
+                  <MapPin size={16} />
+                </div>
+                <div>
+                  <p style={{ fontSize: '0.9375rem', color: '#111111', fontWeight: 600, marginBottom: '0.2rem' }}>
+                    Zenvora Architectural Studio
+                  </p>
+                  <p style={{ fontSize: '0.875rem', color: '#6b7280', lineHeight: 1.5 }}>
+                    Polígono Industrial &amp; Demonstration Lab, 46800 Studio Space
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Production-grade Contact Form */}
-          <div>
+          {/* Right Column: Contact Card Form */}
+          <div
+            style={{
+              gridColumn: 'span 12',
+            }}
+            className="lg:col-span-7"
+          >
             <ContactForm initialProduct={prefilledProduct} />
           </div>
         </div>
       </div>
+
+      {/* Floating Chat Widget Button (Bottom Right icon in Page 4) */}
+      <a
+        href={`mailto:${siteConfig.email}?subject=Live%20Inquiry`}
+        className="floating-chat-btn"
+        aria-label="Direct Chat or Inquiry"
+      >
+        <MessageSquare size={22} />
+      </a>
 
       <JsonLd
         type="breadcrumb"

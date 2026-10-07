@@ -44,6 +44,11 @@ export interface Product {
   shortDescription: string;
   fullDescription: string;
   category: ProductCategory;
+  catalogType?: 'dry' | 'wet';
+  designer?: string;
+  codeLabel?: string;
+  mosaicSpan?: number;
+  editorialStory?: string;
   subcategory?: string;
   tags?: string[];
   status: 'published' | 'draft' | 'archived';

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import { CheckCircle2, AlertCircle, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, MessageSquare, CheckCircle2, AlertCircle } from 'lucide-react';
+import { siteConfig } from '@/config/site';
 
 export interface ContactFormProps {
   initialProduct?: string;
@@ -11,14 +11,12 @@ export interface ContactFormProps {
 export const ContactForm: React.FC<ContactFormProps> = ({ initialProduct = '' }) => {
   const [formData, setFormData] = useState({
     name: '',
+    company: '',
     email: '',
     phone: '',
-    company: '',
-    topic: 'Commercial Specification & Quotation',
-    product: initialProduct,
+    subject: initialProduct ? `Inquiry regarding ${initialProduct}` : '',
     message: '',
-    consent: false,
-    websiteHoneypot: '', // Spam bot protection
+    websiteHoneypot: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -28,20 +26,14 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialProduct = '' })
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!formData.name.trim()) errs.name = 'Full name is required.';
+    if (!formData.name.trim()) errs.name = 'Please enter your name.';
     if (!formData.email.trim()) {
-      errs.email = 'Email address is required.';
+      errs.email = 'Please enter your email.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errs.email = 'Please provide a valid corporate or professional email.';
+      errs.email = 'Please provide a valid email address.';
     }
-    if (!formData.message.trim()) {
-      errs.message = 'Please provide details about your architectural project or inquiry.';
-    } else if (formData.message.length < 15) {
-      errs.message = 'Inquiry details should be at least 15 characters.';
-    }
-    if (!formData.consent) {
-      errs.consent = 'Consent to process your project specification details is required.';
-    }
+    if (!formData.subject.trim()) errs.subject = 'Please enter a subject.';
+    if (!formData.message.trim()) errs.message = 'Please tell us how we can help you.';
     return errs;
   };
 
@@ -49,7 +41,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialProduct = '' })
     e.preventDefault();
     setServerError(null);
 
-    // Spam honeypot detection
     if (formData.websiteHoneypot) {
       setSubmitSuccess(true);
       return;
@@ -68,13 +59,16 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialProduct = '' })
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          consent: true,
+          topic: formData.subject,
+        }),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
-        throw new Error(data.message || 'Submission failed. Please verify fields and try again.');
+        throw new Error(data.message || 'Submission failed. Please try again.');
       }
 
       setSubmitSuccess(true);
@@ -82,7 +76,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialProduct = '' })
       if (err instanceof Error) {
         setServerError(err.message);
       } else {
-        setServerError('A network error occurred while submitting your inquiry. Please try again or reach out directly.');
+        setServerError('A network error occurred. Please try again or contact us directly.');
       }
     } finally {
       setIsSubmitting(false);
@@ -92,27 +86,22 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialProduct = '' })
   if (submitSuccess) {
     return (
       <div
-        role="status"
-        aria-live="polite"
+        className="contact-card"
         style={{
-          padding: '3rem 2rem',
-          backgroundColor: 'var(--color-bg-surface)',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-xs)',
           textAlign: 'center',
+          padding: '3rem 2rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           gap: '1.25rem',
         }}
       >
-        <CheckCircle2 size={48} color="var(--color-accent)" />
-        <h3 style={{ fontSize: '1.5rem', fontFamily: 'var(--font-serif)' }}>
-          Inquiry Successfully Dispatched
+        <CheckCircle2 size={48} color="#111111" />
+        <h3 style={{ fontSize: '1.5rem', fontFamily: 'var(--font-sans)', fontWeight: 600, color: '#111111' }}>
+          Message Sent Successfully
         </h3>
-        <p style={{ maxWidth: '480px', color: 'var(--color-text-secondary)', lineHeight: '1.6' }}>
-          Thank you. Your architectural specification details have been routed directly to our engineering division.
-          A lighting specialist will review your photometric criteria and respond promptly.
+        <p style={{ color: '#4b5563', lineHeight: 1.6, maxWidth: '440px' }}>
+          Thank you for reaching out. Our Zenvora lighting team will review your inquiry and get back to you shortly.
         </p>
         <button
           type="button"
@@ -120,225 +109,263 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialProduct = '' })
             setSubmitSuccess(false);
             setFormData({
               name: '',
+              company: '',
               email: '',
               phone: '',
-              company: '',
-              topic: 'Commercial Specification & Quotation',
-              product: '',
+              subject: '',
               message: '',
-              consent: false,
               websiteHoneypot: '',
             });
           }}
-          className="btn btn-secondary"
-          style={{ marginTop: '1rem' }}
+          className="btn btn-pill"
+          style={{
+            backgroundColor: '#111111',
+            color: '#ffffff',
+            marginTop: '1rem',
+          }}
         >
-          Submit Another Specification
+          Send Another Message
         </button>
       </div>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      noValidate
-      style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-xs)',
-        padding: 'clamp(1.5rem, 4vw, 2.75rem)',
-      }}
-    >
-      {/* Hidden honeypot field for bot trapping */}
-      <div style={{ display: 'none' }} aria-hidden="true">
-        <label htmlFor="websiteHoneypot">Leave blank</label>
-        <input
-          id="websiteHoneypot"
-          name="websiteHoneypot"
-          type="text"
-          value={formData.websiteHoneypot}
-          onChange={(e) => setFormData({ ...formData, websiteHoneypot: e.target.value })}
-          tabIndex={-1}
-          autoComplete="off"
-        />
-      </div>
-
-      {serverError && (
-        <div
-          role="alert"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            padding: '1rem',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid var(--color-error)',
-            borderRadius: 'var(--radius-xs)',
-            color: 'var(--color-error)',
-            marginBottom: '1.5rem',
-            fontSize: '0.875rem',
-          }}
-        >
-          <AlertCircle size={18} />
-          <span>{serverError}</span>
-        </div>
-      )}
-
-      {/* Grid: Name & Email */}
-      <div className="grid-2" style={{ gap: '1.25rem', marginBottom: '0.5rem' }}>
-        <div className="form-group">
-          <label htmlFor="contact-name" className="form-label">
-            Full Name <span className="required">*</span>
-          </label>
+    <div className="contact-card">
+      <form onSubmit={handleSubmit} noValidate>
+        {/* Spam Honeypot */}
+        <div style={{ display: 'none' }} aria-hidden="true">
           <input
-            id="contact-name"
+            id="websiteHoneypot"
+            name="websiteHoneypot"
             type="text"
-            required
-            aria-required="true"
-            aria-invalid={!!errors.name}
-            className="form-input"
-            placeholder="e.g. Ar. Vikram Mehta"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-          {errors.name && <span className="form-error-msg">{errors.name}</span>}
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="contact-email" className="form-label">
-            Corporate Email <span className="required">*</span>
-          </label>
-          <input
-            id="contact-email"
-            type="email"
-            required
-            aria-required="true"
-            aria-invalid={!!errors.email}
-            className="form-input"
-            placeholder="v.mehta@architects.com"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          />
-          {errors.email && <span className="form-error-msg">{errors.email}</span>}
-        </div>
-      </div>
-
-      {/* Grid: Phone & Company */}
-      <div className="grid-2" style={{ gap: '1.25rem', marginBottom: '0.5rem' }}>
-        <div className="form-group">
-          <label htmlFor="contact-phone" className="form-label">
-            Telephone / Mobile
-          </label>
-          <input
-            id="contact-phone"
-            type="tel"
-            className="form-input"
-            placeholder="+91 98765 43210"
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            value={formData.websiteHoneypot}
+            onChange={(e) => setFormData({ ...formData, websiteHoneypot: e.target.value })}
+            tabIndex={-1}
+            autoComplete="off"
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="contact-company" className="form-label">
-            Firm / Organization
-          </label>
-          <input
-            id="contact-company"
-            type="text"
-            className="form-input"
-            placeholder="Studio Architecture Partners"
-            value={formData.company}
-            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-          />
-        </div>
-      </div>
-
-      {/* Grid: Topic & Associated Product */}
-      <div className="grid-2" style={{ gap: '1.25rem', marginBottom: '0.5rem' }}>
-        <div className="form-group">
-          <label htmlFor="contact-topic" className="form-label">
-            Specification Nature
-          </label>
-          <select
-            id="contact-topic"
-            className="form-select"
-            value={formData.topic}
-            onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-          >
-            <option value="Commercial Specification & Quotation">Commercial Specification &amp; Quotation</option>
-            <option value="Bespoke Luminaire Engineering">Bespoke Luminaire Engineering</option>
-            <option value="Photometric & IES File Request">Photometric &amp; IES File Request</option>
-            <option value="Physical Fixture Mockup / Sample">Physical Fixture Mockup / Sample</option>
-            <option value="General Architectural Inquiry">General Architectural Inquiry</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="contact-product" className="form-label">
-            Luminaire Under Review (Optional)
-          </label>
-          <input
-            id="contact-product"
-            type="text"
-            className="form-input"
-            placeholder="e.g. Ingraze Frame 1000"
-            value={formData.product}
-            onChange={(e) => setFormData({ ...formData, product: e.target.value })}
-          />
-        </div>
-      </div>
-
-      {/* Message textarea */}
-      <div className="form-group">
-        <label htmlFor="contact-message" className="form-label">
-          Project Specification Details <span className="required">*</span>
-        </label>
-        <textarea
-          id="contact-message"
-          rows={5}
-          required
-          aria-required="true"
-          aria-invalid={!!errors.message}
-          className="form-textarea"
-          placeholder="Please describe project scale, mounting conditions, required optical distributions, quantities, or schedule milestones..."
-          value={formData.message}
-          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-        />
-        {errors.message && <span className="form-error-msg">{errors.message}</span>}
-      </div>
-
-      {/* Consent Checkbox */}
-      <div style={{ marginBottom: '2rem' }}>
-        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer' }}>
-          <input
-            type="checkbox"
-            checked={formData.consent}
-            onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
+        {serverError && (
+          <div
+            role="alert"
             style={{
-              marginTop: '0.2rem',
-              accentColor: 'var(--color-accent)',
-              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.875rem 1rem',
+              backgroundColor: '#fee2e2',
+              border: '1px solid #ef4444',
+              borderRadius: '8px',
+              color: '#b91c1c',
+              marginBottom: '1.5rem',
+              fontSize: '0.875rem',
+            }}
+          >
+            <AlertCircle size={18} />
+            <span>{serverError}</span>
+          </div>
+        )}
+
+        {/* Row 1: Name * | Company */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+          <div>
+            <input
+              type="text"
+              placeholder="Name *"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '0.875rem 1.125rem',
+                backgroundColor: '#ffffff',
+                border: errors.name ? '1px solid #ef4444' : '1px solid #d1d5db',
+                borderRadius: '8px',
+                fontSize: '0.9375rem',
+                color: '#111111',
+                outline: 'none',
+                transition: 'border-color 0.2s ease',
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#111111')}
+              onBlur={(e) => {
+                if (!errors.name) e.currentTarget.style.borderColor = '#d1d5db';
+              }}
+            />
+            {errors.name && <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem', display: 'block' }}>{errors.name}</span>}
+          </div>
+
+          <div>
+            <input
+              type="text"
+              placeholder="Company"
+              value={formData.company}
+              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '0.875rem 1.125rem',
+                backgroundColor: '#ffffff',
+                border: '1px solid #d1d5db',
+                borderRadius: '8px',
+                fontSize: '0.9375rem',
+                color: '#111111',
+                outline: 'none',
+                transition: 'border-color 0.2s ease',
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#111111')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = '#d1d5db')}
+            />
+          </div>
+        </div>
+
+        {/* Row 2: Email * | +91 Phone */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+          <div>
+            <input
+              type="email"
+              placeholder="Email *"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '0.875rem 1.125rem',
+                backgroundColor: '#ffffff',
+                border: errors.email ? '1px solid #ef4444' : '1px solid #d1d5db',
+                borderRadius: '8px',
+                fontSize: '0.9375rem',
+                color: '#111111',
+                outline: 'none',
+                transition: 'border-color 0.2s ease',
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#111111')}
+              onBlur={(e) => {
+                if (!errors.email) e.currentTarget.style.borderColor = '#d1d5db';
+              }}
+            />
+            {errors.email && <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem', display: 'block' }}>{errors.email}</span>}
+          </div>
+
+          <div style={{ display: 'flex' }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '0.875rem 0.875rem',
+                backgroundColor: '#f3f4f6',
+                border: '1px solid #d1d5db',
+                borderRight: 'none',
+                borderRadius: '8px 0 0 8px',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: '#4b5563',
+              }}
+            >
+              +91
+            </span>
+            <input
+              type="tel"
+              placeholder="Phone number"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '0.875rem 1.125rem',
+                backgroundColor: '#ffffff',
+                border: '1px solid #d1d5db',
+                borderRadius: '0 8px 8px 0',
+                fontSize: '0.9375rem',
+                color: '#111111',
+                outline: 'none',
+                transition: 'border-color 0.2s ease',
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#111111')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = '#d1d5db')}
+            />
+          </div>
+        </div>
+
+        {/* Row 3: Subject * */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <input
+            type="text"
+            placeholder="Subject *"
+            value={formData.subject}
+            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+            style={{
+              width: '100%',
+              padding: '0.875rem 1.125rem',
+              backgroundColor: '#ffffff',
+              border: errors.subject ? '1px solid #ef4444' : '1px solid #d1d5db',
+              borderRadius: '8px',
+              fontSize: '0.9375rem',
+              color: '#111111',
+              outline: 'none',
+              transition: 'border-color 0.2s ease',
+            }}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#111111')}
+            onBlur={(e) => {
+              if (!errors.subject) e.currentTarget.style.borderColor = '#d1d5db';
             }}
           />
-          <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)', lineHeight: '1.5' }}>
-            I consent to Kirtee &amp; Associates processing my contact information and project requirements to provide technical recommendations and quotations.
-          </span>
-        </label>
-        {errors.consent && <p className="form-error-msg">{errors.consent}</p>}
-      </div>
+          {errors.subject && <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem', display: 'block' }}>{errors.subject}</span>}
+        </div>
 
-      {/* Submit Button */}
-      <Button
-        type="submit"
-        variant="primary"
-        isLoading={isSubmitting}
-        rightIcon={<Send size={15} />}
-        style={{ width: '100%' }}
-      >
-        Transmitting Specification Request
-      </Button>
-    </form>
+        {/* Row 4: Tell us how we can help you * */}
+        <div style={{ marginBottom: '1.75rem' }}>
+          <textarea
+            rows={5}
+            placeholder="Tell us how we can help you *"
+            value={formData.message}
+            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            style={{
+              width: '100%',
+              padding: '0.875rem 1.125rem',
+              backgroundColor: '#ffffff',
+              border: errors.message ? '1px solid #ef4444' : '1px solid #d1d5db',
+              borderRadius: '8px',
+              fontSize: '0.9375rem',
+              color: '#111111',
+              outline: 'none',
+              resize: 'vertical',
+              minHeight: '140px',
+              transition: 'border-color 0.2s ease',
+              fontFamily: 'inherit',
+            }}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#111111')}
+            onBlur={(e) => {
+              if (!errors.message) e.currentTarget.style.borderColor = '#d1d5db';
+            }}
+          />
+          {errors.message && <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem', display: 'block' }}>{errors.message}</span>}
+        </div>
+
+        {/* Submit Pill Button (Matching Page 4 black pill: Submit) */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn btn-pill"
+          style={{
+            width: '100%',
+            backgroundColor: '#111111',
+            color: '#ffffff',
+            padding: '1rem',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            border: 'none',
+            cursor: isSubmitting ? 'not-allowed' : 'pointer',
+            opacity: isSubmitting ? 0.7 : 1,
+            transition: 'background-color 0.2s ease, transform 0.1s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (!isSubmitting) e.currentTarget.style.backgroundColor = '#000000';
+          }}
+          onMouseLeave={(e) => {
+            if (!isSubmitting) e.currentTarget.style.backgroundColor = '#111111';
+          }}
+        >
+          {isSubmitting ? 'Sending...' : 'Submit'}
+        </button>
+      </form>
+    </div>
   );
 };

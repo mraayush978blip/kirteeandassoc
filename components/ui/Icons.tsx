@@ -46,6 +46,49 @@ export const LinkedinIcon: React.FC<{ size?: number; color?: string; className?:
   </svg>
 );
 
+export const FacebookIcon: React.FC<{ size?: number; color?: string; className?: string }> = ({
+  size = 18,
+  color = 'currentColor',
+  className = '',
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
+
+export const XTwitterIcon: React.FC<{ size?: number; color?: string; className?: string }> = ({
+  size = 18,
+  color = 'currentColor',
+  className = '',
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
+    <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+  </svg>
+);
+
 export const YoutubeIcon: React.FC<{ size?: number; color?: string; className?: string }> = ({
   size = 18,
   color = 'currentColor',

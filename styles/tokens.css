@@ -4,39 +4,41 @@
  */
 
 :root {
-  /* Global Color Palette — Architectural Luminaire Editorial Theme */
-  --color-bg-primary: #0a0b0d;
-  --color-bg-surface: #121417;
-  --color-bg-surface-elevated: #1a1d22;
-  --color-bg-secondary: #16181d;
-  --color-bg-subtle: #21242c;
+  /* Global Color Palette — Modern Architectural Editorial Theme (Artemide & Flos inspired) */
+  --color-bg-primary: #ffffff;
+  --color-bg-surface: #f9fafb;
+  --color-bg-surface-elevated: #ffffff;
+  --color-bg-secondary: #f3f4f6;
+  --color-bg-subtle: #f8f9fa;
+  --color-bg-dark: #0a0b0d;
 
-  --color-text-primary: #f8f9fa;
-  --color-text-secondary: #a0a6b1;
-  --color-text-muted: #6e7683;
-  --color-text-inverse: #0a0b0d;
+  --color-text-primary: #111111;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #8b949e;
+  --color-text-inverse: #ffffff;
 
-  /* Architectural Warm Brass / Champagne Accent */
-  --color-accent: #c5a880;
-  --color-accent-hover: #d6bc98;
-  --color-accent-subtle: rgba(197, 168, 128, 0.12);
-  --color-accent-border: rgba(197, 168, 128, 0.28);
+  /* Architectural Accents */
+  --color-accent: #111111;
+  --color-accent-hover: #333333;
+  --color-accent-subtle: rgba(0, 0, 0, 0.04);
+  --color-accent-border: rgba(0, 0, 0, 0.12);
+  --color-gold: #c5a880;
 
   /* Borders & Dividers */
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-subtle: rgba(255, 255, 255, 0.04);
-  --color-border-focus: #c5a880;
+  --color-border: #e5e7eb;
+  --color-border-subtle: #f0f0f0;
+  --color-border-focus: #111111;
 
   /* Button Tokens */
-  --color-btn-bg: #c5a880;
-  --color-btn-text: #0a0b0d;
-  --color-btn-hover: #d6bc98;
-  --color-btn-active: #b5976e;
+  --color-btn-bg: #111111;
+  --color-btn-text: #ffffff;
+  --color-btn-hover: #262626;
+  --color-btn-active: #000000;
   
   --color-btn-ghost-bg: transparent;
-  --color-btn-ghost-text: #f8f9fa;
-  --color-btn-ghost-border: rgba(255, 255, 255, 0.14);
-  --color-btn-ghost-hover-bg: rgba(255, 255, 255, 0.05);
+  --color-btn-ghost-text: #111111;
+  --color-btn-ghost-border: #e5e7eb;
+  --color-btn-ghost-hover-bg: #f3f4f6;
 
   /* Status Colors */
   --color-success: #10b981;
@@ -44,7 +46,7 @@
   --color-warning: #f59e0b;
 
   /* Typography Scale */
-  --font-serif: "Cinzel", "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-serif: "Cinzel", "Playfair Display", Georgia, serif;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
@@ -68,8 +70,8 @@
 
   --letter-spacing-tight: -0.02em;
   --letter-spacing-normal: 0em;
-  --letter-spacing-wide: 0.06em;
-  --letter-spacing-eyebrow: 0.18em;
+  --letter-spacing-wide: 0.04em;
+  --letter-spacing-eyebrow: 0.14em;
 
   /* Spacing Scale */
   --space-1: 0.25rem;
@@ -88,21 +90,21 @@
 
   /* Layout / Containers */
   --container-max-width: 1440px;
-  --container-editorial-width: 1120px;
-  --container-reading-width: 800px;
-  --header-height: 84px;
+  --container-editorial-width: 1160px;
+  --container-reading-width: 820px;
+  --header-height: 80px;
 
-  /* Border Radii (Subtle, architectural, never bubbly) */
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
+  /* Border Radii */
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 36px -6px rgba(0, 0, 0, 0.12);
 
   /* Transitions & Motion */
   --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
