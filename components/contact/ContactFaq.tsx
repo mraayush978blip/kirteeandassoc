@@ -1,180 +1,140 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, FileText, Clock, Palette, Award } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 
 interface FaqItem {
   id: string;
-  icon: React.ReactNode;
   question: string;
   answer: string;
-  badge?: string;
 }
 
 const faqs: FaqItem[] = [
   {
     id: 'faq-ies',
-    icon: <FileText size={16} />,
-    badge: 'SAME-DAY DISPATCH',
-    question: 'How quickly can we obtain certified IES / LDT photometric files?',
+    question: 'How are certified IES and photometric files distributed?',
     answer:
-      'Our optical library contains verified IES, EULUMDAT (.ldt), and Revit BIM files for our entire standard range. Digital files are dispatched within 2 hours of inquiry for immediate DIALux or Relux lux-level modeling. Customized photometric distributions can also be generated for bespoke optical matrices.',
+      'Luminous intensity distribution files (IES and EULUMDAT .ldt) and Revit BIM families are available for all standard and configured luminaires. Files are prepared for direct integration into DIALux evo, Relux, and lighting calculation software.',
   },
   {
-    id: 'faq-leadtime',
-    icon: <Clock size={16} />,
-    badge: '14-DAY MOCKUPS',
-    question: 'What is the typical turnaround for bespoke luminaire prototypes?',
+    id: 'faq-prototypes',
+    question: 'What is the schedule for bespoke luminaire mockups and prototypes?',
     answer:
-      'For bespoke adaptations (custom dimensions, mounting plates, or beam optics), CAD submittals are delivered in 48 hours. Working physical mockups are CNC-machined, photometrically tested in our goniometer, and dispatched to your architectural studio within 14 business days.',
+      'Following project design approval and 3D CAD sign-off, working CNC architectural prototypes are produced in our workshop. Prototype luminaires undergo optical and thermal bench validation prior to studio dispatch.',
   },
   {
     id: 'faq-finishes',
-    icon: <Palette size={16} />,
-    badge: 'CUSTOM RAL & PATINAS',
-    question: 'Can fixtures be customized in specific architectural patinas or RAL finishes?',
+    question: 'Can luminaires be specified in bespoke architectural patinas or RAL colours?',
     answer:
-      'Yes. Beyond our standard hard-anodized Matte Black, Brushed Aluminium, and Bronze, we formulate custom powder-coat finishes across the complete RAL and NCS palettes, as well as hand-applied architectural metal patinas (brushed brass, blackened steel, and verdigris).',
+      'Yes. In addition to our architectural Matte Black and Natural Anodized aluminium, we fabricate custom finishes across the complete RAL Classic palette, as well as hand-burnished bronze, weathered brass, and architectural powder-coatings tailored to project interior palettes.',
   },
   {
-    id: 'faq-marine',
-    icon: <Award size={16} />,
-    badge: 'IP68 SUBMERSIBLE',
-    question: 'Do you provide certified IP68 submersible fixtures for fountains and coastlines?',
+    id: 'faq-submersible',
+    question: 'Are Wet Goods luminaires certified for continuous submersion?',
     answer:
-      'Our Wet Goods family features marine-grade 316L stainless steel and hermetically sealed nitrogen-purged optical chambers rated for continuous immersion up to 10 meters depth and severe saline atmospheric corrosion.',
+      'Our Wet Goods architectural series is engineered from marine-grade 316L stainless steel with hermetically sealed optical cavities, rated IP68 for permanent underwater placement up to 10 meters depth and severe coastal environments.',
   },
 ];
 
 export const ContactFaq: React.FC = () => {
-  const [openId, setOpenId] = useState<string | null>('faq-ies');
+  const [openId, setOpenId] = useState<string | null>(null);
 
   const toggleFaq = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: '#ffffff',
-        border: '1px solid #e5e7eb',
-        borderRadius: '12px',
-        padding: 'clamp(1.5rem, 3vw, 2rem)',
-        boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.04)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-        <HelpCircle size={18} color="#111111" />
+    <div style={{ marginTop: '2rem' }}>
+      <div style={{ marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid #111111' }}>
         <h3
           style={{
-            fontFamily: 'var(--font-sans)',
-            fontSize: '0.9375rem',
-            fontWeight: 700,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
+            fontFamily: 'var(--font-serif)',
+            fontSize: '1.125rem',
+            fontWeight: 500,
+            letterSpacing: '0.04em',
             color: '#111111',
+            textTransform: 'uppercase',
             margin: 0,
           }}
         >
-          SPECIFICATION FAQ
+          Specification Notes &amp; FAQ
         </h3>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         {faqs.map((faq) => {
           const isOpen = openId === faq.id;
           return (
             <div
               key={faq.id}
               style={{
-                border: isOpen ? '1px solid #111111' : '1px solid #e5e7eb',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                transition: 'border-color 0.2s ease',
+                borderBottom: '1px solid #e5e7eb',
+                transition: 'background-color 0.2s ease',
               }}
             >
               <button
                 type="button"
                 onClick={() => toggleFaq(faq.id)}
+                aria-expanded={isOpen}
                 style={{
                   width: '100%',
-                  padding: '1rem 1.15rem',
+                  padding: '1.1rem 0',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  gap: '1rem',
-                  backgroundColor: isOpen ? '#f9fafb' : '#ffffff',
+                  gap: '1.25rem',
+                  backgroundColor: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
                   textAlign: 'left',
-                  transition: 'background-color 0.2s ease',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span style={{ color: isOpen ? '#111111' : '#6b7280', display: 'flex', alignItems: 'center' }}>
-                    {faq.icon}
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      color: isOpen ? '#111111' : '#374151',
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {faq.question}
-                  </span>
-                </div>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.9375rem',
+                    fontWeight: 500,
+                    color: isOpen ? '#111111' : '#374151',
+                    lineHeight: 1.45,
+                  }}
+                >
+                  {faq.question}
+                </span>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-                  {faq.badge && (
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.625rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.08em',
-                        color: isOpen ? '#111111' : '#6b7280',
-                        backgroundColor: isOpen ? 'rgba(0,0,0,0.06)' : '#f3f4f6',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '3px',
-                      }}
-                      className="hidden sm:inline-block"
-                    >
-                      {faq.badge}
-                    </span>
-                  )}
-                  <ChevronDown
-                    size={16}
-                    color="#111111"
-                    style={{
-                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.25s ease',
-                    }}
-                  />
-                </div>
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '24px',
+                    height: '24px',
+                    flexShrink: 0,
+                    color: '#111111',
+                  }}
+                >
+                  {isOpen ? <Minus size={16} /> : <Plus size={16} />}
+                </span>
               </button>
 
               <div
                 style={{
-                  maxHeight: isOpen ? '240px' : '0px',
+                  maxHeight: isOpen ? '300px' : '0px',
                   opacity: isOpen ? 1 : 0,
                   overflow: 'hidden',
-                  transition: 'max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease',
-                  backgroundColor: isOpen ? '#f9fafb' : '#ffffff',
+                  transition: 'max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease',
                 }}
               >
-                <div
+                <p
                   style={{
-                    padding: '0 1.15rem 1rem 1.15rem',
-                    fontSize: '0.8125rem',
-                    lineHeight: 1.65,
-                    color: '#4b5563',
+                    paddingBottom: '1.25rem',
+                    fontSize: '0.875rem',
+                    lineHeight: 1.7,
+                    color: '#6b7280',
+                    margin: 0,
                   }}
                 >
                   {faq.answer}
-                </div>
+                </p>
               </div>
             </div>
           );

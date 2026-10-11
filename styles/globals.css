@@ -1,5 +1,4 @@
 @import './tokens.css';
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
 
 /* Reset & Box Sizing */
 *, *::before, *::after {
@@ -551,5 +550,117 @@ a {
 .bespoke-step-item:hover .bespoke-title,
 .bespoke-step-item:hover .bespoke-num {
   color: #111111 !important;
+}
+
+/* Contact Page — Architectural Editorial System */
+.contact-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .contact-layout-grid {
+    grid-template-columns: 5fr 7fr;
+  }
+}
+
+.contact-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.03);
+}
+
+.contact-input-field {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 1rem; /* 16px prevents iOS Safari auto-zoom */
+  line-height: 1.5;
+  color: #111111;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  -webkit-appearance: none;
+}
+
+.contact-input-field:focus {
+  border-color: #111111;
+  box-shadow: 0 0 0 1px #111111;
+}
+
+.contact-input-field::placeholder {
+  color: #9ca3af;
+  font-weight: 300;
+}
+
+.contact-form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .contact-form-row-2col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.contact-channel-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 3px;
+  text-decoration: none;
+  color: #111111;
+  transition: all 0.2s ease;
+}
+
+.contact-channel-item:hover {
+  background-color: #ffffff;
+  border-color: #111111;
+}
+
+.contact-tag-pill {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.55rem 0.95rem;
+  border-radius: 2px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.contact-tag-pill:hover {
+  border-color: #111111;
+  color: #111111;
+}
+
+.contact-tag-pill.active {
+  background-color: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .contact-pills-container {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+  }
 }
 

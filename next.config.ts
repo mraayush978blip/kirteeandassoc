@@ -50,4 +50,21 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPayload(nextConfig);
+// Payload CMS requires a running PostgreSQL instance. When deployed on Vercel or statically
+// without an external database, enabling withPayload causes the serverless functions to hang
+// attempting to connect to 127.0.0.1:5432.
+// Payload is only wrapped if ENABLE_PAYLOAD is explicitly set to 'true' AND DATABASE_URI is defined.
+const isPayloadEnabled = process.env.ENABLE_PAYLOAD === 'true' && Boolean(process.env.DATABASE_URI);
+
+let finalConfig = nextConfig;
+if (isPayloadEnabled) {
+  try {
+    // Dynamic import to avoid bundling Payload during regular frontend builds
+    const { withPayload } = require('@payloadcms/next/withPayload');
+    finalConfig = withPayload(nextConfig);
+  } catch (error) {
+    console.warn('[next.config] withPayload failed to initialize:', error);
+  }
+}
+
+export default finalConfig;
