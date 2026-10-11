@@ -5,28 +5,28 @@ export const DifferenceSection: React.FC = () => {
     {
       num: '01',
       title: 'EXPERTISE',
-      description: 'Specification-led solutions for complex architectural requirements.',
+      description: 'Specification-led engineering for complex architectural and commercial requirements.',
     },
     {
       num: '02',
       title: 'GLOBAL REACH',
-      description: 'A network spanning designers, architects and manufacturers.',
+      description: 'An established specification network spanning architects, designers and premier manufacturers.',
     },
     {
       num: '03',
-      title: 'ENGINEERING',
-      description: 'Technical precision without compromising design.',
+      title: 'PRECISION',
+      description: 'Technical photometrics, low glare (UGR < 10), and certified engineering without compromising aesthetic purity.',
     },
     {
       num: '04',
       title: 'EXPERIENCE',
-      description: 'Thousands of bespoke solutions developed worldwide.',
+      description: 'Extensive portfolio of bespoke luminaire solutions specified across prestigious architecture worldwide.',
     },
   ];
 
   return (
     <section
-      id="difference"
+      id="philosophy"
       style={{
         backgroundColor: '#ffffff',
         color: '#111111',
@@ -57,7 +57,7 @@ export const DifferenceSection: React.FC = () => {
                 marginBottom: '1.25rem',
               }}
             >
-              THE ZENVORA DIFFERENCE
+              WHY KIRTEE &amp; ASSOCIATES BESPOKE
             </span>
             <h2
               style={{
@@ -86,11 +86,11 @@ export const DifferenceSection: React.FC = () => {
                 fontSize: '1.0625rem',
                 lineHeight: 1.75,
                 color: '#4b5563',
-                maxWidth: '440px',
+                maxWidth: '460px',
               }}
             >
-              From architectural specifications to bespoke finishes, Zenvora develops lighting systems designed around
-              the architecture they inhabit.
+              From architectural specifications to bespoke luminaire adaptations, Kirtee &amp; Associates engineers
+              lighting systems designed seamlessly around the architecture they inhabit.
             </p>
           </div>
         </div>

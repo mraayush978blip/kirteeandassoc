@@ -33,6 +33,7 @@ export const ProjectCtaSection: React.FC = () => {
       }}
     >
       <div
+        className="container"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(12, 1fr)',
@@ -47,7 +48,7 @@ export const ProjectCtaSection: React.FC = () => {
           }}
           className="lg:col-span-6"
         >
-          <div style={{ maxWidth: '480px' }}>
+          <div style={{ maxWidth: '520px' }}>
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -125,7 +126,7 @@ export const ProjectCtaSection: React.FC = () => {
           style={{
             gridColumn: 'span 12',
             position: 'relative',
-            height: 'clamp(360px, 45vw, 520px)',
+            height: 'clamp(440px, 40vw, 680px)',
             backgroundColor: '#050608',
           }}
           className="lg:col-span-6"

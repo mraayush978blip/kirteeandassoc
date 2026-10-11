@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'Architectural exterior, in-ground subterranean luminaires, and underwater optical projectors built with continuous IP68 submersion sealing, IK10 impact resistance, and marine-grade alloys.',
   openGraph: {
-    title: 'WET GOODS | ZENVORA Architectural Collection',
+    title: 'WET GOODS | Kirtee & Associates Architectural Collection',
     description:
       'Architectural exterior, in-ground subterranean luminaires, and underwater optical projectors built with continuous IP68 submersion sealing, IK10 impact resistance, and marine-grade alloys.',
   },

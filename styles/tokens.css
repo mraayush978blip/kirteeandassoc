@@ -88,10 +88,10 @@
   --space-24: 6rem;
   --space-32: 8rem;
 
-  /* Layout / Containers */
-  --container-max-width: 1440px;
-  --container-editorial-width: 1160px;
-  --container-reading-width: 820px;
+  /* Layout / Containers — Refined Architectural Luxury Grid */
+  --container-max-width: 1720px;
+  --container-editorial-width: 1320px;
+  --container-reading-width: 860px;
   --header-height: 80px;
 
   /* Border Radii */

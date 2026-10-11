@@ -224,7 +224,7 @@ export const ProjectsSwipeSection: React.FC = () => {
               key={proj.id}
               style={{
                 flexShrink: 0,
-                width: 'clamp(280px, 32vw, 380px)',
+                width: 'clamp(280px, 22vw, 420px)',
                 scrollSnapAlign: 'start',
               }}
             >
@@ -242,7 +242,7 @@ export const ProjectsSwipeSection: React.FC = () => {
                   style={{
                     position: 'relative',
                     width: '100%',
-                    height: '280px',
+                    height: 'clamp(260px, 15vw, 320px)',
                     borderRadius: '2px',
                     overflow: 'hidden',
                     backgroundColor: '#14161b',

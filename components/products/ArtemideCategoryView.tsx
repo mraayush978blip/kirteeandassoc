@@ -41,6 +41,58 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
       }}
     >
       <div className="container">
+        {/* Category Switcher Tabs (Dry vs Wet Goods) */}
+        <div
+          style={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '1.5rem',
+            padding: '0.3rem',
+            backgroundColor: '#f3f4f6',
+            borderRadius: '4px',
+            maxWidth: '100%',
+          }}
+        >
+          <Link
+            href="/dry-goods"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '0.6875rem',
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '3px',
+              backgroundColor: categoryType === 'dry' ? '#111111' : 'transparent',
+              color: categoryType === 'dry' ? '#ffffff' : '#6b7280',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            DRY GOODS (INDOOR)
+          </Link>
+          <Link
+            href="/wet-goods"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '0.6875rem',
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '3px',
+              backgroundColor: categoryType === 'wet' ? '#111111' : 'transparent',
+              color: categoryType === 'wet' ? '#ffffff' : '#6b7280',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            WET GOODS (OUTDOOR)
+          </Link>
+        </div>
+
         {/* Category Header (Artemide reference from PDF Page 2) */}
         <div
           style={{
@@ -51,13 +103,13 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
           <h1
             style={{
               fontFamily: 'var(--font-sans)',
-              fontSize: 'clamp(2.75rem, 6vw, 4.5rem)',
+              fontSize: 'clamp(1.85rem, 5.5vw, 4.25rem)',
               fontWeight: 700,
               letterSpacing: '-0.02em',
               textTransform: 'uppercase',
               color: '#111111',
-              marginBottom: '1.75rem',
-              lineHeight: 1.05,
+              marginBottom: '1.5rem',
+              lineHeight: 1.08,
             }}
           >
             {title}
@@ -66,7 +118,7 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
           <p
             style={{
               fontFamily: 'var(--font-sans)',
-              fontSize: 'clamp(1rem, 1.5vw, 1.1875rem)',
+              fontSize: 'clamp(0.9375rem, 1.8vw, 1.125rem)',
               lineHeight: 1.75,
               color: '#4b5563',
               fontWeight: 400,

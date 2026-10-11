@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'Products that convey innovation and design skills, towards new frontiers of light where the focus is both on the product as such and on operation and information intelligence.',
   openGraph: {
-    title: 'DRY GOODS | ZENVORA Architectural Collection',
+    title: 'DRY GOODS | Kirtee & Associates Architectural Collection',
     description:
       'Products that convey innovation and design skills, towards new frontiers of light where the focus is both on the product as such and on operation and information intelligence.',
   },

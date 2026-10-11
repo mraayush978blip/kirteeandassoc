@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { LinkedinIcon, InstagramIcon } from '@/components/ui/Icons';
+import { Phone, Mail, MapPin } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -31,7 +32,7 @@ export const Footer: React.FC = () => {
           }}
         >
           {/* Brand Monogram */}
-          <div>
+          <div style={{ maxWidth: '380px' }}>
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -44,7 +45,7 @@ export const Footer: React.FC = () => {
                 marginBottom: '0.4rem',
               }}
             >
-              ZENVORA
+              KIRTEE &amp; ASSOCIATES
             </span>
             <span
               style={{
@@ -55,30 +56,70 @@ export const Footer: React.FC = () => {
                 textTransform: 'uppercase',
                 color: 'rgba(255, 255, 255, 0.5)',
                 display: 'block',
+                marginBottom: '1rem',
               }}
             >
-              Architectural Systems
+              Architectural Lighting &amp; Bespoke Luminaires
             </span>
+            <p
+              style={{
+                fontSize: '0.875rem',
+                lineHeight: 1.6,
+                color: 'rgba(255, 255, 255, 0.6)',
+                margin: 0,
+              }}
+            >
+              Precision engineered architectural lighting instruments, custom optical grazers, and bespoke luminaire design.
+            </p>
           </div>
 
-          {/* Links & Social */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '3rem' }}>
+          {/* Links & Direct Contact */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '3.5rem' }}>
             <nav
               aria-label="Footer Navigation"
               style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '2rem',
+                flexDirection: 'column',
+                gap: '0.875rem',
               }}
             >
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.6875rem',
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255, 255, 255, 0.4)',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                NAVIGATION
+              </span>
+              <Link
+                href="/"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.14em',
+                  color: 'rgba(255, 255, 255, 0.75)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
+              >
+                HOME
+              </Link>
               <Link
                 href="/products"
                 style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.16em',
+                  letterSpacing: '0.14em',
                   color: 'rgba(255, 255, 255, 0.75)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
@@ -86,16 +127,16 @@ export const Footer: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
               >
-                COLLECTIONS
+                PRODUCTS
               </Link>
               <Link
-                href="/#projects"
+                href="/dry-goods"
                 style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.16em',
+                  letterSpacing: '0.14em',
                   color: 'rgba(255, 255, 255, 0.75)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
@@ -103,16 +144,16 @@ export const Footer: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
               >
-                PROJECTS
+                DRY GOODS (INDOOR)
               </Link>
               <Link
-                href="/#difference"
+                href="/wet-goods"
                 style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.16em',
+                  letterSpacing: '0.14em',
                   color: 'rgba(255, 255, 255, 0.75)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
@@ -120,16 +161,16 @@ export const Footer: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
               >
-                ABOUT
+                WET GOODS (OUTDOOR)
               </Link>
               <Link
                 href="/contact"
                 style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.16em',
+                  letterSpacing: '0.14em',
                   color: 'rgba(255, 255, 255, 0.75)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
@@ -141,30 +182,94 @@ export const Footer: React.FC = () => {
               </Link>
             </nav>
 
-            {/* Social Icons */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <a
-                href="https://linkedin.com/company/zenvora"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                style={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'color 0.2s ease' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)')}
+            {/* Direct Specification & Contact Info */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.6875rem',
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255, 255, 255, 0.4)',
+                  marginBottom: '0.25rem',
+                }}
               >
-                <LinkedinIcon size={16} />
+                SPECIFICATION CONTACT
+              </span>
+              <a
+                href="tel:7096962640"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.875rem',
+                  color: '#ffffff',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#ffffff')}
+              >
+                <Phone size={14} style={{ color: 'var(--color-accent)' }} />
+                <span>Divvya — +91 70969 62640</span>
               </a>
               <a
-                href="https://instagram.com/zenvora"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                style={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'color 0.2s ease' }}
+                href="mailto:inquiries@kirteeandassoc.com"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.875rem',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)')}
               >
-                <InstagramIcon size={16} />
+                <Mail size={14} />
+                <span>inquiries@kirteeandassoc.com</span>
               </a>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '0.5rem',
+                  fontSize: '0.8125rem',
+                  color: 'rgba(255, 255, 255, 0.55)',
+                  marginTop: '0.25rem',
+                  maxWidth: '260px',
+                }}
+              >
+                <MapPin size={14} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <span>Kirtee &amp; Associates Architectural Studio</span>
+              </div>
+
+              {/* Social Icons */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.75rem' }}>
+                <a
+                  href="https://linkedin.com/company/kirteeandassoc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  style={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'color 0.2s ease' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)')}
+                >
+                  <LinkedinIcon size={16} />
+                </a>
+                <a
+                  href="https://instagram.com/kirteeandassoc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  style={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'color 0.2s ease' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)')}
+                >
+                  <InstagramIcon size={16} />
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -182,7 +287,7 @@ export const Footer: React.FC = () => {
             color: 'rgba(255, 255, 255, 0.45)',
           }}
         >
-          <span>&copy; {currentYear} Zenvora. All rights reserved.</span>
+          <span>&copy; {currentYear} Kirtee &amp; Associates. All rights reserved.</span>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <Link
@@ -202,7 +307,7 @@ export const Footer: React.FC = () => {
               Terms of Use
             </Link>
             <span style={{ color: 'rgba(255, 255, 255, 0.3)' }}>|</span>
-            <span>Made for exceptional spaces.</span>
+            <span>Crafted for architectural specifications.</span>
           </div>
         </div>
       </div>

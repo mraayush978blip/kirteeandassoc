@@ -108,23 +108,23 @@ a {
   margin-bottom: var(--space-3);
 }
 
-/* Container utilities */
+/* Container utilities — Balanced Luxury Framing */
 .container {
   width: 100%;
-  max-width: var(--container-max-width);
+  max-width: var(--container-max-width, 1720px);
   margin-left: auto;
   margin-right: auto;
-  padding-left: clamp(1.25rem, 4vw, 3.5rem);
-  padding-right: clamp(1.25rem, 4vw, 3.5rem);
+  padding-left: clamp(1.5rem, 3.5vw, 4.5rem);
+  padding-right: clamp(1.5rem, 3.5vw, 4.5rem);
 }
 
 .container-editorial {
   width: 100%;
-  max-width: var(--container-editorial-width);
+  max-width: var(--container-editorial-width, 1320px);
   margin-left: auto;
   margin-right: auto;
-  padding-left: clamp(1.25rem, 4vw, 3rem);
-  padding-right: clamp(1.25rem, 4vw, 3rem);
+  padding-left: clamp(1.5rem, 3.5vw, 4rem);
+  padding-right: clamp(1.5rem, 3.5vw, 4rem);
 }
 
 .section-spacing {
@@ -291,6 +291,22 @@ a {
   }
 }
 
+/* Responsive Grid Column Utilities for 12-Column Layouts */
+@media (min-width: 1024px) {
+  .lg\:col-span-1 { grid-column: span 1 !important; }
+  .lg\:col-span-2 { grid-column: span 2 !important; }
+  .lg\:col-span-3 { grid-column: span 3 !important; }
+  .lg\:col-span-4 { grid-column: span 4 !important; }
+  .lg\:col-span-5 { grid-column: span 5 !important; }
+  .lg\:col-span-6 { grid-column: span 6 !important; }
+  .lg\:col-span-7 { grid-column: span 7 !important; }
+  .lg\:col-span-8 { grid-column: span 8 !important; }
+  .lg\:col-span-9 { grid-column: span 9 !important; }
+  .lg\:col-span-10 { grid-column: span 10 !important; }
+  .lg\:col-span-11 { grid-column: span 11 !important; }
+  .lg\:col-span-12 { grid-column: span 12 !important; }
+}
+
 /* Form Controls */
 .form-group {
   display: flex;
@@ -388,13 +404,17 @@ a {
 }
 
 /* Header Responsive Visibility */
+.mobile-menu-toggle {
+  display: none !important;
+}
+
 @media (max-width: 900px) {
   .desktop-nav,
   .desktop-cta {
     display: none !important;
   }
-  .mobile-toggle {
-    display: flex !important;
+  .mobile-menu-toggle {
+    display: inline-flex !important;
   }
 }
 
@@ -487,3 +507,49 @@ a {
   text-decoration: underline !important;
   opacity: 0.8;
 }
+
+/* Flos Bespoke Process Section */
+.bespoke-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .bespoke-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(3rem, 6vw, 6rem);
+    align-items: center;
+  }
+}
+
+.bespoke-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  min-height: 320px;
+  background-color: #f3f4f6;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .bespoke-image-container {
+    aspect-ratio: 16 / 11;
+    min-height: 520px;
+    max-height: 640px;
+  }
+}
+
+.bespoke-step-item {
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition: opacity 0.25s ease;
+}
+
+.bespoke-step-item:hover .bespoke-title,
+.bespoke-step-item:hover .bespoke-num {
+  color: #111111 !important;
+}
+

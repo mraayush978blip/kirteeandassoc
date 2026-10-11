@@ -3,8 +3,8 @@ import { HeroSwipeSection } from '@/components/home/HeroSwipeSection';
 import { DifferenceSection } from '@/components/home/DifferenceSection';
 import { CollectionsSection } from '@/components/home/CollectionsSection';
 import { BespokeInteractiveSection } from '@/components/home/BespokeInteractiveSection';
+import { FlosBespokeProcessSection } from '@/components/home/FlosBespokeProcessSection';
 import { ProjectsSwipeSection } from '@/components/home/ProjectsSwipeSection';
-import { StatsSection } from '@/components/home/StatsSection';
 import { ProjectCtaSection } from '@/components/home/ProjectCtaSection';
 
 export default function HomePage() {
@@ -13,22 +13,22 @@ export default function HomePage() {
       {/* 1. Hero Section with Touch & Drag Right/Left Image Swiping */}
       <HeroSwipeSection />
 
-      {/* 2. The Zenvora Difference: 4 Strategic Editorial Pillars */}
+      {/* 2. The Kirtee & Associates Philosophy: 4 Strategic Pillars */}
       <DifferenceSection />
 
-      {/* 3. Our Collections: Dry Goods & Wet Goods */}
+      {/* 3. Product Collections: Dry Goods & Wet Goods */}
       <CollectionsSection />
 
-      {/* 4. Bespoke by Design: 4-Step Process & Interactive Annotated Luminaire */}
+      {/* 4. Bespoke by Design: Specification Process & Luminaire Customizer */}
       <BespokeInteractiveSection />
 
-      {/* 5. Featured Projects: Spaces That Inspire (Swipeable Carousel) */}
+      {/* 5. Flos Bespoke Process: Design Thinking, Prototyping, Realization, Installation */}
+      <FlosBespokeProcessSection />
+
+      {/* 6. Featured Projects: Swipeable Architectural Showcase */}
       <ProjectsSwipeSection />
 
-      {/* 6. Architectural Scale: Curved Gallery Image & Global Statistics */}
-      <StatsSection />
-
-      {/* 7. Specification Partnership CTA Showcase */}
+      {/* 7. Specification Consultation CTA */}
       <ProjectCtaSection />
     </>
   );

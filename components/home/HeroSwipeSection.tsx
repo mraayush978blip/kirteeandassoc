@@ -64,6 +64,17 @@ export const HeroSwipeSection: React.FC = () => {
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   }, []);
 
+  // Auto-advance slides every 3 seconds
+  useEffect(() => {
+    if (isDragging) return;
+
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [nextSlide, isDragging, currentSlide]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -214,7 +225,7 @@ export const HeroSwipeSection: React.FC = () => {
           paddingBottom: '3rem',
         }}
       >
-        <div style={{ maxWidth: '620px' }}>
+        <div style={{ maxWidth: '680px' }}>
           {/* Eyebrow */}
           <span
             style={{
@@ -235,12 +246,12 @@ export const HeroSwipeSection: React.FC = () => {
           <h1
             style={{
               fontFamily: 'var(--font-serif)',
-              fontSize: 'clamp(3.5rem, 7.5vw, 6.25rem)',
-              lineHeight: 0.98,
+              fontSize: 'clamp(2.25rem, 6.5vw, 6rem)',
+              lineHeight: 1.02,
               letterSpacing: '-0.02em',
               fontWeight: 500,
               color: '#ffffff',
-              marginBottom: '1.75rem',
+              marginBottom: '1.5rem',
               whiteSpace: 'pre-line',
             }}
           >
@@ -251,12 +262,12 @@ export const HeroSwipeSection: React.FC = () => {
           <p
             style={{
               fontFamily: 'var(--font-sans)',
-              fontSize: '1.125rem',
+              fontSize: 'clamp(0.9375rem, 1.8vw, 1.125rem)',
               lineHeight: 1.65,
               color: 'rgba(255, 255, 255, 0.8)',
               fontWeight: 300,
-              maxWidth: '460px',
-              marginBottom: '2.5rem',
+              maxWidth: '480px',
+              marginBottom: '2.25rem',
             }}
           >
             {active.subtitle}

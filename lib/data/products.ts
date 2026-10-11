@@ -117,8 +117,8 @@ This honeycomb characterizes the lamp both aesthetically and optically - not onl
     ],
     relatedProductSlugs: ['a-24-system', 'a-39-system', 'ale-01'],
     seo: {
-      metaTitle: 'Calipso Luminaire | ZENVORA Architectural Collection',
-      metaDescription: 'Explore the Calipso architectural luminaire designed with fractal moon honeycomb optics. Available at ZENVORA.',
+      metaTitle: 'Calipso Luminaire | Kirtee & Associates Architectural Collection',
+      metaDescription: 'Explore the Calipso architectural luminaire designed with fractal moon honeycomb optics. Available at Kirtee & Associates.',
       ogImage: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1200&q=80',
     },
     createdAt: '2026-01-10T08:00:00Z',
@@ -180,8 +180,8 @@ Engineered for seamless architectural integration, A.24 moves effortlessly betwe
     ],
     relatedProductSlugs: ['a-39-system', 'ale-01', 'calipso'],
     seo: {
-      metaTitle: 'A.24 Architectural System | ZENVORA',
-      metaDescription: 'Discover the A.24 magnetic architectural lighting system by ZENVORA.',
+      metaTitle: 'A.24 Architectural System | Kirtee & Associates',
+      metaDescription: 'Discover the A.24 magnetic architectural lighting system by Kirtee & Associates.',
     },
     createdAt: '2026-01-12T08:00:00Z',
     updatedAt: '2026-03-20T10:00:00Z',
@@ -234,8 +234,8 @@ Engineered for seamless architectural integration, A.24 moves effortlessly betwe
     ],
     relatedProductSlugs: ['a-24-system', 'calipso', 'ale-01'],
     seo: {
-      metaTitle: 'A.39 Linear System | ZENVORA',
-      metaDescription: 'Minimalist continuous architectural linear profiles by ZENVORA.',
+      metaTitle: 'A.39 Linear System | Kirtee & Associates',
+      metaDescription: 'Minimalist continuous architectural linear profiles by Kirtee & Associates.',
     },
     createdAt: '2026-01-14T08:00:00Z',
     updatedAt: '2026-03-20T10:00:00Z',
@@ -288,8 +288,8 @@ Engineered for seamless architectural integration, A.24 moves effortlessly betwe
     ],
     relatedProductSlugs: ['calipso', 'a-24-system', 'boltons'],
     seo: {
-      metaTitle: 'ALE.01 Architectural Luminaire | ZENVORA',
-      metaDescription: 'Sustainable biomimetic suspended luminaire designed by BIG. Part of ZENVORA.',
+      metaTitle: 'ALE.01 Architectural Luminaire | Kirtee & Associates',
+      metaDescription: 'Sustainable biomimetic suspended luminaire designed by BIG. Part of Kirtee & Associates.',
     },
     createdAt: '2026-01-16T08:00:00Z',
     updatedAt: '2026-03-20T10:00:00Z',
@@ -342,8 +342,8 @@ Engineered for seamless architectural integration, A.24 moves effortlessly betwe
     ],
     relatedProductSlugs: ['calipso', 'ale-01'],
     seo: {
-      metaTitle: 'Boltons by Herzog & de Meuron | ZENVORA',
-      metaDescription: 'Boltons luminaire by Herzog & de Meuron. Available at ZENVORA.',
+      metaTitle: 'Boltons by Herzog & de Meuron | Kirtee & Associates',
+      metaDescription: 'Boltons luminaire by Herzog & de Meuron. Available at Kirtee & Associates.',
     },
     createdAt: '2026-01-18T08:00:00Z',
     updatedAt: '2026-03-20T10:00:00Z',
@@ -398,8 +398,8 @@ Designed specifically to meet demanding architectural standards, this system int
     ],
     relatedProductSlugs: ['stria-facade-1200', 'aura-spot-75'],
     seo: {
-      metaTitle: 'Ingraze Frame 1000 | In-Ground Wet Goods | ZENVORA',
-      metaDescription: 'IP68 drive-over linear luminaire for facade grazing by ZENVORA.',
+      metaTitle: 'Ingraze Frame 1000 | In-Ground Wet Goods | Kirtee & Associates',
+      metaDescription: 'IP68 drive-over linear luminaire for facade grazing by Kirtee & Associates.',
     },
     createdAt: '2026-01-15T08:00:00Z',
     updatedAt: '2026-03-20T10:00:00Z',
@@ -451,7 +451,7 @@ Designed specifically to meet demanding architectural standards, this system int
     ],
     relatedProductSlugs: ['ingraze-frame-1000', 'aura-spot-75'],
     seo: {
-      metaTitle: 'Stria Façade 1200 | Wet Goods Collection | ZENVORA',
+      metaTitle: 'Stria Façade 1200 | Wet Goods Collection | Kirtee & Associates',
       metaDescription: 'Stria Façade 1200 surface mounted exterior architectural wall grazer.',
     },
     createdAt: '2026-02-15T09:00:00Z',
@@ -504,8 +504,8 @@ Designed specifically to meet demanding architectural standards, this system int
     ],
     relatedProductSlugs: ['ingraze-frame-1000', 'stria-facade-1200'],
     seo: {
-      metaTitle: 'Aura Spot 75 Projector | ZENVORA',
-      metaDescription: 'Precision architectural projector with stepless zoom optics and IP67 weather sealing by ZENVORA.',
+      metaTitle: 'Aura Spot 75 Projector | Kirtee & Associates',
+      metaDescription: 'Precision architectural projector with stepless zoom optics and IP67 weather sealing by Kirtee & Associates.',
     },
     createdAt: '2026-02-01T10:00:00Z',
     updatedAt: '2026-03-21T11:00:00Z',
@@ -526,6 +526,9 @@ export function getFeaturedProducts(): Product[] {
 }
 
 export function getProductBySlug(slug: string): Product | undefined {
+  if (slug === 'outdoor-in-ground-ingraze-frame') {
+    return products.find((p) => p.slug === 'ingraze-frame-1000' && p.status === 'published');
+  }
   return products.find((p) => p.slug === slug && p.status === 'published');
 }
 

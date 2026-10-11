@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Architectural Catalogue | ZENVORA',
-  description: 'Explore the portfolio of architectural luminaires by ZENVORA.',
+  title: 'Architectural Catalogue | Kirtee & Associates',
+  description: 'Explore the portfolio of architectural luminaires by Kirtee & Associates.',
 };
 
 interface ProductsPageProps {

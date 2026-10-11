@@ -12,9 +12,11 @@ interface ProductDetailPageProps {
 
 export async function generateStaticParams() {
   const allProducts = getAllProducts();
-  return allProducts.map((product) => ({
+  const params = allProducts.map((product) => ({
     slug: product.slug,
   }));
+  params.push({ slug: 'outdoor-in-ground-ingraze-frame' });
+  return params;
 }
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
     };
   }
 
-  const title = product.seo?.metaTitle || `${product.name} | ZENVORA`;
+  const title = product.seo?.metaTitle || `${product.name} | Kirtee & Associates`;
   const description = product.seo?.metaDescription || product.shortDescription;
 
   return {
