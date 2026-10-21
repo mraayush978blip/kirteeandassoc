@@ -113,6 +113,36 @@ CREATE INDEX IF NOT EXISTS idx_submissions_created ON submissions(created_at DES
 CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status);
 
 -- =====================================================================
+-- ROW LEVEL SECURITY (RLS) & ACCESS CONTROL (SUPABASE COMPATIBLE)
+-- =====================================================================
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE media ENABLE ROW LEVEL SECURITY;
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+-- Categories: Public read access
+DROP POLICY IF EXISTS "Allow public read access on categories" ON categories;
+CREATE POLICY "Allow public read access on categories" ON categories FOR SELECT USING (true);
+
+-- Products: Public read access
+DROP POLICY IF EXISTS "Allow public read access on products" ON products;
+CREATE POLICY "Allow public read access on products" ON products FOR SELECT USING (true);
+
+-- Media: Public read access
+DROP POLICY IF EXISTS "Allow public read access on media" ON media;
+CREATE POLICY "Allow public read access on media" ON media FOR SELECT USING (true);
+
+-- Site Settings: Public read access
+DROP POLICY IF EXISTS "Allow public read access on site_settings" ON site_settings;
+CREATE POLICY "Allow public read access on site_settings" ON site_settings FOR SELECT USING (true);
+
+-- Submissions: Allow visitors to submit specification inquiries, but restrict reading/updates to backend
+DROP POLICY IF EXISTS "Allow public insert on submissions" ON submissions;
+CREATE POLICY "Allow public insert on submissions" ON submissions FOR INSERT WITH CHECK (true);
+
+-- =====================================================================
 -- INITIAL SEED DATA
 -- =====================================================================
 
