@@ -146,10 +146,13 @@ CREATE POLICY "Allow public insert on submissions" ON submissions FOR INSERT WIT
 -- INITIAL SEED DATA
 -- =====================================================================
 
--- Seed Default Admin User
-INSERT INTO users (email, name, role)
-VALUES ('admin@kirteeandassoc.com', 'Divvya / Studio Admin', 'admin')
-ON CONFLICT (email) DO NOTHING;
+-- Seed Admin Users
+INSERT INTO users (id, email, name, role)
+VALUES 
+  ('9460e78f-ffe8-420a-aa7e-baabbe4643ab', 'zenvora204@gmail.com', 'Zenvora Admin', 'admin'),
+  (gen_random_uuid(), 'admin@kirteeandassoc.com', 'Divvya / Studio Lead', 'admin')
+ON CONFLICT (email) DO UPDATE SET
+  role = 'admin';
 
 -- Seed Categories
 INSERT INTO categories (id, slug, name, description, order_index) VALUES
