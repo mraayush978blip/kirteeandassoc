@@ -4,6 +4,33 @@ export const Media: CollectionConfig = {
   slug: 'media',
   upload: {
     staticDir: 'public/media',
+    formatOptions: {
+      format: 'webp',
+      options: {
+        quality: 85,
+        effort: 6,
+      },
+    },
+    imageSizes: [
+      {
+        name: 'thumbnail',
+        width: 480,
+        height: undefined,
+        formatOptions: { format: 'webp', options: { quality: 80 } },
+      },
+      {
+        name: 'card',
+        width: 1024,
+        height: undefined,
+        formatOptions: { format: 'webp', options: { quality: 85 } },
+      },
+      {
+        name: 'hero',
+        width: 2400,
+        height: undefined,
+        formatOptions: { format: 'webp', options: { quality: 88 } },
+      },
+    ],
     mimeTypes: [
       'image/jpeg',
       'image/png',

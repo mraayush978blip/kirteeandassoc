@@ -307,7 +307,14 @@ export const Footer: React.FC = () => {
               Terms of Use
             </Link>
             <span style={{ color: 'rgba(255, 255, 255, 0.3)' }}>|</span>
-            <span>Crafted for architectural specifications.</span>
+            <Link
+              href="/admin"
+              style={{ color: 'rgba(255, 255, 255, 0.6)', textDecoration: 'none', fontWeight: 600 }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#c5a880')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)')}
+            >
+              Admin Studio
+            </Link>
           </div>
         </div>
       </div>

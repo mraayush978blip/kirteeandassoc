@@ -27,9 +27,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Specification consent is mandatory.' }, { status: 400 });
     }
 
-    // In production with RESEND_API_KEY or SMTP configured, trigger transactional email dispatch:
-    // e.g. await sendEmail({ to: 'inquiries@kirteeandassoc.com', subject: `[Specification] ${topic}`, ... })
-    // For local development and verification, log the formatted submission cleanly:
+    // Persist to PostgreSQL submissions table if available
+    try {
+      const { query } = await import('@/lib/db');
+      await query(
+        `INSERT INTO submissions (name, email, phone, company, topic, product, message, status, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'new', NOW())`,
+        [name.trim(), email.trim(), phone?.trim() || null, company?.trim() || null, topic || null, product || null, message.trim()]
+      );
+    } catch {
+      // Fallback: DB offline, logged cleanly
+    }
+
     console.log('[Contact Form Submission Received]:', {
       name: name.trim(),
       email: email.trim(),
