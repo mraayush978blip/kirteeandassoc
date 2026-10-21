@@ -4,8 +4,20 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import { useSiteImages } from '@/lib/useSiteImages';
 
 export const CollectionsSection: React.FC = () => {
+  const { getImage } = useSiteImages();
+  const dryImage = getImage(
+    'collection-dry',
+    'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1400&q=80',
+    'Dry Goods architectural interior luminaire'
+  );
+  const wetImage = getImage(
+    'collection-wet',
+    'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1400&q=80',
+    'Wet Goods waterproof architectural luminaire'
+  );
   return (
     <section
       id="collections"
@@ -130,8 +142,8 @@ export const CollectionsSection: React.FC = () => {
               }}
             >
               <Image
-                src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1400&q=80"
-                alt="Dry Goods architectural interior luminaire"
+                src={dryImage.url}
+                alt={dryImage.alt}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 style={{
@@ -215,8 +227,8 @@ export const CollectionsSection: React.FC = () => {
               }}
             >
               <Image
-                src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1400&q=80"
-                alt="Wet Goods waterproof architectural luminaire"
+                src={wetImage.url}
+                alt={wetImage.alt}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 style={{

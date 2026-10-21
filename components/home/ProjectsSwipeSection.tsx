@@ -4,9 +4,11 @@ import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSiteImages } from '@/lib/useSiteImages';
 
 interface ProjectItem {
   id: string;
+  slotId: string;
   num: string;
   title: string;
   location: string;
@@ -17,6 +19,7 @@ interface ProjectItem {
 const projects: ProjectItem[] = [
   {
     id: 'proj-1',
+    slotId: 'project-1',
     num: '01',
     title: 'PRIVATE RESIDENCE',
     location: 'Mumbai, India',
@@ -25,6 +28,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: 'proj-2',
+    slotId: 'project-2',
     num: '02',
     title: 'BOUTIQUE HOTEL',
     location: 'Dubai, UAE',
@@ -33,6 +37,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: 'proj-3',
+    slotId: 'project-3',
     num: '03',
     title: 'ARCHITECTURAL INTERIOR',
     location: 'London, UK',
@@ -41,6 +46,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: 'proj-4',
+    slotId: 'project-4',
     num: '04',
     title: 'CULTURAL PAVILION',
     location: 'Milan, Italy',
@@ -49,6 +55,7 @@ const projects: ProjectItem[] = [
   },
   {
     id: 'proj-5',
+    slotId: 'project-5',
     num: '05',
     title: 'CIVIC GALLERIA',
     location: 'Kyoto, Japan',
@@ -58,6 +65,7 @@ const projects: ProjectItem[] = [
 ];
 
 export const ProjectsSwipeSection: React.FC = () => {
+  const { getImage } = useSiteImages();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -250,8 +258,8 @@ export const ProjectsSwipeSection: React.FC = () => {
                   }}
                 >
                   <Image
-                    src={proj.imageUrl}
-                    alt={proj.title}
+                    src={getImage(proj.slotId, proj.imageUrl, proj.title).url}
+                    alt={getImage(proj.slotId, proj.imageUrl, proj.title).alt || proj.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     style={{

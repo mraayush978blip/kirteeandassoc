@@ -225,12 +225,12 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
         id, slug, sku, name, code_label, designer, catalog_type, category_id,
         subcategory, tagline, short_description, full_description, editorial_story,
         tags, status, is_featured, order_index, hero_image_url, hero_image_alt,
-        specifications, downloads, updated_at
+        gallery_urls, specifications, downloads, updated_at
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8,
         $9, $10, $11, $12, $13,
         $14, $15, $16, $17, $18, $19,
-        $20, $21, NOW()
+        $20, $21, $22, NOW()
       )
       ON CONFLICT (id) DO UPDATE SET
         slug = EXCLUDED.slug,
@@ -251,6 +251,7 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
         order_index = EXCLUDED.order_index,
         hero_image_url = EXCLUDED.hero_image_url,
         hero_image_alt = EXCLUDED.hero_image_alt,
+        gallery_urls = EXCLUDED.gallery_urls,
         specifications = EXCLUDED.specifications,
         downloads = EXCLUDED.downloads,
         updated_at = NOW()
@@ -275,6 +276,7 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
         product.order || 1,
         product.heroImage?.url || '',
         product.heroImage?.alt || name,
+        JSON.stringify(product.gallery || []),
         JSON.stringify(product.specifications || []),
         JSON.stringify(product.downloads || []),
       ]

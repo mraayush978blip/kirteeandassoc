@@ -4,9 +4,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSiteImages } from '@/lib/useSiteImages';
 
 interface HeroSlide {
   id: string;
+  slotId: string;
   eyebrow: string;
   title: string;
   subtitle: string;
@@ -19,6 +21,7 @@ interface HeroSlide {
 const heroSlides: HeroSlide[] = [
   {
     id: 'hero-1',
+    slotId: 'hero-slide-1',
     eyebrow: 'ARCHITECTURAL LIGHTING SYSTEMS',
     title: 'LIGHT,\nREFINED.',
     subtitle: 'Bespoke architectural lighting systems engineered for exceptional spaces.',
@@ -29,6 +32,7 @@ const heroSlides: HeroSlide[] = [
   },
   {
     id: 'hero-2',
+    slotId: 'hero-slide-2',
     eyebrow: 'PRECISION OPTICAL CRAFT',
     title: 'SPACE,\nDEFINED.',
     subtitle: 'Micro-aperture linear wall grazers and dark-light downlights for monolithic architecture.',
@@ -39,6 +43,7 @@ const heroSlides: HeroSlide[] = [
   },
   {
     id: 'hero-3',
+    slotId: 'hero-slide-3',
     eyebrow: 'IP68 SUBMERSIBLE SYSTEMS',
     title: 'FORM,\nENDURING.',
     subtitle: 'Marine-grade in-ground facade projectors crafted for extreme subterranean resilience.',
@@ -50,6 +55,7 @@ const heroSlides: HeroSlide[] = [
 ];
 
 export const HeroSwipeSection: React.FC = () => {
+  const { getImage } = useSiteImages();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
@@ -164,6 +170,7 @@ export const HeroSwipeSection: React.FC = () => {
       <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
         {heroSlides.map((slide, index) => {
           const isActive = index === currentSlide;
+          const resolved = getImage(slide.slotId, slide.imageUrl, slide.imageAlt);
           return (
             <div
               key={slide.id}
@@ -179,8 +186,8 @@ export const HeroSwipeSection: React.FC = () => {
               }}
             >
               <Image
-                src={slide.imageUrl}
-                alt={slide.imageAlt}
+                src={resolved.url}
+                alt={resolved.alt}
                 fill
                 priority={index === 0}
                 sizes="100vw"

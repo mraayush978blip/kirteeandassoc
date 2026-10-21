@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import { useSiteImages } from '@/lib/useSiteImages';
 
 interface BespokeStep {
+  slotId: string;
   number: string;
   title: string;
   description: string;
@@ -16,40 +18,45 @@ interface BespokeStep {
 // Using curated architectural photography matching Kirtee & Associates homepage aesthetic
 const bespokeSteps: BespokeStep[] = [
   {
+    slotId: 'process-step-1',
     number: '.01',
     title: 'Design Thinking',
     description:
       'From concept or sketch, all the way to the final installation, the process is collaborative to ensure your vision is fully realized.',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+    image: '/images/bespoke/01-design-thinking.jpg',
     imageAlt: 'Architectural lighting design concept',
   },
   {
+    slotId: 'process-step-2',
     number: '.02',
     title: 'Prototyping',
     description:
       'Merging technology and emotion, we integrate light into architecture and nature, bringing a sophisticated poetic sensibility to our designs and creations.',
-    image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85',
+    image: '/images/bespoke/02-prototyping.jpg',
     imageAlt: 'Precision linear optical prototype',
   },
   {
+    slotId: 'process-step-3',
     number: '.03',
     title: 'Realization',
     description:
       'Form, function, and performance drive each and every Flos creation, aided by the most advanced technologies and processes.',
-    image: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1600&q=85',
+    image: '/images/bespoke/03-realization.jpg',
     imageAlt: 'Master artisanal luminaire realization',
   },
   {
+    slotId: 'process-step-4',
     number: '.04',
     title: 'Installation',
     description:
       'As a full-service business, Flos believes in providing support and specialized assistance from inception to installation.',
-    image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=85',
+    image: '/images/bespoke/04-installation.jpg',
     imageAlt: 'Monolithic gallery architectural lighting installation',
   },
 ];
 
 export const FlosBespokeProcessSection: React.FC = () => {
+  const { getImage } = useSiteImages();
   const [activeStep, setActiveStep] = useState(0);
 
   return (
@@ -70,6 +77,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
           <div className="bespoke-image-container">
             {bespokeSteps.map((step, idx) => {
               const isActive = idx === activeStep;
+              const resolved = getImage(step.slotId, step.image, step.imageAlt);
               return (
                 <div
                   key={step.number}
@@ -84,8 +92,8 @@ export const FlosBespokeProcessSection: React.FC = () => {
                   }}
                 >
                   <Image
-                    src={step.image}
-                    alt={step.imageAlt}
+                    src={resolved.url}
+                    alt={resolved.alt}
                     fill
                     priority={idx === 0}
                     sizes="(max-width: 1024px) 100vw, 58vw"
