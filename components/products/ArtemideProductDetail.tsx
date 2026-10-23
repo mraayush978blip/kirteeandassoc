@@ -1138,19 +1138,22 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
         <section
           style={{
             borderTop: '1px solid #e5e7eb',
-            paddingTop: '4.5rem',
-            paddingBottom: '6rem',
+            paddingTop: '2.75rem',
+            paddingBottom: '2.5rem',
+            paddingLeft: 'clamp(1.5rem, 4vw, 3.75rem)',
+            paddingRight: 'clamp(1.5rem, 4vw, 3.75rem)',
             backgroundColor: '#ffffff',
+            boxSizing: 'border-box',
           }}
         >
-          <div className="container" style={{ maxWidth: '1440px' }}>
+          <div style={{ width: '100%' }}>
             <h3
               style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: '1.5rem',
+                fontSize: 'clamp(1.25rem, 2vw, 1.5rem)',
                 fontWeight: 600,
                 color: '#111111',
-                marginBottom: '2rem',
+                marginBottom: '1.5rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
               }}
@@ -1162,7 +1165,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(12, 1fr)',
-                gap: '1.5rem',
+                gap: '1.25rem',
               }}
             >
               {relatedProducts.slice(0, 3).map((rel) => (
@@ -1178,9 +1181,10 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     style={{
                       display: 'block',
                       position: 'relative',
-                      height: '320px',
+                      height: '450px',
                       overflow: 'hidden',
                       backgroundColor: '#f3f4f6',
+                      borderRadius: '4px',
                       border: '1px solid #e5e7eb',
                       textDecoration: 'none',
                     }}
@@ -1190,10 +1194,10 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                       src={rel.heroImage.url}
                       alt={rel.name}
                       fill
-                      sizes="(max-width: 1024px) 100vw, 33vw"
+                      sizes="(max-width: 900px) 100vw, 33vw"
                       style={{
                         objectFit: 'cover',
-                        transition: 'transform 0.5s ease',
+                        transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                       }}
                       className="group-hover:scale-105"
                     />
@@ -1201,21 +1205,30 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     <div
                       style={{
                         position: 'absolute',
-                        bottom: '1rem',
-                        left: '1rem',
+                        inset: 0,
+                        background: 'linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.45) 100%)',
+                      }}
+                    />
+
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '1.25rem',
+                        left: '1.25rem',
                       }}
                     >
                       <span
                         style={{
-                          backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.94)',
                           backdropFilter: 'blur(8px)',
-                          padding: '0.35rem 0.75rem',
+                          padding: '0.4rem 0.85rem',
                           fontFamily: 'var(--font-sans)',
                           fontSize: '0.8125rem',
                           fontWeight: 600,
                           color: '#111111',
                           letterSpacing: '0.04em',
                           textTransform: 'uppercase',
+                          borderRadius: '2px',
                         }}
                       >
                         {rel.codeLabel || rel.name}
