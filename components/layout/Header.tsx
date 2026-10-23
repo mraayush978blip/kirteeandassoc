@@ -54,6 +54,11 @@ export const Header: React.FC = () => {
 
   const isProductsActive =
     pathname.startsWith('/products') || pathname === '/dry-goods' || pathname === '/wet-goods';
+  const isLightHeader =
+    pathname === '/contact' ||
+    pathname.startsWith('/products') ||
+    pathname === '/dry-goods' ||
+    pathname === '/wet-goods';
 
   return (
     <>
@@ -64,15 +69,19 @@ export const Header: React.FC = () => {
           left: 0,
           right: 0,
           zIndex: 100,
-          backgroundColor: 'rgba(12, 13, 16, 0.96)',
-          borderBottom: isScrolled
-            ? '1px solid rgba(255, 255, 255, 0.12)'
-            : '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: isLightHeader
+            ? isScrolled ? 'rgba(255, 255, 255, 0.98)' : '#ffffff'
+            : 'rgba(10, 10, 9, 0.96)',
+          borderBottom: isLightHeader
+            ? '1px solid #f0f0f2'
+            : isScrolled
+            ? '1px solid #302F2B'
+            : '1px solid rgba(48, 47, 43, 0.6)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          transition: 'padding 0.3s ease, border-color 0.3s ease',
-          paddingTop: isScrolled ? '0.9rem' : '1.25rem',
-          paddingBottom: isScrolled ? '0.9rem' : '1.25rem',
+          transition: 'padding 0.3s ease, border-color 0.3s ease, background-color 0.3s ease',
+          paddingTop: isScrolled ? '0.85rem' : '1.15rem',
+          paddingBottom: isScrolled ? '0.85rem' : '1.15rem',
         }}
       >
         <div
@@ -84,24 +93,24 @@ export const Header: React.FC = () => {
             gap: '1.5rem',
           }}
         >
-          {/* Brand Logo: KIRTEE & ASSOCIATES */}
+          {/* Brand Logo: ZENVORA */}
           <Link
             href="/"
-            aria-label="Kirtee & Associates Homepage"
+            aria-label="ZENVORA Architectural Lighting"
             style={{ display: 'inline-flex', flexDirection: 'column', textDecoration: 'none' }}
           >
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: 'clamp(0.875rem, 3.8vw, 1.0625rem)',
+                fontSize: 'clamp(1.1rem, 3.8vw, 1.35rem)',
                 fontWeight: 700,
-                letterSpacing: '0.12em',
-                color: '#ffffff',
+                letterSpacing: '0.14em',
+                color: isLightHeader ? '#111827' : '#E9E6DE',
                 textTransform: 'uppercase',
-                lineHeight: 1.2,
+                lineHeight: 1.1,
               }}
             >
-              KIRTEE &amp; ASSOCIATES
+              ZENVORA
             </span>
             <span
               style={{
@@ -109,7 +118,7 @@ export const Header: React.FC = () => {
                 fontSize: 'clamp(0.48rem, 1.8vw, 0.5625rem)',
                 fontWeight: 500,
                 letterSpacing: '0.22em',
-                color: 'rgba(255, 255, 255, 0.55)',
+                color: isLightHeader ? '#6b7280' : '#96938C',
                 textTransform: 'uppercase',
                 marginTop: '2px',
               }}
@@ -118,245 +127,86 @@ export const Header: React.FC = () => {
             </span>
           </Link>
 
-          {/* Center Navigation Links: HOME, PRODUCTS (with DRY & WET GOODS dropdown), CONTACT */}
+          {/* Center Navigation Links: DRY GOODS, WET GOODS, CONTACT (Matching Zenvora Mockup) */}
           <nav
             aria-label="Main Navigation"
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '2.5rem',
+              gap: 'clamp(1.5rem, 3vw, 2.75rem)',
             }}
             className="desktop-nav"
           >
-            {/* 1. HOME */}
+            {/* 1. DRY GOODS */}
             <Link
-              href="/"
+              href="/dry-goods"
               style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: '0.6875rem',
+                fontSize: '0.75rem',
                 fontWeight: 600,
                 textTransform: 'uppercase',
-                letterSpacing: '0.18em',
-                color: pathname === '/' ? '#ffffff' : 'rgba(255, 255, 255, 0.72)',
+                letterSpacing: '0.14em',
+                color: isLightHeader
+                  ? pathname === '/dry-goods' ? '#111827' : '#4b5563'
+                  : pathname === '/dry-goods' ? '#E9E6DE' : '#96938C',
                 transition: 'color 0.2s ease',
                 textDecoration: 'none',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#E9E6DE')}
               onMouseLeave={(e) =>
-                (e.currentTarget.style.color =
-                  pathname === '/' ? '#ffffff' : 'rgba(255, 255, 255, 0.72)')
+                (e.currentTarget.style.color = isLightHeader
+                  ? pathname === '/dry-goods' ? '#111827' : '#4b5563'
+                  : pathname === '/dry-goods' ? '#E9E6DE' : '#96938C')
               }
             >
-              HOME
+              DRY GOODS
             </Link>
 
-            {/* 2. PRODUCTS (with DRY GOODS & WET GOODS Dropdown) */}
-            <div
-              ref={dropdownContainerRef}
-              onMouseEnter={handleMouseEnterProducts}
-              onMouseLeave={handleMouseLeaveProducts}
-              style={{ position: 'relative' }}
+            {/* 2. WET GOODS */}
+            <Link
+              href="/wet-goods"
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: isLightHeader
+                  ? pathname === '/wet-goods' ? '#111827' : '#4b5563'
+                  : pathname === '/wet-goods' ? '#E9E6DE' : '#96938C',
+                transition: 'color 0.2s ease',
+                textDecoration: 'none',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#E9E6DE')}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = isLightHeader
+                  ? pathname === '/wet-goods' ? '#111827' : '#4b5563'
+                  : pathname === '/wet-goods' ? '#E9E6DE' : '#96938C')
+              }
             >
-              <button
-                type="button"
-                onClick={() => setIsProductsDropdownOpen((prev) => !prev)}
-                aria-expanded={isProductsDropdownOpen}
-                aria-haspopup="true"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.18em',
-                  color: isProductsActive ? '#ffffff' : 'rgba(255, 255, 255, 0.72)',
-                  transition: 'color 0.2s ease',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = isProductsActive
-                    ? '#ffffff'
-                    : 'rgba(255, 255, 255, 0.72)';
-                }}
-              >
-                <span>PRODUCTS</span>
-                <ChevronDown
-                  size={12}
-                  style={{
-                    transform: isProductsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 0.2s ease',
-                  }}
-                />
-              </button>
-
-              {/* Luxury Dropdown Panel */}
-              {isProductsDropdownOpen && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 0.85rem)',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    backgroundColor: 'rgba(12, 13, 16, 0.98)',
-                    border: '1px solid rgba(255, 255, 255, 0.14)',
-                    borderRadius: '4px',
-                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.7)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    padding: '0.65rem',
-                    minWidth: '260px',
-                    zIndex: 150,
-                  }}
-                >
-                  <Link
-                    href="/dry-goods"
-                    onClick={() => setIsProductsDropdownOpen(false)}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '3px',
-                      textDecoration: 'none',
-                      transition: 'background-color 0.2s ease',
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)')
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = 'transparent')
-                    }
-                  >
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.14em',
-                        color: pathname === '/dry-goods' ? 'var(--color-accent)' : '#ffffff',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      DRY GOODS
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '0.6875rem',
-                        color: 'rgba(255, 255, 255, 0.55)',
-                        marginTop: '2px',
-                        letterSpacing: '0.02em',
-                      }}
-                    >
-                      Architectural Indoor Systems
-                    </span>
-                  </Link>
-
-                  <Link
-                    href="/wet-goods"
-                    onClick={() => setIsProductsDropdownOpen(false)}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '3px',
-                      textDecoration: 'none',
-                      transition: 'background-color 0.2s ease',
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)')
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = 'transparent')
-                    }
-                  >
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.14em',
-                        color: pathname === '/wet-goods' ? 'var(--color-accent)' : '#ffffff',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      WET GOODS
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '0.6875rem',
-                        color: 'rgba(255, 255, 255, 0.55)',
-                        marginTop: '2px',
-                        letterSpacing: '0.02em',
-                      }}
-                    >
-                      Outdoor &amp; IP68 Submersible
-                    </span>
-                  </Link>
-
-                  <div
-                    style={{
-                      height: '1px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                      margin: '0.35rem 0.5rem',
-                    }}
-                  />
-
-                  <Link
-                    href="/products"
-                    onClick={() => setIsProductsDropdownOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '0.55rem 0.85rem',
-                      borderRadius: '3px',
-                      textDecoration: 'none',
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.6875rem',
-                      fontWeight: 600,
-                      letterSpacing: '0.1em',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      textTransform: 'uppercase',
-                      transition: 'background-color 0.2s ease, color 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
-                      e.currentTarget.style.color = '#ffffff';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
-                    }}
-                  >
-                    <span>All Products Catalogue</span>
-                    <span>→</span>
-                  </Link>
-                </div>
-              )}
-            </div>
+              WET GOODS
+            </Link>
 
             {/* 3. CONTACT */}
             <Link
               href="/contact"
               style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: '0.6875rem',
+                fontSize: '0.75rem',
                 fontWeight: 600,
                 textTransform: 'uppercase',
-                letterSpacing: '0.18em',
-                color: pathname === '/contact' ? '#ffffff' : 'rgba(255, 255, 255, 0.72)',
+                letterSpacing: '0.14em',
+                color: isLightHeader
+                  ? pathname === '/contact' ? '#111827' : '#4b5563'
+                  : pathname === '/contact' ? '#E9E6DE' : '#96938C',
                 transition: 'color 0.2s ease',
                 textDecoration: 'none',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#E9E6DE')}
               onMouseLeave={(e) =>
-                (e.currentTarget.style.color =
-                  pathname === '/contact' ? '#ffffff' : 'rgba(255, 255, 255, 0.72)')
+                (e.currentTarget.style.color = isLightHeader
+                  ? pathname === '/contact' ? '#111827' : '#4b5563'
+                  : pathname === '/contact' ? '#E9E6DE' : '#96938C')
               }
             >
               CONTACT
@@ -371,10 +221,10 @@ export const Header: React.FC = () => {
             aria-label="Open mobile navigation menu"
             aria-expanded={isMobileMenuOpen}
             style={{
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
+              background: isLightHeader ? '#f3f4f6' : 'rgba(255, 255, 255, 0.06)',
+              border: isLightHeader ? '1px solid #e5e7eb' : '1px solid rgba(255, 255, 255, 0.16)',
               borderRadius: '4px',
-              color: '#ffffff',
+              color: isLightHeader ? '#111827' : '#ffffff',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
@@ -385,8 +235,8 @@ export const Header: React.FC = () => {
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '18px' }}>
-              <div style={{ width: '100%', height: '1.5px', backgroundColor: '#ffffff', borderRadius: '1px' }} />
-              <div style={{ width: '100%', height: '1.5px', backgroundColor: '#ffffff', borderRadius: '1px' }} />
+              <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
+              <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
             </div>
           </button>
         </div>
@@ -402,7 +252,7 @@ export const Header: React.FC = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            backgroundColor: '#0c0d10',
+            backgroundColor: '#282b32',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -676,7 +526,7 @@ export const Header: React.FC = () => {
                 gap: '0.5rem',
                 padding: '0.75rem 1.25rem',
                 backgroundColor: '#ffffff',
-                color: '#0c0d10',
+                color: '#282b32',
                 borderRadius: '3px',
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.75rem',

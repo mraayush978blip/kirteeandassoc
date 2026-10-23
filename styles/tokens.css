@@ -4,41 +4,60 @@
  */
 
 :root {
-  /* Global Color Palette — Modern Architectural Editorial Theme (Artemide & Flos inspired) */
-  --color-bg-primary: #ffffff;
-  --color-bg-surface: #f9fafb;
-  --color-bg-surface-elevated: #ffffff;
-  --color-bg-secondary: #f3f4f6;
-  --color-bg-subtle: #f8f9fa;
-  --color-bg-dark: #0a0b0d;
+  /* =========================================================================
+   * User Specified Architectural Color Palette (2026 Studio Specification)
+   * Role                 Colour           HEX
+   * Primary background   Deep black       #0A0A09
+   * Secondary background Charcoal         #151514
+   * Surface              Warm charcoal    #22211E
+   * Primary text         Warm white       #E9E6DE
+   * Secondary text       Grey             #96938C
+   * Fine lines / borders Dark grey        #302F2B
+   * Interactive / hover  Soft warm white  #C8C2B7
+   * ========================================================================= */
+  --palette-deep-black: #0A0A09;
+  --palette-charcoal: #151514;
+  --palette-warm-charcoal: #22211E;
+  --palette-warm-white: #E9E6DE;
+  --palette-grey: #96938C;
+  --palette-dark-grey: #302F2B;
+  --palette-soft-warm-white: #C8C2B7;
 
-  --color-text-primary: #111111;
-  --color-text-secondary: #4b5563;
-  --color-text-muted: #8b949e;
-  --color-text-inverse: #ffffff;
+  /* Global Color Tokens */
+  --color-bg-primary: #0A0A09;
+  --color-bg-secondary: #151514;
+  --color-bg-surface: #22211E;
+  --color-bg-surface-elevated: #22211E;
+  --color-bg-subtle: #151514;
+  --color-bg-dark: #0A0A09;
+
+  --color-text-primary: #E9E6DE;
+  --color-text-secondary: #96938C;
+  --color-text-muted: #96938C;
+  --color-text-inverse: #0A0A09;
 
   /* Architectural Accents */
-  --color-accent: #111111;
-  --color-accent-hover: #333333;
-  --color-accent-subtle: rgba(0, 0, 0, 0.04);
-  --color-accent-border: rgba(0, 0, 0, 0.12);
+  --color-accent: #C8C2B7;
+  --color-accent-hover: #E9E6DE;
+  --color-accent-subtle: rgba(200, 194, 183, 0.08);
+  --color-accent-border: #302F2B;
   --color-gold: #c5a880;
 
   /* Borders & Dividers */
-  --color-border: #e5e7eb;
-  --color-border-subtle: #f0f0f0;
-  --color-border-focus: #111111;
+  --color-border: #302F2B;
+  --color-border-subtle: #302F2B;
+  --color-border-focus: #C8C2B7;
 
   /* Button Tokens */
-  --color-btn-bg: #111111;
-  --color-btn-text: #ffffff;
-  --color-btn-hover: #262626;
-  --color-btn-active: #000000;
+  --color-btn-bg: #E9E6DE;
+  --color-btn-text: #0A0A09;
+  --color-btn-hover: #C8C2B7;
+  --color-btn-active: #ffffff;
   
   --color-btn-ghost-bg: transparent;
-  --color-btn-ghost-text: #111111;
-  --color-btn-ghost-border: #e5e7eb;
-  --color-btn-ghost-hover-bg: #f3f4f6;
+  --color-btn-ghost-text: #E9E6DE;
+  --color-btn-ghost-border: #302F2B;
+  --color-btn-ghost-hover-bg: #22211E;
 
   /* Status Colors */
   --color-success: #10b981;
