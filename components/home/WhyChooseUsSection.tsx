@@ -1,120 +1,92 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Compass, ShieldCheck, Cpu, Sliders, Sparkles, Award } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 interface ValuePillar {
   id: string;
   num: string;
+  tag: string;
   title: string;
-  subtitle: string;
+  metric: string;
   description: string;
-  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
-  metric?: string;
-  metricLabel?: string;
+  image: string;
 }
 
 const pillars: ValuePillar[] = [
   {
     id: 'p1',
     num: '01',
-    title: 'BESPOKE TAILORING',
-    subtitle: 'Dimensional & Optical Freedom',
-    description:
-      'We adapt luminaires to your exact spatial blueprint—modifying lengths, mounting details, custom RAL finishes, and optical beam distributions to integrate into architectural envelope.',
-    icon: Sliders,
-    metric: '100%',
-    metricLabel: 'Customizable Architecture',
+    tag: 'BESPOKE TAILORING',
+    title: 'Custom Spatial Geometry',
+    metric: '100% Tailored',
+    description: 'Custom lengths, mounting junctions, and RAL finishes engineered to your architectural drawings.',
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
   },
   {
     id: 'p2',
     num: '02',
-    title: 'OPTICAL PRECISION',
-    subtitle: 'Zero-Glare Visual Comfort',
-    description:
-      'Micro-engineered reflectors and prismatic diffusers achieving UGR < 10 with ultra-high CRI 90+ (R9 > 50) spectral purity for pristine color rendering and occupant well-being.',
-    icon: Compass,
+    tag: 'OPTICAL PRECISION',
+    title: 'Zero-Glare Purity',
     metric: 'UGR < 10',
-    metricLabel: 'Certified Glare Elimination',
+    description: 'Micro-engineered fractal apertures delivering absolute visual comfort with CRI 90+ spectral fidelity.',
+    image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85',
   },
   {
     id: 'p3',
     num: '03',
-    title: 'NOBLE MATERIALS',
-    subtitle: 'Aerospace Aluminium & Turned Brass',
-    description:
-      'Engineered exclusively from architectural-grade 6063-T6 extruded aluminium, CNC-milled solid brass, and tempered borosilicate glass designed to withstand rigorous environmental stressors.',
-    icon: Sparkles,
-    metric: '6063-T6',
-    metricLabel: 'Structural Grade Alloy',
+    tag: 'NOBLE METALLURGY',
+    title: 'Architectural Alloys',
+    metric: '6063-T6 & Brass',
+    description: 'CNC-milled structural aluminium and hand-turned solid brass built to microscopic mechanical tolerances.',
+    image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85',
   },
   {
     id: 'p4',
     num: '04',
-    title: 'RIGOROUS CERTIFICATION',
-    subtitle: 'LM-79, LM-80 & IP68 Sealed',
-    description:
-      'Tested to international standards with certified thermal dissipation arrays ensuring 50,000+ hour L90B10 operational lifespan and IP67/IP68 wet-zone ingress protection.',
-    icon: ShieldCheck,
-    metric: '50,000h',
-    metricLabel: 'L90B10 Lifespan',
-  },
-  {
-    id: 'p5',
-    num: '05',
-    title: 'SPECIFICATION SUPPORT',
-    subtitle: 'Direct Engineering Consultation',
-    description:
-      'Complete photometric documentation, IES/LDT lighting simulation packages, custom CAD/BIM models, and physical mock-up luminaires delivered directly to your studio.',
-    icon: Cpu,
-    metric: '24-48h',
-    metricLabel: 'Photometric Turnaround',
-  },
-  {
-    id: 'p6',
-    num: '06',
-    title: 'ARCHITECTURAL PEDIGREE',
-    subtitle: 'Global Project Recognition',
-    description:
-      'Trusted by premier architectural firms and lighting designers for bespoke installations in luxury hospitality, private residences, art galleries, and corporate headquarters.',
-    icon: Award,
-    metric: '500+',
-    metricLabel: 'Landmark Installations',
+    tag: 'CERTIFIED ENDURANCE',
+    title: 'Submersible Rigor',
+    metric: 'IP68 & 50,000h',
+    description: 'Hermetically sealed for wet architectural environments, backed by LM-79 and LM-80 laboratory certification.',
+    image: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=85',
   },
 ];
 
 export const WhyChooseUsSection: React.FC = () => {
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [hoveredPillar, setHoveredPillar] = useState<string | null>(null);
 
   return (
     <section
       id="why-choose-us"
       style={{
-        backgroundColor: '#f5f2eb',
-        color: '#1e2229',
+        backgroundColor: '#0c0e12',
+        color: '#ffffff',
         paddingTop: 'clamp(5rem, 8vw, 7.5rem)',
         paddingBottom: 'clamp(5rem, 8vw, 7.5rem)',
         position: 'relative',
         overflow: 'hidden',
-        borderTop: '1px solid #e2ddd5',
-        borderBottom: '1px solid #e2ddd5',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
       }}
     >
-      {/* Subtle Background Architectural Gridlines */}
+      {/* Background Architectural Ambient Radial Glow */}
       <div
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundImage:
-            'linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
+          top: '-15%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '900px',
+          height: '450px',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        {/* Header Block */}
+        {/* Editorial Section Header */}
         <div
           style={{
             display: 'grid',
@@ -132,12 +104,12 @@ export const WhyChooseUsSection: React.FC = () => {
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.22em',
-                color: '#6b7280',
+                color: '#9ca3af',
                 display: 'block',
                 marginBottom: '1rem',
               }}
             >
-              WHY CHOOSE ZENVORA
+              WHY SPECIFY ZENVORA
             </span>
 
             <h2
@@ -147,7 +119,7 @@ export const WhyChooseUsSection: React.FC = () => {
                 lineHeight: 1.1,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
-                color: '#1a1d24',
+                color: '#ffffff',
                 margin: 0,
               }}
             >
@@ -161,17 +133,17 @@ export const WhyChooseUsSection: React.FC = () => {
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.9375rem',
                 lineHeight: 1.7,
-                color: '#4b5563',
+                color: '#9ca3af',
                 margin: 0,
               }}
             >
-              We bridge the gap between pure architectural intent and precision luminaire engineering, delivering
-              custom lighting instruments that elevate spaces with lasting distinction.
+              Precision photometrics, noble metallurgy, and dimensional agility designed to integrate seamlessly into
+              the architectural fabric.
             </p>
           </div>
         </div>
 
-        {/* 6 Value Pillars Grid */}
+        {/* 4 Luxury Architectural Photographic Tiles */}
         <div
           style={{
             display: 'grid',
@@ -180,167 +152,166 @@ export const WhyChooseUsSection: React.FC = () => {
           }}
         >
           {pillars.map((pillar) => {
-            const Icon = pillar.icon;
-            const isHovered = hoveredCard === pillar.id;
+            const isHovered = hoveredPillar === pillar.id;
 
             return (
               <div
                 key={pillar.id}
-                onMouseEnter={() => setHoveredCard(pillar.id)}
-                onMouseLeave={() => setHoveredCard(null)}
+                onMouseEnter={() => setHoveredPillar(pillar.id)}
+                onMouseLeave={() => setHoveredPillar(null)}
                 style={{
                   gridColumn: 'span 12',
-                  backgroundColor: isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.72)',
-                  backdropFilter: 'blur(10px)',
-                  border: isHovered ? '1px solid #1a1d24' : '1px solid rgba(0, 0, 0, 0.08)',
+                  position: 'relative',
+                  height: '480px',
                   borderRadius: '4px',
-                  padding: '2rem 2.25rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  minHeight: '280px',
-                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                  transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                  overflow: 'hidden',
+                  border: isHovered ? '1px solid rgba(255, 255, 255, 0.45)' : '1px solid rgba(255, 255, 255, 0.1)',
+                  backgroundColor: '#14171d',
+                  cursor: 'pointer',
+                  transition: 'border-color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease',
+                  transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
                   boxShadow: isHovered
-                    ? '0 16px 36px rgba(0, 0, 0, 0.08)'
-                    : '0 2px 8px rgba(0, 0, 0, 0.02)',
-                  cursor: 'default',
+                    ? '0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.05)'
+                    : '0 4px 16px rgba(0, 0, 0, 0.3)',
                 }}
-                className="lg:col-span-4"
+                className="lg:col-span-3 sm:col-span-6 group"
               >
-                {/* Top Row: Numeral & Icon */}
-                <div>
-                  <div
+                {/* Background Architectural Photo with Smooth Zoom */}
+                <Image
+                  src={pillar.image}
+                  alt={pillar.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  style={{
+                    objectFit: 'cover',
+                    transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  className="group-hover:scale-110"
+                />
+
+                {/* Dark Luxury Vignette Overlay */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background:
+                      'linear-gradient(180deg, rgba(12, 14, 18, 0.4) 0%, rgba(12, 14, 18, 0.65) 50%, rgba(12, 14, 18, 0.96) 100%)',
+                    transition: 'opacity 0.4s ease',
+                  }}
+                />
+
+                {/* Top Badge: Index and Category */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '1.5rem',
+                    left: '1.5rem',
+                    right: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    zIndex: 3,
+                  }}
+                >
+                  <span
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '1.5rem',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.625rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.14em',
+                      textTransform: 'uppercase',
+                      padding: '0.35rem 0.65rem',
+                      borderRadius: '2px',
+                      backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.5)',
+                      color: isHovered ? '#0c0e12' : '#e5e7eb',
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      transition: 'all 0.3s ease',
                     }}
                   >
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.8125rem',
-                        fontWeight: 600,
-                        color: isHovered ? '#1a1d24' : '#9ca3af',
-                        letterSpacing: '0.1em',
-                        transition: 'color 0.2s ease',
-                      }}
-                    >
-                      {pillar.num}
-                    </span>
+                    {pillar.tag}
+                  </span>
 
-                    <div
-                      style={{
-                        width: '38px',
-                        height: '38px',
-                        borderRadius: '50%',
-                        backgroundColor: isHovered ? '#1a1d24' : '#ebe7df',
-                        color: isHovered ? '#ffffff' : '#374151',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.3s ease',
-                      }}
-                    >
-                      <Icon size={18} strokeWidth={1.75} />
-                    </div>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.8125rem',
+                      fontWeight: 600,
+                      color: isHovered ? '#ffffff' : '#6b7280',
+                      transition: 'color 0.3s ease',
+                    }}
+                  >
+                    {pillar.num}
+                  </span>
+                </div>
+
+                {/* Bottom Narrative Content */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '1.75rem',
+                    left: '1.75rem',
+                    right: '1.75rem',
+                    zIndex: 3,
+                  }}
+                >
+                  {/* Metric Pill */}
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.6875rem',
+                      fontWeight: 700,
+                      color: '#ffffff',
+                      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                      padding: '0.2rem 0.55rem',
+                      borderRadius: '2px',
+                      marginBottom: '0.75rem',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {pillar.metric}
                   </div>
 
-                  {/* Title & Subtitle */}
+                  {/* Title */}
                   <h3
                     style={{
                       fontFamily: 'var(--font-sans)',
-                      fontSize: '1rem',
+                      fontSize: '1.1875rem',
                       fontWeight: 600,
-                      letterSpacing: '0.06em',
-                      textTransform: 'uppercase',
-                      color: '#1a1d24',
-                      margin: '0 0 0.35rem 0',
+                      letterSpacing: '-0.01em',
+                      color: '#ffffff',
+                      margin: '0 0 0.5rem 0',
+                      lineHeight: 1.3,
                     }}
                   >
                     {pillar.title}
                   </h3>
 
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6875rem',
-                      fontWeight: 500,
-                      color: '#6b7280',
-                      letterSpacing: '0.06em',
-                      display: 'block',
-                      marginBottom: '1rem',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {pillar.subtitle}
-                  </span>
-
-                  {/* Narrative Body */}
+                  {/* Micro-Copy Description (Concise & Impactful) */}
                   <p
                     style={{
                       fontFamily: 'var(--font-sans)',
-                      fontSize: '0.875rem',
-                      lineHeight: 1.65,
-                      color: '#4b5563',
+                      fontSize: '0.8125rem',
+                      lineHeight: 1.55,
+                      color: '#d1d5db',
                       margin: 0,
                     }}
                   >
                     {pillar.description}
                   </p>
                 </div>
-
-                {/* Bottom Metric Pill */}
-                {pillar.metric && (
-                  <div
-                    style={{
-                      marginTop: '1.75rem',
-                      paddingTop: '1rem',
-                      borderTop: '1px solid rgba(0, 0, 0, 0.06)',
-                      display: 'flex',
-                      alignItems: 'baseline',
-                      gap: '0.5rem',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '1.125rem',
-                        fontWeight: 700,
-                        color: '#1a1d24',
-                        letterSpacing: '-0.02em',
-                      }}
-                    >
-                      {pillar.metric}
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: '0.6875rem',
-                        color: '#6b7280',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                      }}
-                    >
-                      {pillar.metricLabel}
-                    </span>
-                  </div>
-                )}
               </div>
             );
           })}
         </div>
 
-        {/* Bottom Callout Bar */}
+        {/* Minimalist Engineering Consultation Strip */}
         <div
           style={{
-            marginTop: '3.5rem',
-            padding: '1.75rem 2.5rem',
-            backgroundColor: '#1a1d24',
-            color: '#ffffff',
-            borderRadius: '4px',
+            marginTop: '3rem',
+            paddingTop: '2rem',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
@@ -348,60 +319,55 @@ export const WhyChooseUsSection: React.FC = () => {
             gap: '1.5rem',
           }}
         >
-          <div>
-            <h4
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div
               style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '1.0625rem',
-                fontWeight: 600,
-                letterSpacing: '0.02em',
-                margin: '0 0 0.25rem 0',
-                color: '#ffffff',
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#10b981',
+                boxShadow: '0 0 8px #10b981',
               }}
-            >
-              Have a Custom Architectural Specification?
-            </h4>
-            <p
+            />
+            <span
               style={{
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.875rem',
-                color: '#9ca3af',
-                margin: 0,
+                color: '#d1d5db',
               }}
             >
-              Consult directly with our photometric engineers for custom luminaire designs, IES data, and physical mock-ups.
-            </p>
+              Direct technical access to photometric engineers &amp; custom luminaire prototyping.
+            </span>
           </div>
 
           <Link
-            href="/contact?topic=Specification%20Inquiry"
+            href="/contact?topic=Bespoke%20Specification"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.65rem',
-              backgroundColor: '#ffffff',
-              color: '#1a1d24',
-              padding: '0.75rem 1.75rem',
-              borderRadius: '2px',
+              gap: '0.5rem',
+              color: '#ffffff',
               fontFamily: 'var(--font-sans)',
               fontSize: '0.8125rem',
               fontWeight: 600,
-              letterSpacing: '0.08em',
+              letterSpacing: '0.1em',
               textTransform: 'uppercase',
               textDecoration: 'none',
-              transition: 'background-color 0.2s ease, transform 0.2s ease',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.35)',
+              paddingBottom: '0.2rem',
+              transition: 'border-color 0.2s ease, color 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6';
-              e.currentTarget.style.transform = 'translateX(2px)';
+              e.currentTarget.style.borderColor = '#ffffff';
+              e.currentTarget.style.color = '#ffffff';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.transform = 'translateX(0)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
+              e.currentTarget.style.color = '#ffffff';
             }}
           >
-            <span>Consult With Engineering</span>
-            <ArrowRight size={14} />
+            <span>Request Specification Package</span>
+            <ArrowUpRight size={14} />
           </Link>
         </div>
       </div>

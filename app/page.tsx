@@ -1,7 +1,6 @@
 import React from 'react';
 import { HeroSwipeSection } from '@/components/home/HeroSwipeSection';
 import { DifferenceSection } from '@/components/home/DifferenceSection';
-import { CollectionsSection } from '@/components/home/CollectionsSection';
 import { WhyChooseUsSection } from '@/components/home/WhyChooseUsSection';
 import { FlosBespokeProcessSection } from '@/components/home/FlosBespokeProcessSection';
 import { ProjectsSwipeSection } from '@/components/home/ProjectsSwipeSection';
@@ -16,10 +15,7 @@ export default function HomePage() {
       {/* 2. The Kirtee & Associates Philosophy: 4 Strategic Pillars */}
       <DifferenceSection />
 
-      {/* 3. Product Collections: Dry Goods & Wet Goods */}
-      <CollectionsSection />
-
-      {/* 4. Why Choose Us: 6 Strategic Architectural & Engineering Value Pillars */}
+      {/* 3. Why Choose Us: 4 Strategic Architectural & Engineering Value Pillars */}
       <WhyChooseUsSection />
 
       {/* 5. Flos Bespoke Process: Design Thinking, Prototyping, Realization, Installation */}
