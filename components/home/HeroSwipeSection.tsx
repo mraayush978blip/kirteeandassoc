@@ -148,7 +148,7 @@ export const HeroSwipeSection: React.FC = () => {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        backgroundColor: '#0c0d10',
+        backgroundColor: '#0a0a0a',
         color: '#ffffff',
         overflow: 'hidden',
         display: 'flex',
@@ -196,21 +196,13 @@ export const HeroSwipeSection: React.FC = () => {
                   objectPosition: 'center 40%',
                 }}
               />
-              {/* Dual Vignette Overlay from Screenshot */}
+              {/* Subtle Natural Contrast Overlay for Text Readability (No Greyish Blur or Fog) */}
               <div
                 style={{
                   position: 'absolute',
                   inset: 0,
                   background:
-                    'linear-gradient(90deg, rgba(12, 13, 16, 0.92) 0%, rgba(12, 13, 16, 0.75) 38%, rgba(12, 13, 16, 0.2) 70%, rgba(12, 13, 16, 0.4) 100%)',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background:
-                    'linear-gradient(180deg, rgba(12, 13, 16, 0.4) 0%, transparent 40%, rgba(12, 13, 16, 0.85) 90%, #0c0d10 100%)',
+                    'linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 35%, transparent 65%)',
                 }}
               />
             </div>
@@ -241,9 +233,10 @@ export const HeroSwipeSection: React.FC = () => {
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '0.22em',
-              color: 'rgba(255, 255, 255, 0.75)',
+              color: 'rgba(255, 255, 255, 0.85)',
               display: 'block',
               marginBottom: '1.75rem',
+              textShadow: '0 1px 8px rgba(0, 0, 0, 0.6)',
             }}
           >
             {active.eyebrow}
@@ -260,6 +253,7 @@ export const HeroSwipeSection: React.FC = () => {
               color: '#ffffff',
               marginBottom: '1.5rem',
               whiteSpace: 'pre-line',
+              textShadow: '0 2px 16px rgba(0, 0, 0, 0.65)',
             }}
           >
             {active.title}
@@ -271,10 +265,11 @@ export const HeroSwipeSection: React.FC = () => {
               fontFamily: 'var(--font-sans)',
               fontSize: 'clamp(0.9375rem, 1.8vw, 1.125rem)',
               lineHeight: 1.65,
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: '#ffffff',
               fontWeight: 300,
               maxWidth: '480px',
               marginBottom: '2.25rem',
+              textShadow: '0 2px 12px rgba(0, 0, 0, 0.65)',
             }}
           >
             {active.subtitle}

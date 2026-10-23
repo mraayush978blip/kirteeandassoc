@@ -88,7 +88,7 @@ export const ProjectsSwipeSection: React.FC = () => {
     <section
       id="projects"
       style={{
-        backgroundColor: '#0c0d10',
+        backgroundColor: '#282b32',
         color: '#ffffff',
         paddingTop: 'clamp(5rem, 8vw, 8rem)',
         paddingBottom: 'clamp(5rem, 8vw, 8rem)',
@@ -253,7 +253,7 @@ export const ProjectsSwipeSection: React.FC = () => {
                     height: 'clamp(260px, 15vw, 320px)',
                     borderRadius: '2px',
                     overflow: 'hidden',
-                    backgroundColor: '#14161b',
+                    backgroundColor: '#353943',
                     marginBottom: '1.25rem',
                   }}
                 >
@@ -272,7 +272,7 @@ export const ProjectsSwipeSection: React.FC = () => {
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      background: 'linear-gradient(180deg, transparent 50%, rgba(12, 13, 16, 0.7) 100%)',
+                      background: 'linear-gradient(180deg, transparent 60%, rgba(10, 10, 10, 0.65) 100%)',
                     }}
                   />
                 </div>

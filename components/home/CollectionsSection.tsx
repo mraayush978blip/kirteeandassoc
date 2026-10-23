@@ -22,7 +22,7 @@ export const CollectionsSection: React.FC = () => {
     <section
       id="collections"
       style={{
-        backgroundColor: '#0c0d10',
+        backgroundColor: '#282b32',
         color: '#ffffff',
         paddingTop: 'clamp(5rem, 8vw, 8rem)',
         paddingBottom: 'clamp(5rem, 8vw, 8rem)',
@@ -126,7 +126,7 @@ export const CollectionsSection: React.FC = () => {
               textDecoration: 'none',
               borderRadius: '2px',
               overflow: 'hidden',
-              backgroundColor: '#14161b',
+              backgroundColor: '#353943',
               border: '1px solid rgba(255, 255, 255, 0.08)',
               transition: 'border-color 0.3s ease, transform 0.3s ease',
             }}
@@ -138,7 +138,7 @@ export const CollectionsSection: React.FC = () => {
                 width: '100%',
                 height: '380px',
                 overflow: 'hidden',
-                backgroundColor: '#050608',
+                backgroundColor: '#30343e',
               }}
             >
               <Image
@@ -156,7 +156,7 @@ export const CollectionsSection: React.FC = () => {
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(180deg, transparent 40%, rgba(12, 13, 16, 0.85) 100%)',
+                  background: 'linear-gradient(180deg, transparent 55%, rgba(10, 10, 10, 0.75) 100%)',
                 }}
               />
             </div>
@@ -211,7 +211,7 @@ export const CollectionsSection: React.FC = () => {
               textDecoration: 'none',
               borderRadius: '2px',
               overflow: 'hidden',
-              backgroundColor: '#14161b',
+              backgroundColor: '#353943',
               border: '1px solid rgba(255, 255, 255, 0.08)',
               transition: 'border-color 0.3s ease, transform 0.3s ease',
             }}
@@ -223,7 +223,7 @@ export const CollectionsSection: React.FC = () => {
                 width: '100%',
                 height: '380px',
                 overflow: 'hidden',
-                backgroundColor: '#050608',
+                backgroundColor: '#30343e',
               }}
             >
               <Image
@@ -241,7 +241,7 @@ export const CollectionsSection: React.FC = () => {
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(180deg, transparent 40%, rgba(12, 13, 16, 0.85) 100%)',
+                  background: 'linear-gradient(180deg, transparent 55%, rgba(10, 10, 10, 0.75) 100%)',
                 }}
               />
             </div>
