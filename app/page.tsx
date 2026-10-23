@@ -2,7 +2,7 @@ import React from 'react';
 import { HeroSwipeSection } from '@/components/home/HeroSwipeSection';
 import { DifferenceSection } from '@/components/home/DifferenceSection';
 import { CollectionsSection } from '@/components/home/CollectionsSection';
-import { BespokeInteractiveSection } from '@/components/home/BespokeInteractiveSection';
+import { WhyChooseUsSection } from '@/components/home/WhyChooseUsSection';
 import { FlosBespokeProcessSection } from '@/components/home/FlosBespokeProcessSection';
 import { ProjectsSwipeSection } from '@/components/home/ProjectsSwipeSection';
 import { ProjectCtaSection } from '@/components/home/ProjectCtaSection';
@@ -19,8 +19,8 @@ export default function HomePage() {
       {/* 3. Product Collections: Dry Goods & Wet Goods */}
       <CollectionsSection />
 
-      {/* 4. Bespoke by Design: Specification Process & Luminaire Customizer */}
-      <BespokeInteractiveSection />
+      {/* 4. Why Choose Us: 6 Strategic Architectural & Engineering Value Pillars */}
+      <WhyChooseUsSection />
 
       {/* 5. Flos Bespoke Process: Design Thinking, Prototyping, Realization, Installation */}
       <FlosBespokeProcessSection />
