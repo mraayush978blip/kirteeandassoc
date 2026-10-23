@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Product, ProductSpecification } from '@/types/product';
-import { ChevronLeft, ChevronRight, Download, Share2, Check, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, X, Maximize2 } from 'lucide-react';
 import { FacebookIcon, XTwitterIcon, LinkedinIcon } from '@/components/ui/Icons';
 
 export interface ArtemideProductDetailProps {
@@ -18,8 +18,12 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
 }) => {
   const allImages = [product.heroImage, ...(product.gallery || [])].filter(Boolean);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [copiedShare, setCopiedShare] = useState(false);
-  const [isSpecsDrawerOpen, setIsSpecsDrawerOpen] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<{
+    url: string;
+    alt: string;
+    tag: string;
+    caption: string;
+  } | null>(null);
 
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
@@ -52,49 +56,59 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
     }
   };
 
-  // Curated Mosaic Luminaires matching Image 1 mockup
-  const mosaicItems = [
+  const scrollToSpecs = () => {
+    const el = document.getElementById('technical-specifications');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Build 5 rich architectural product perspective photos combining product gallery and curated views
+  const rawImages = [product.heroImage, ...(product.gallery || [])].filter(Boolean);
+  const fallbackDetails = [
     {
-      id: 'a24',
-      title: '↳ A.24',
-      slug: 'a-24-system',
-      category: 'DRY GOODS',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=85',
-      alt: 'A.24 continuous linear profile grazing architectural wall and ceiling',
+      url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} spatial interior installation view`,
+      tag: '01 / ARCHITECTURAL SPACE',
+      caption: 'Seamless architectural integration delivering balanced horizontal and vertical illumination.',
     },
     {
-      id: 'a39',
-      title: 'A.39',
-      slug: 'a-39-system',
-      category: 'DRY GOODS',
-      image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85',
-      alt: 'A.39 continuous linear architectural luminaire profile',
+      url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} precision optical surface texture`,
+      tag: '02 / OPTICAL DIFFUSER',
+      caption: 'Micro-engineered fractal apertures delivering zero-glare, high visual comfort emission.',
     },
     {
-      id: 'curved',
-      title: 'A.24 Curvilinear',
-      slug: 'a-24-system',
-      category: 'DRY GOODS',
-      image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85',
-      alt: 'Curvilinear organic architectural light ribbon',
+      url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} wall grazing light pattern`,
+      tag: '03 / GRAZING EMISSION',
+      caption: 'High-uniformity beam distribution accentuating monolithic masonry and textures.',
     },
     {
-      id: 'ale01',
-      title: 'ALE.01',
-      slug: 'ale-01',
-      category: 'DRY GOODS',
-      image: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=85',
-      alt: 'ALE.01 suspended sound-absorbing luminaire shell',
+      url: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} twilight ambient atmosphere`,
+      tag: '04 / AMBIENT WARMTH',
+      caption: 'Warm spectral balance creating emotionally resonant transitions between interior and exterior.',
     },
     {
-      id: 'honeycomb',
-      title: 'Calipso Vertical',
-      slug: 'calipso',
-      category: 'DRY GOODS',
-      image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1200&q=85',
-      alt: 'Calipso honeycomb acoustic architectural pendant',
+      url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} mechanical mounting detail`,
+      tag: '05 / TACTILE CRAFTSMANSHIP',
+      caption: 'Concealed mechanical junction and pure material finishing with microscopic tolerances.',
     },
   ];
+
+  const productPhotos = fallbackDetails.map((fallback, idx) => {
+    if (rawImages[idx]) {
+      return {
+        url: rawImages[idx].url,
+        alt: rawImages[idx].alt || fallback.alt,
+        tag: fallback.tag,
+        caption: rawImages[idx].caption || fallback.caption,
+      };
+    }
+    return fallback;
+  });
 
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh', overflowX: 'hidden' }}>
@@ -293,7 +307,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               )}
             </div>
 
-            {/* Right Column: Actions Row + Narrative + Spec Toggle */}
+            {/* Right Column: Actions Row + Narrative */}
             <div style={{ gridColumn: 'span 12' }} className="lg:col-span-8">
               {/* Top Row: Download Brochure Pill & Social Icons */}
               <div
@@ -430,7 +444,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               </div>
 
               {/* Editorial Narrative Text */}
-              <div style={{ position: 'relative', paddingBottom: '3.5rem' }}>
+              <div style={{ position: 'relative', paddingBottom: '2rem' }}>
                 <p
                   style={{
                     fontFamily: 'var(--font-sans)',
@@ -445,20 +459,20 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                   {product.editorialStory || product.fullDescription}
                 </p>
 
-                {/* Bottom Right Corner: Spec Sheet Toggle [ ⊠ ] */}
+                {/* Bottom Right Corner: Spec Sheet Quick Link [ ⊠ ] */}
                 <div style={{ position: 'absolute', bottom: 0, right: 0 }}>
                   <button
                     type="button"
-                    onClick={() => setIsSpecsDrawerOpen((prev) => !prev)}
-                    title="Toggle Technical Specifications & Photometric Data"
-                    aria-label="Technical Specifications"
+                    onClick={scrollToSpecs}
+                    title="Jump to Technical Specifications"
+                    aria-label="View Technical Specifications"
                     style={{
                       width: '34px',
                       height: '34px',
                       borderRadius: '2px',
                       border: '1px solid #9ca3af',
-                      backgroundColor: isSpecsDrawerOpen ? '#111827' : '#ffffff',
-                      color: isSpecsDrawerOpen ? '#ffffff' : '#374151',
+                      backgroundColor: '#ffffff',
+                      color: '#374151',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -466,95 +480,107 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                       transition: 'all 0.2s ease',
                     }}
                     onMouseEnter={(e) => {
-                      if (!isSpecsDrawerOpen) {
-                        e.currentTarget.style.borderColor = '#111827';
-                        e.currentTarget.style.color = '#111827';
-                      }
+                      e.currentTarget.style.borderColor = '#111827';
+                      e.currentTarget.style.color = '#111827';
                     }}
                     onMouseLeave={(e) => {
-                      if (!isSpecsDrawerOpen) {
-                        e.currentTarget.style.borderColor = '#9ca3af';
-                        e.currentTarget.style.color = '#374151';
-                      }
+                      e.currentTarget.style.borderColor = '#9ca3af';
+                      e.currentTarget.style.color = '#374151';
                     }}
                   >
-                    {isSpecsDrawerOpen ? (
-                      <X size={16} />
-                    ) : (
+                    <div
+                      style={{
+                        width: '14px',
+                        height: '14px',
+                        border: '1.5px solid currentColor',
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
                       <div
                         style={{
-                          width: '14px',
-                          height: '14px',
-                          border: '1.5px solid currentColor',
-                          position: 'relative',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          position: 'absolute',
+                          width: '100%',
+                          height: '1px',
+                          backgroundColor: 'currentColor',
+                          transform: 'rotate(45deg)',
                         }}
-                      >
-                        <div
-                          style={{
-                            position: 'absolute',
-                            width: '100%',
-                            height: '1px',
-                            backgroundColor: 'currentColor',
-                            transform: 'rotate(45deg)',
-                          }}
-                        />
-                        <div
-                          style={{
-                            position: 'absolute',
-                            width: '100%',
-                            height: '1px',
-                            backgroundColor: 'currentColor',
-                            transform: 'rotate(-45deg)',
-                          }}
-                        />
-                      </div>
-                    )}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          width: '100%',
+                          height: '1px',
+                          backgroundColor: 'currentColor',
+                          transform: 'rotate(-45deg)',
+                        }}
+                      />
+                    </div>
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Technical Specifications Sheet (Expanded on [ ⊠ ] Click) */}
-          {isSpecsDrawerOpen && product.specifications && product.specifications.length > 0 && (
+          {/* ========================================================= */}
+          {/* 3. TECHNICAL SPECIFICATIONS MATRIX */}
+          {/* ========================================================= */}
+          {product.specifications && product.specifications.length > 0 && (
             <div
+              id="technical-specifications"
               style={{
-                marginTop: '3rem',
-                paddingTop: '2.5rem',
-                borderTop: '1px solid #302F2B',
-                backgroundColor: '#151514',
-                color: '#E9E6DE',
-                borderRadius: '4px',
-                padding: '2rem',
-                boxShadow: '0 15px 35px rgba(0,0,0,0.4)',
-                border: '1px solid #302F2B',
+                marginTop: '4.5rem',
+                paddingTop: '3.5rem',
+                borderTop: '1px solid #e5e7eb',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem' }}>
-                <div>
-                  <span style={{ fontSize: '0.6875rem', fontFamily: 'var(--font-mono)', color: '#C8C2B7', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                    ENGINEERING &amp; PHOTOMETRIC MATRIX
-                  </span>
-                  <h3 style={{ fontFamily: 'var(--font-sans)', fontSize: '1.35rem', fontWeight: 600, color: '#E9E6DE', margin: '0.25rem 0 0 0' }}>
-                    Technical Specifications
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsSpecsDrawerOpen(false)}
-                  style={{ background: 'none', border: 'none', color: '#96938C', cursor: 'pointer' }}
+              <div style={{ marginBottom: '2.5rem' }}>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.6875rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.16em',
+                    textTransform: 'uppercase',
+                    color: '#6b7280',
+                    marginBottom: '0.5rem',
+                  }}
                 >
-                  <X size={18} />
-                </button>
+                  ENGINEERING &amp; PHOTOMETRIC MATRIX
+                </span>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 'clamp(1.5rem, 2.8vw, 2rem)',
+                    fontWeight: 600,
+                    letterSpacing: '-0.02em',
+                    color: '#111827',
+                    margin: 0,
+                  }}
+                >
+                  Technical Specifications
+                </h2>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.9375rem',
+                    color: '#4b5563',
+                    marginTop: '0.5rem',
+                    maxWidth: '720px',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Precision photometric data, electrical ratings, and mechanical dimensions measured in accordance with IESNA LM-79 &amp; LM-80 laboratory standards.
+                </p>
               </div>
 
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
                   gap: '1rem',
                 }}
               >
@@ -562,30 +588,44 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                   <div
                     key={spec.id}
                     style={{
-                      padding: '1.15rem',
-                      border: '1px solid #302F2B',
-                      backgroundColor: '#22211E',
-                      borderRadius: '3px',
+                      padding: '1.25rem 1.5rem',
+                      border: '1px solid #e5e7eb',
+                      backgroundColor: '#fafafa',
+                      borderRadius: '4px',
+                      transition: 'border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#111827';
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#e5e7eb';
+                      e.currentTarget.style.backgroundColor = '#fafafa';
+                      e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
                     <span
                       style={{
                         display: 'block',
+                        fontFamily: 'var(--font-mono)',
                         fontSize: '0.6875rem',
                         fontWeight: 600,
                         textTransform: 'uppercase',
-                        color: '#96938C',
+                        color: '#6b7280',
                         letterSpacing: '0.08em',
-                        marginBottom: '0.35rem',
+                        marginBottom: '0.5rem',
                       }}
                     >
                       {spec.label}
                     </span>
                     <span
                       style={{
-                        fontSize: '0.9375rem',
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '1rem',
                         fontWeight: 600,
-                        color: '#E9E6DE',
+                        color: '#111827',
+                        letterSpacing: '-0.01em',
                       }}
                     >
                       {spec.value} {spec.unit && spec.unit}
@@ -595,285 +635,684 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               </div>
             </div>
           )}
+
+          {/* ========================================================= */}
+          {/* 4. UNIQUE PRODUCT PERSPECTIVES PHOTO GRID */}
+          {/* ========================================================= */}
+          <div
+            id="product-gallery-grid"
+            style={{
+              marginTop: '5rem',
+              paddingTop: '4rem',
+              borderTop: '1px solid #e5e7eb',
+            }}
+          >
+            <div style={{ marginBottom: '2.5rem' }}>
+              <span
+                style={{
+                  display: 'inline-block',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: '#6b7280',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                VISUAL PERSPECTIVES &amp; CRAFT
+              </span>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: 'clamp(1.5rem, 2.8vw, 2rem)',
+                  fontWeight: 600,
+                  letterSpacing: '-0.02em',
+                  color: '#111827',
+                  margin: 0,
+                }}
+              >
+                Architectural Installation &amp; Detail Gallery
+              </h2>
+              <p
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.9375rem',
+                  color: '#4b5563',
+                  marginTop: '0.5rem',
+                  maxWidth: '720px',
+                  lineHeight: 1.6,
+                }}
+              >
+                Photographic portfolio capturing {product.name}&apos;s optical precision, tactile surface craft, and luminous dialogue within architectural spaces.
+              </p>
+            </div>
+
+            {/* Unique Bento / Masonry Architectural Grid */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(12, 1fr)',
+                gap: '1.25rem',
+              }}
+            >
+              {/* Photo 1: Large Feature Installation (Span 7) */}
+              <div
+                className="photo-grid-feature group"
+                onClick={() => setSelectedPhoto(productPhotos[0])}
+                style={{
+                  gridColumn: 'span 7',
+                  position: 'relative',
+                  height: '500px',
+                  overflow: 'hidden',
+                  borderRadius: '4px',
+                  backgroundColor: '#f3f4f6',
+                  cursor: 'pointer',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <Image
+                  src={productPhotos[0].url}
+                  alt={productPhotos[0].alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  style={{
+                    objectFit: 'cover',
+                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  className="group-hover:scale-105"
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(180deg, transparent 40%, rgba(10, 10, 9, 0.82) 100%)',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '1.5rem',
+                    left: '1.5rem',
+                    right: '1.5rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end',
+                  }}
+                >
+                  <div>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        padding: '0.3rem 0.65rem',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: '#111827',
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        marginBottom: '0.5rem',
+                        borderRadius: '2px',
+                      }}
+                    >
+                      {productPhotos[0].tag}
+                    </span>
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '0.875rem',
+                        color: '#ffffff',
+                        margin: 0,
+                        textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                        maxWidth: '520px',
+                      }}
+                    >
+                      {productPhotos[0].caption}
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      backdropFilter: 'blur(8px)',
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#ffffff',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Maximize2 size={16} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Photo 2: Tall Detail Card (Span 5) */}
+              <div
+                className="photo-grid-tall group"
+                onClick={() => setSelectedPhoto(productPhotos[1])}
+                style={{
+                  gridColumn: 'span 5',
+                  position: 'relative',
+                  height: '500px',
+                  overflow: 'hidden',
+                  borderRadius: '4px',
+                  backgroundColor: '#f3f4f6',
+                  cursor: 'pointer',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <Image
+                  src={productPhotos[1].url}
+                  alt={productPhotos[1].alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  style={{
+                    objectFit: 'cover',
+                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  className="group-hover:scale-105"
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(180deg, transparent 40%, rgba(10, 10, 9, 0.82) 100%)',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '1.5rem',
+                    left: '1.5rem',
+                    right: '1.5rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end',
+                  }}
+                >
+                  <div>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        padding: '0.3rem 0.65rem',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: '#111827',
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        marginBottom: '0.5rem',
+                        borderRadius: '2px',
+                      }}
+                    >
+                      {productPhotos[1].tag}
+                    </span>
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '0.875rem',
+                        color: '#ffffff',
+                        margin: 0,
+                        textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                      }}
+                    >
+                      {productPhotos[1].caption}
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      backdropFilter: 'blur(8px)',
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#ffffff',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Maximize2 size={16} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Photo 3: Triplet Detail 1 (Span 4) */}
+              <div
+                className="photo-grid-item group"
+                onClick={() => setSelectedPhoto(productPhotos[2])}
+                style={{
+                  gridColumn: 'span 4',
+                  position: 'relative',
+                  height: '340px',
+                  overflow: 'hidden',
+                  borderRadius: '4px',
+                  backgroundColor: '#f3f4f6',
+                  cursor: 'pointer',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <Image
+                  src={productPhotos[2].url}
+                  alt={productPhotos[2].alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  style={{
+                    objectFit: 'cover',
+                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  className="group-hover:scale-105"
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '1.25rem',
+                    left: '1.25rem',
+                    right: '1.25rem',
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      padding: '0.25rem 0.55rem',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.625rem',
+                      fontWeight: 600,
+                      color: '#111827',
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      marginBottom: '0.35rem',
+                      borderRadius: '2px',
+                    }}
+                  >
+                    {productPhotos[2].tag}
+                  </span>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '0.8125rem',
+                      color: '#ffffff',
+                      margin: 0,
+                    }}
+                  >
+                    {productPhotos[2].caption}
+                  </p>
+                </div>
+              </div>
+
+              {/* Photo 4: Triplet Detail 2 (Span 4) */}
+              <div
+                className="photo-grid-item group"
+                onClick={() => setSelectedPhoto(productPhotos[3])}
+                style={{
+                  gridColumn: 'span 4',
+                  position: 'relative',
+                  height: '340px',
+                  overflow: 'hidden',
+                  borderRadius: '4px',
+                  backgroundColor: '#f3f4f6',
+                  cursor: 'pointer',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <Image
+                  src={productPhotos[3].url}
+                  alt={productPhotos[3].alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  style={{
+                    objectFit: 'cover',
+                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  className="group-hover:scale-105"
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '1.25rem',
+                    left: '1.25rem',
+                    right: '1.25rem',
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      padding: '0.25rem 0.55rem',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.625rem',
+                      fontWeight: 600,
+                      color: '#111827',
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      marginBottom: '0.35rem',
+                      borderRadius: '2px',
+                    }}
+                  >
+                    {productPhotos[3].tag}
+                  </span>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '0.8125rem',
+                      color: '#ffffff',
+                      margin: 0,
+                    }}
+                  >
+                    {productPhotos[3].caption}
+                  </p>
+                </div>
+              </div>
+
+              {/* Photo 5: Triplet Detail 3 (Span 4) */}
+              <div
+                className="photo-grid-item group"
+                onClick={() => setSelectedPhoto(productPhotos[4])}
+                style={{
+                  gridColumn: 'span 4',
+                  position: 'relative',
+                  height: '340px',
+                  overflow: 'hidden',
+                  borderRadius: '4px',
+                  backgroundColor: '#f3f4f6',
+                  cursor: 'pointer',
+                  border: '1px solid #e5e7eb',
+                }}
+              >
+                <Image
+                  src={productPhotos[4].url}
+                  alt={productPhotos[4].alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  style={{
+                    objectFit: 'cover',
+                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  className="group-hover:scale-105"
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '1.25rem',
+                    left: '1.25rem',
+                    right: '1.25rem',
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      padding: '0.25rem 0.55rem',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.625rem',
+                      fontWeight: 600,
+                      color: '#111827',
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      marginBottom: '0.35rem',
+                      borderRadius: '2px',
+                    }}
+                  >
+                    {productPhotos[4].tag}
+                  </span>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '0.8125rem',
+                      color: '#ffffff',
+                      margin: 0,
+                    }}
+                  >
+                    {productPhotos[4].caption}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ========================================================= */}
+          {/* 5. FAMILIAR PRODUCTS (Related Luminaire Families - Restored as Original) */}
+          {/* ========================================================= */}
+          {relatedProducts && relatedProducts.length > 0 && (
+            <div
+              id="familiar-products"
+              style={{
+                marginTop: '5rem',
+                borderTop: '1px solid #e5e7eb',
+                paddingTop: '4rem',
+                paddingBottom: '5rem',
+              }}
+            >
+              <h3
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '1.5rem',
+                  fontWeight: 600,
+                  color: '#111111',
+                  marginBottom: '2rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                Related Luminaire Families
+              </h3>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(12, 1fr)',
+                  gap: '1.5rem',
+                }}
+              >
+                {relatedProducts.slice(0, 3).map((rel) => (
+                  <div
+                    key={rel.id}
+                    style={{
+                      gridColumn: 'span 4',
+                    }}
+                    className="related-col"
+                  >
+                    <Link
+                      href={`/products/${rel.slug}`}
+                      style={{
+                        display: 'block',
+                        position: 'relative',
+                        height: '320px',
+                        overflow: 'hidden',
+                        backgroundColor: '#f3f4f6',
+                        border: '1px solid #e5e7eb',
+                        textDecoration: 'none',
+                      }}
+                      className="mosaic-item group"
+                    >
+                      <Image
+                        src={rel.heroImage.url}
+                        alt={rel.name}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 33vw"
+                        style={{
+                          objectFit: 'cover',
+                          transition: 'transform 0.5s ease',
+                        }}
+                        className="group-hover:scale-105"
+                      />
+
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '1rem',
+                          left: '1rem',
+                        }}
+                      >
+                        <span
+                          style={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                            backdropFilter: 'blur(8px)',
+                            padding: '0.35rem 0.75rem',
+                            fontFamily: 'var(--font-sans)',
+                            fontSize: '0.8125rem',
+                            fontWeight: 600,
+                            color: '#111111',
+                            letterSpacing: '0.04em',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {rel.codeLabel || rel.name}
+                        </span>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* 3. ARCHITECTURAL MOSAIC GRID (Exact Layout from Mockup) */}
+      {/* 6. LIGHTBOX MODAL FOR UNIQUE PRODUCT PHOTO PREVIEW */}
       {/* ========================================================= */}
-      <section
-        id="related-mosaic"
-        aria-label="Related Architectural Luminaires"
-        style={{
-          backgroundColor: '#0A0A09',
-          borderTop: '1px solid #302F2B',
-          position: 'relative',
-        }}
-      >
+      {selectedPhoto && (
         <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setSelectedPhoto(null)}
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(12, 1fr)',
-            gap: '2px',
-            backgroundColor: '#302F2B',
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            backgroundColor: 'rgba(10, 10, 9, 0.94)',
+            backdropFilter: 'blur(12px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'clamp(1rem, 3vw, 2.5rem)',
           }}
         >
-          {/* Card 1: Left Tall Column (↳ A.24) */}
-          <Link
-            href="/products/a-24-system"
+          <div
+            onClick={(e) => e.stopPropagation()}
             style={{
-              gridColumn: 'span 12',
               position: 'relative',
-              minHeight: 'clamp(460px, 60vh, 620px)',
-              overflow: 'hidden',
+              maxWidth: '1200px',
+              width: '100%',
+              maxHeight: '92vh',
+              display: 'flex',
+              flexDirection: 'column',
               backgroundColor: '#151514',
-              textDecoration: 'none',
-              display: 'block',
+              borderRadius: '6px',
+              overflow: 'hidden',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.6)',
+              border: '1px solid #302F2B',
             }}
-            className="lg:col-span-6 group"
           >
-            <Image
-              src={mosaicItems[0].image}
-              alt={mosaicItems[0].alt}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              style={{
-                objectFit: 'cover',
-                transition: 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-              className="group-hover:scale-105"
-            />
-            {/* Subtle Vignette */}
             <div
               style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(180deg, transparent 60%, rgba(10, 10, 9, 0.85) 100%)',
-              }}
-            />
-            {/* Bottom Left Label: ↳ A.24 */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 'clamp(1.5rem, 3vw, 2.5rem)',
-                left: 'clamp(1.5rem, 3vw, 2.5rem)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                color: '#E9E6DE',
-                fontFamily: 'var(--font-sans)',
-                fontSize: '1rem',
-                fontWeight: 600,
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
+                position: 'relative',
+                width: '100%',
+                height: '70vh',
+                backgroundColor: '#0A0A09',
               }}
             >
-              <span>{mosaicItems[0].title}</span>
+              <Image
+                src={selectedPhoto.url}
+                alt={selectedPhoto.alt}
+                fill
+                style={{ objectFit: 'contain' }}
+              />
             </div>
-          </Link>
 
-          {/* Column 2: Center Stacked Cards (DRY GOODS, A.39, Curvilinear) */}
-          <div
-            style={{
-              gridColumn: 'span 12',
-              display: 'grid',
-              gridTemplateRows: 'auto 1fr 1fr',
-              gap: '2px',
-              backgroundColor: '#302F2B',
-            }}
-            className="lg:col-span-3"
-          >
-            {/* Top Bar: DRY GOODS overline badge */}
             <div
               style={{
-                backgroundColor: '#151514',
                 padding: '1.25rem 1.75rem',
+                borderTop: '1px solid #302F2B',
                 display: 'flex',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                justifyContent: 'flex-end',
+                backgroundColor: '#22211E',
               }}
             >
-              <Link
-                href="/dry-goods"
+              <div>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.6875rem',
+                    color: '#C8C2B7',
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    marginBottom: '0.25rem',
+                  }}
+                >
+                  {selectedPhoto.tag}
+                </span>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.9375rem',
+                    color: '#E9E6DE',
+                    margin: 0,
+                  }}
+                >
+                  {selectedPhoto.caption}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedPhoto(null)}
+                aria-label="Close photo preview"
                 style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.8125rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  color: '#96938C',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  marginLeft: '1.5rem',
+                  transition: 'background-color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#E9E6DE')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#96938C')}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)')}
               >
-                DRY GOODS
-              </Link>
+                <X size={18} />
+              </button>
             </div>
-
-            {/* Middle Card: A.39 linear luminaire */}
-            <Link
-              href="/products/a-39-system"
-              style={{
-                position: 'relative',
-                minHeight: '260px',
-                overflow: 'hidden',
-                backgroundColor: '#151514',
-                textDecoration: 'none',
-                display: 'block',
-              }}
-              className="group"
-            >
-              <Image
-                src={mosaicItems[1].image}
-                alt={mosaicItems[1].alt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 25vw"
-                style={{
-                  objectFit: 'cover',
-                  transition: 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-                className="group-hover:scale-105"
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(180deg, transparent 50%, rgba(10, 10, 9, 0.75) 100%)',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '1.5rem',
-                  left: '1.5rem',
-                  color: '#E9E6DE',
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.9375rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {mosaicItems[1].title}
-              </div>
-            </Link>
-
-            {/* Bottom Card: Curvilinear light sculpture */}
-            <Link
-              href="/products/a-24-system"
-              style={{
-                position: 'relative',
-                minHeight: '260px',
-                overflow: 'hidden',
-                backgroundColor: '#151514',
-                textDecoration: 'none',
-                display: 'block',
-              }}
-              className="group"
-            >
-              <Image
-                src={mosaicItems[2].image}
-                alt={mosaicItems[2].alt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 25vw"
-                style={{
-                  objectFit: 'cover',
-                  transition: 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-                className="group-hover:scale-105"
-              />
-            </Link>
-          </div>
-
-          {/* Column 3: Right Stacked Cards (ALE.01, Honeycomb vertical) */}
-          <div
-            style={{
-              gridColumn: 'span 12',
-              display: 'grid',
-              gridTemplateRows: '1fr 1fr',
-              gap: '2px',
-              backgroundColor: '#302F2B',
-            }}
-            className="lg:col-span-3"
-          >
-            {/* Top Card: ALE.01 */}
-            <Link
-              href="/products/ale-01"
-              style={{
-                position: 'relative',
-                minHeight: '280px',
-                overflow: 'hidden',
-                backgroundColor: '#151514',
-                textDecoration: 'none',
-                display: 'block',
-              }}
-              className="group"
-            >
-              <Image
-                src={mosaicItems[3].image}
-                alt={mosaicItems[3].alt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 25vw"
-                style={{
-                  objectFit: 'cover',
-                  transition: 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-                className="group-hover:scale-105"
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(180deg, transparent 50%, rgba(10, 10, 9, 0.75) 100%)',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '1.5rem',
-                  left: '1.5rem',
-                  color: '#E9E6DE',
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.9375rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {mosaicItems[3].title}
-              </div>
-            </Link>
-
-            {/* Bottom Card: Honeycomb Vertical Fixture */}
-            <Link
-              href="/products/calipso"
-              style={{
-                position: 'relative',
-                minHeight: '280px',
-                overflow: 'hidden',
-                backgroundColor: '#151514',
-                textDecoration: 'none',
-                display: 'block',
-              }}
-              className="group"
-            >
-              <Image
-                src={mosaicItems[4].image}
-                alt={mosaicItems[4].alt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 25vw"
-                style={{
-                  objectFit: 'cover',
-                  transition: 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-                className="group-hover:scale-105"
-              />
-            </Link>
           </div>
         </div>
-      </section>
+      )}
     </div>
   );
 };

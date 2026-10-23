@@ -54,11 +54,7 @@ export const Header: React.FC = () => {
 
   const isProductsActive =
     pathname.startsWith('/products') || pathname === '/dry-goods' || pathname === '/wet-goods';
-  const isLightHeader =
-    pathname === '/contact' ||
-    pathname.startsWith('/products') ||
-    pathname === '/dry-goods' ||
-    pathname === '/wet-goods';
+  const isLightHeader = !pathname.startsWith('/admin');
 
   return (
     <>
@@ -127,7 +123,7 @@ export const Header: React.FC = () => {
             </span>
           </Link>
 
-          {/* Center Navigation Links: DRY GOODS, WET GOODS, CONTACT (Matching Zenvora Mockup) */}
+          {/* Center Navigation Links: HOME, DRY GOODS, WET GOODS, CONTACT */}
           <nav
             aria-label="Main Navigation"
             style={{
@@ -137,7 +133,32 @@ export const Header: React.FC = () => {
             }}
             className="desktop-nav"
           >
-            {/* 1. DRY GOODS */}
+            {/* 1. HOME */}
+            <Link
+              href="/"
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: isLightHeader
+                  ? pathname === '/' ? '#111827' : '#4b5563'
+                  : pathname === '/' ? '#E9E6DE' : '#96938C',
+                transition: 'color 0.2s ease',
+                textDecoration: 'none',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#E9E6DE')}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = isLightHeader
+                  ? pathname === '/' ? '#111827' : '#4b5563'
+                  : pathname === '/' ? '#E9E6DE' : '#96938C')
+              }
+            >
+              HOME
+            </Link>
+
+            {/* 2. DRY GOODS */}
             <Link
               href="/dry-goods"
               style={{
@@ -162,7 +183,7 @@ export const Header: React.FC = () => {
               DRY GOODS
             </Link>
 
-            {/* 2. WET GOODS */}
+            {/* 3. WET GOODS */}
             <Link
               href="/wet-goods"
               style={{
@@ -282,7 +303,7 @@ export const Header: React.FC = () => {
                   textTransform: 'uppercase',
                 }}
               >
-                KIRTEE &amp; ASSOCIATES
+                ZENVORA
               </span>
               <span
                 style={{

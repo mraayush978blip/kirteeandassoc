@@ -425,7 +425,7 @@ a {
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background-color: #111111;
+  background-color: #374151;
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -439,7 +439,7 @@ a {
 
 .floating-chat-btn:hover {
   transform: scale(1.08);
-  background-color: #000000;
+  background-color: #4b5563;
 }
 
 /* Contact Card (Onok Lighting reference) */
@@ -467,7 +467,7 @@ a {
 }
 
 .mosaic-item:hover {
-  border-color: #111111;
+  border-color: #374151;
 }
 
 .mosaic-item:hover .mosaic-img {
@@ -481,7 +481,7 @@ a {
   font-family: var(--font-sans);
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #111111;
+  color: #2d333e;
   letter-spacing: 0.05em;
   display: inline-flex;
   align-items: center;
@@ -549,7 +549,7 @@ a {
 
 .bespoke-step-item:hover .bespoke-title,
 .bespoke-step-item:hover .bespoke-num {
-  color: #111111 !important;
+  color: #2d333e !important;
 }
 
 /* Contact Page — Architectural Editorial System */
@@ -580,7 +580,7 @@ a {
   font-family: var(--font-sans);
   font-size: 1rem; /* 16px prevents iOS Safari auto-zoom */
   line-height: 1.5;
-  color: #111111;
+  color: #2d333e;
   background-color: #ffffff;
   border: 1px solid #d1d5db;
   border-radius: 2px;
@@ -590,8 +590,8 @@ a {
 }
 
 .contact-input-field:focus {
-  border-color: #111111;
-  box-shadow: 0 0 0 1px #111111;
+  border-color: #4b5563;
+  box-shadow: 0 0 0 1px #4b5563;
 }
 
 .contact-input-field::placeholder {
@@ -621,13 +621,13 @@ a {
   border: 1px solid #e5e7eb;
   border-radius: 3px;
   text-decoration: none;
-  color: #111111;
+  color: #2d333e;
   transition: all 0.2s ease;
 }
 
 .contact-channel-item:hover {
   background-color: #ffffff;
-  border-color: #111111;
+  border-color: #4b5563;
 }
 
 .contact-tag-pill {
@@ -646,13 +646,13 @@ a {
 }
 
 .contact-tag-pill:hover {
-  border-color: #111111;
-  color: #111111;
+  border-color: #4b5563;
+  color: #2d333e;
 }
 
 .contact-tag-pill.active {
-  background-color: #111111;
-  border-color: #111111;
+  background-color: #374151;
+  border-color: #374151;
   color: #ffffff;
 }
 
@@ -663,4 +663,69 @@ a {
     scrollbar-width: thin;
   }
 }
+
+/* Contact Page Minimal Screenshot Styles */
+.contact-detail-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: #4b5563;
+  font-size: 0.9375rem;
+  transition: color 0.2s ease;
+}
+
+.contact-detail-link:hover {
+  color: #111827;
+}
+
+.floating-chat-bubble {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #282b32; /* Architectural slate grey, no pitch black */
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  z-index: 50;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  text-decoration: none;
+}
+
+.floating-chat-bubble:hover {
+  transform: scale(1.08);
+  background-color: #374151;
+}
+
+/* Product Detail Page Responsive Classes */
+@media (max-width: 900px) {
+  .related-col {
+    grid-column: span 12 !important;
+  }
+  .photo-grid-feature {
+    grid-column: span 12 !important;
+    height: 380px !important;
+  }
+  .photo-grid-tall {
+    grid-column: span 12 !important;
+    height: 340px !important;
+  }
+  .photo-grid-item {
+    grid-column: span 12 !important;
+    height: 280px !important;
+  }
+}
+
+@media (min-width: 901px) {
+  .related-col {
+    grid-column: span 4 !important;
+  }
+}
+
 
