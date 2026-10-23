@@ -63,8 +63,16 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
     }
   };
 
-  // Build 5 rich architectural product perspective photos combining product gallery and curated views
-  const rawImages = [product.heroImage, ...(product.gallery || [])].filter(Boolean);
+  // Build 5 distinct architectural product perspective photos with deduplication
+  const uniqueUrls = new Set<string>();
+  const rawImages: { url: string; alt?: string; caption?: string }[] = [];
+  [product.heroImage, ...(product.gallery || [])].filter(Boolean).forEach((img) => {
+    if (img && img.url && !uniqueUrls.has(img.url)) {
+      uniqueUrls.add(img.url);
+      rawImages.push(img);
+    }
+  });
+
   const fallbackDetails = [
     {
       url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
@@ -73,25 +81,25 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
       caption: 'Seamless architectural integration delivering balanced horizontal and vertical illumination.',
     },
     {
-      url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} precision optical surface texture`,
+      url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} wall grazing light pattern`,
       tag: '02 / OPTICAL DIFFUSER',
       caption: 'Micro-engineered fractal apertures delivering zero-glare, high visual comfort emission.',
     },
     {
-      url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} wall grazing light pattern`,
+      url: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} material geometry and form`,
       tag: '03 / GRAZING EMISSION',
       caption: 'High-uniformity beam distribution accentuating monolithic masonry and textures.',
     },
     {
-      url: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=85',
+      url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1600&q=85',
       alt: `${product.name} twilight ambient atmosphere`,
       tag: '04 / AMBIENT WARMTH',
       caption: 'Warm spectral balance creating emotionally resonant transitions between interior and exterior.',
     },
     {
-      url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1600&q=85',
+      url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=85',
       alt: `${product.name} mechanical mounting detail`,
       tag: '05 / TACTILE CRAFTSMANSHIP',
       caption: 'Concealed mechanical junction and pure material finishing with microscopic tolerances.',
@@ -255,12 +263,12 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
       </section>
 
       {/* ========================================================= */}
-      {/* 2. TITLE & EDITORIAL STORY (Exact Layout from Mockup) */}
+      {/* 2. TITLE & EDITORIAL STORY */}
       {/* ========================================================= */}
       <section
         style={{
           paddingTop: 'clamp(3rem, 5.5vw, 5rem)',
-          paddingBottom: 'clamp(3.5rem, 6vw, 5.5rem)',
+          paddingBottom: 'clamp(3rem, 5vw, 4.5rem)',
           backgroundColor: '#ffffff',
           color: '#111827',
         }}
@@ -531,7 +539,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             <div
               id="technical-specifications"
               style={{
-                marginTop: '4.5rem',
+                marginTop: '4rem',
                 paddingTop: '3.5rem',
                 borderTop: '1px solid #e5e7eb',
               }}
@@ -635,567 +643,575 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               </div>
             </div>
           )}
+        </div>
+      </section>
 
-          {/* ========================================================= */}
-          {/* 4. UNIQUE PRODUCT PERSPECTIVES PHOTO GRID */}
-          {/* ========================================================= */}
-          <div
-            id="product-gallery-grid"
+      {/* ========================================================= */}
+      {/* 4. UNIQUE PRODUCT PERSPECTIVES PHOTO GRID (EDGE-TO-EDGE FULL SCREEN) */}
+      {/* ========================================================= */}
+      <section
+        id="product-gallery-grid"
+        style={{
+          width: '100%',
+          backgroundColor: '#ffffff',
+          paddingTop: '3.5rem',
+          paddingBottom: 0,
+          overflow: 'hidden',
+        }}
+      >
+        {/* Gallery Section Header Container */}
+        <div className="container" style={{ maxWidth: '1440px', marginBottom: '2.5rem' }}>
+          <span
             style={{
-              marginTop: '5rem',
-              paddingTop: '4rem',
-              borderTop: '1px solid #e5e7eb',
+              display: 'inline-block',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6875rem',
+              fontWeight: 600,
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              color: '#6b7280',
+              marginBottom: '0.5rem',
             }}
           >
-            <div style={{ marginBottom: '2.5rem' }}>
-              <span
-                style={{
-                  display: 'inline-block',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.16em',
-                  textTransform: 'uppercase',
-                  color: '#6b7280',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                VISUAL PERSPECTIVES &amp; CRAFT
-              </span>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: 'clamp(1.5rem, 2.8vw, 2rem)',
-                  fontWeight: 600,
-                  letterSpacing: '-0.02em',
-                  color: '#111827',
-                  margin: 0,
-                }}
-              >
-                Architectural Installation &amp; Detail Gallery
-              </h2>
-              <p
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.9375rem',
-                  color: '#4b5563',
-                  marginTop: '0.5rem',
-                  maxWidth: '720px',
-                  lineHeight: 1.6,
-                }}
-              >
-                Photographic portfolio capturing {product.name}&apos;s optical precision, tactile surface craft, and luminous dialogue within architectural spaces.
-              </p>
-            </div>
+            VISUAL PERSPECTIVES &amp; CRAFT
+          </span>
+          <h2
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 'clamp(1.5rem, 2.8vw, 2rem)',
+              fontWeight: 600,
+              letterSpacing: '-0.02em',
+              color: '#111827',
+              margin: 0,
+            }}
+          >
+            Architectural Installation &amp; Detail Gallery
+          </h2>
+          <p
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: '0.9375rem',
+              color: '#4b5563',
+              marginTop: '0.5rem',
+              maxWidth: '720px',
+              lineHeight: 1.6,
+            }}
+          >
+            Photographic portfolio capturing {product.name}&apos;s optical precision, tactile surface craft, and luminous dialogue within architectural spaces.
+          </p>
+        </div>
 
-            {/* Unique Bento / Masonry Architectural Grid */}
+        {/* FULL SCREEN EDGE-TO-EDGE ZERO-GAP PHOTO GRID */}
+        <div
+          style={{
+            width: '100%',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(12, 1fr)',
+            gap: 0,
+            margin: 0,
+            padding: 0,
+            backgroundColor: '#0A0A09',
+          }}
+        >
+          {/* Photo 1: Large Feature Installation (Span 7) */}
+          <div
+            className="photo-grid-feature group"
+            onClick={() => setSelectedPhoto(productPhotos[0])}
+            style={{
+              gridColumn: 'span 7',
+              position: 'relative',
+              height: '560px',
+              overflow: 'hidden',
+              borderRadius: 0,
+              border: 'none',
+              backgroundColor: '#151514',
+              cursor: 'pointer',
+            }}
+          >
+            <Image
+              src={productPhotos[0].url}
+              alt={productPhotos[0].alt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 60vw"
+              style={{
+                objectFit: 'cover',
+                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+              className="group-hover:scale-105"
+            />
             <div
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(12, 1fr)',
-                gap: '1.25rem',
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(180deg, transparent 40%, rgba(10, 10, 9, 0.82) 100%)',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '1.75rem',
+                left: '2rem',
+                right: '2rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
               }}
             >
-              {/* Photo 1: Large Feature Installation (Span 7) */}
-              <div
-                className="photo-grid-feature group"
-                onClick={() => setSelectedPhoto(productPhotos[0])}
-                style={{
-                  gridColumn: 'span 7',
-                  position: 'relative',
-                  height: '500px',
-                  overflow: 'hidden',
-                  borderRadius: '4px',
-                  backgroundColor: '#f3f4f6',
-                  cursor: 'pointer',
-                  border: '1px solid #e5e7eb',
-                }}
-              >
-                <Image
-                  src={productPhotos[0].url}
-                  alt={productPhotos[0].alt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 60vw"
+              <div>
+                <span
                   style={{
-                    objectFit: 'cover',
-                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                  className="group-hover:scale-105"
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(180deg, transparent 40%, rgba(10, 10, 9, 0.82) 100%)',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '1.5rem',
-                    left: '1.5rem',
-                    right: '1.5rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-end',
+                    display: 'inline-block',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    padding: '0.3rem 0.65rem',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.6875rem',
+                    fontWeight: 600,
+                    color: '#111827',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    marginBottom: '0.5rem',
+                    borderRadius: '2px',
                   }}
                 >
-                  <div>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        padding: '0.3rem 0.65rem',
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.6875rem',
-                        fontWeight: 600,
-                        color: '#111827',
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
-                        marginBottom: '0.5rem',
-                        borderRadius: '2px',
-                      }}
-                    >
-                      {productPhotos[0].tag}
-                    </span>
-                    <p
-                      style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: '0.875rem',
-                        color: '#ffffff',
-                        margin: 0,
-                        textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                        maxWidth: '520px',
-                      }}
-                    >
-                      {productPhotos[0].caption}
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                      backdropFilter: 'blur(8px)',
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#ffffff',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Maximize2 size={16} />
-                  </div>
-                </div>
+                  {productPhotos[0].tag}
+                </span>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.875rem',
+                    color: '#ffffff',
+                    margin: 0,
+                    textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                    maxWidth: '520px',
+                  }}
+                >
+                  {productPhotos[0].caption}
+                </p>
               </div>
-
-              {/* Photo 2: Tall Detail Card (Span 5) */}
               <div
-                className="photo-grid-tall group"
-                onClick={() => setSelectedPhoto(productPhotos[1])}
                 style={{
-                  gridColumn: 'span 5',
-                  position: 'relative',
-                  height: '500px',
-                  overflow: 'hidden',
-                  borderRadius: '4px',
-                  backgroundColor: '#f3f4f6',
-                  cursor: 'pointer',
-                  border: '1px solid #e5e7eb',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  flexShrink: 0,
                 }}
               >
-                <Image
-                  src={productPhotos[1].url}
-                  alt={productPhotos[1].alt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                  style={{
-                    objectFit: 'cover',
-                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                  className="group-hover:scale-105"
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(180deg, transparent 40%, rgba(10, 10, 9, 0.82) 100%)',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '1.5rem',
-                    left: '1.5rem',
-                    right: '1.5rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-end',
-                  }}
-                >
-                  <div>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        padding: '0.3rem 0.65rem',
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.6875rem',
-                        fontWeight: 600,
-                        color: '#111827',
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
-                        marginBottom: '0.5rem',
-                        borderRadius: '2px',
-                      }}
-                    >
-                      {productPhotos[1].tag}
-                    </span>
-                    <p
-                      style={{
-                        fontFamily: 'var(--font-sans)',
-                        fontSize: '0.875rem',
-                        color: '#ffffff',
-                        margin: 0,
-                        textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                      }}
-                    >
-                      {productPhotos[1].caption}
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                      backdropFilter: 'blur(8px)',
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#ffffff',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Maximize2 size={16} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Photo 3: Triplet Detail 1 (Span 4) */}
-              <div
-                className="photo-grid-item group"
-                onClick={() => setSelectedPhoto(productPhotos[2])}
-                style={{
-                  gridColumn: 'span 4',
-                  position: 'relative',
-                  height: '340px',
-                  overflow: 'hidden',
-                  borderRadius: '4px',
-                  backgroundColor: '#f3f4f6',
-                  cursor: 'pointer',
-                  border: '1px solid #e5e7eb',
-                }}
-              >
-                <Image
-                  src={productPhotos[2].url}
-                  alt={productPhotos[2].alt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 33vw"
-                  style={{
-                    objectFit: 'cover',
-                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                  className="group-hover:scale-105"
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '1.25rem',
-                    left: '1.25rem',
-                    right: '1.25rem',
-                  }}
-                >
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '0.25rem 0.55rem',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.625rem',
-                      fontWeight: 600,
-                      color: '#111827',
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      marginBottom: '0.35rem',
-                      borderRadius: '2px',
-                    }}
-                  >
-                    {productPhotos[2].tag}
-                  </span>
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.8125rem',
-                      color: '#ffffff',
-                      margin: 0,
-                    }}
-                  >
-                    {productPhotos[2].caption}
-                  </p>
-                </div>
-              </div>
-
-              {/* Photo 4: Triplet Detail 2 (Span 4) */}
-              <div
-                className="photo-grid-item group"
-                onClick={() => setSelectedPhoto(productPhotos[3])}
-                style={{
-                  gridColumn: 'span 4',
-                  position: 'relative',
-                  height: '340px',
-                  overflow: 'hidden',
-                  borderRadius: '4px',
-                  backgroundColor: '#f3f4f6',
-                  cursor: 'pointer',
-                  border: '1px solid #e5e7eb',
-                }}
-              >
-                <Image
-                  src={productPhotos[3].url}
-                  alt={productPhotos[3].alt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 33vw"
-                  style={{
-                    objectFit: 'cover',
-                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                  className="group-hover:scale-105"
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '1.25rem',
-                    left: '1.25rem',
-                    right: '1.25rem',
-                  }}
-                >
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '0.25rem 0.55rem',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.625rem',
-                      fontWeight: 600,
-                      color: '#111827',
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      marginBottom: '0.35rem',
-                      borderRadius: '2px',
-                    }}
-                  >
-                    {productPhotos[3].tag}
-                  </span>
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.8125rem',
-                      color: '#ffffff',
-                      margin: 0,
-                    }}
-                  >
-                    {productPhotos[3].caption}
-                  </p>
-                </div>
-              </div>
-
-              {/* Photo 5: Triplet Detail 3 (Span 4) */}
-              <div
-                className="photo-grid-item group"
-                onClick={() => setSelectedPhoto(productPhotos[4])}
-                style={{
-                  gridColumn: 'span 4',
-                  position: 'relative',
-                  height: '340px',
-                  overflow: 'hidden',
-                  borderRadius: '4px',
-                  backgroundColor: '#f3f4f6',
-                  cursor: 'pointer',
-                  border: '1px solid #e5e7eb',
-                }}
-              >
-                <Image
-                  src={productPhotos[4].url}
-                  alt={productPhotos[4].alt}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 33vw"
-                  style={{
-                    objectFit: 'cover',
-                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                  className="group-hover:scale-105"
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '1.25rem',
-                    left: '1.25rem',
-                    right: '1.25rem',
-                  }}
-                >
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      padding: '0.25rem 0.55rem',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.625rem',
-                      fontWeight: 600,
-                      color: '#111827',
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      marginBottom: '0.35rem',
-                      borderRadius: '2px',
-                    }}
-                  >
-                    {productPhotos[4].tag}
-                  </span>
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.8125rem',
-                      color: '#ffffff',
-                      margin: 0,
-                    }}
-                  >
-                    {productPhotos[4].caption}
-                  </p>
-                </div>
+                <Maximize2 size={16} />
               </div>
             </div>
           </div>
 
-          {/* ========================================================= */}
-          {/* 5. FAMILIAR PRODUCTS (Related Luminaire Families - Restored as Original) */}
-          {/* ========================================================= */}
-          {relatedProducts && relatedProducts.length > 0 && (
-            <div
-              id="familiar-products"
+          {/* Photo 2: Tall Detail Card (Span 5) */}
+          <div
+            className="photo-grid-tall group"
+            onClick={() => setSelectedPhoto(productPhotos[1])}
+            style={{
+              gridColumn: 'span 5',
+              position: 'relative',
+              height: '560px',
+              overflow: 'hidden',
+              borderRadius: 0,
+              border: 'none',
+              backgroundColor: '#151514',
+              cursor: 'pointer',
+            }}
+          >
+            <Image
+              src={productPhotos[1].url}
+              alt={productPhotos[1].alt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 40vw"
               style={{
-                marginTop: '5rem',
-                borderTop: '1px solid #e5e7eb',
-                paddingTop: '4rem',
-                paddingBottom: '5rem',
+                objectFit: 'cover',
+                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+              className="group-hover:scale-105"
+            />
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(180deg, transparent 40%, rgba(10, 10, 9, 0.82) 100%)',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '1.75rem',
+                left: '2rem',
+                right: '2rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
               }}
             >
-              <h3
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '1.5rem',
-                  fontWeight: 600,
-                  color: '#111111',
-                  marginBottom: '2rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                }}
-              >
-                Related Luminaire Families
-              </h3>
-
+              <div>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    padding: '0.3rem 0.65rem',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.6875rem',
+                    fontWeight: 600,
+                    color: '#111827',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    marginBottom: '0.5rem',
+                    borderRadius: '2px',
+                  }}
+                >
+                  {productPhotos[1].tag}
+                </span>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.875rem',
+                    color: '#ffffff',
+                    margin: 0,
+                    textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                  }}
+                >
+                  {productPhotos[1].caption}
+                </p>
+              </div>
               <div
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(12, 1fr)',
-                  gap: '1.5rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  flexShrink: 0,
                 }}
               >
-                {relatedProducts.slice(0, 3).map((rel) => (
-                  <div
-                    key={rel.id}
-                    style={{
-                      gridColumn: 'span 4',
-                    }}
-                    className="related-col"
-                  >
-                    <Link
-                      href={`/products/${rel.slug}`}
-                      style={{
-                        display: 'block',
-                        position: 'relative',
-                        height: '320px',
-                        overflow: 'hidden',
-                        backgroundColor: '#f3f4f6',
-                        border: '1px solid #e5e7eb',
-                        textDecoration: 'none',
-                      }}
-                      className="mosaic-item group"
-                    >
-                      <Image
-                        src={rel.heroImage.url}
-                        alt={rel.name}
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 33vw"
-                        style={{
-                          objectFit: 'cover',
-                          transition: 'transform 0.5s ease',
-                        }}
-                        className="group-hover:scale-105"
-                      />
-
-                      <div
-                        style={{
-                          position: 'absolute',
-                          bottom: '1rem',
-                          left: '1rem',
-                        }}
-                      >
-                        <span
-                          style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.92)',
-                            backdropFilter: 'blur(8px)',
-                            padding: '0.35rem 0.75rem',
-                            fontFamily: 'var(--font-sans)',
-                            fontSize: '0.8125rem',
-                            fontWeight: 600,
-                            color: '#111111',
-                            letterSpacing: '0.04em',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          {rel.codeLabel || rel.name}
-                        </span>
-                      </div>
-                    </Link>
-                  </div>
-                ))}
+                <Maximize2 size={16} />
               </div>
             </div>
-          )}
+          </div>
+
+          {/* Photo 3: Triplet Detail 1 (Span 4) */}
+          <div
+            className="photo-grid-item group"
+            onClick={() => setSelectedPhoto(productPhotos[2])}
+            style={{
+              gridColumn: 'span 4',
+              position: 'relative',
+              height: '400px',
+              overflow: 'hidden',
+              borderRadius: 0,
+              border: 'none',
+              backgroundColor: '#151514',
+              cursor: 'pointer',
+            }}
+          >
+            <Image
+              src={productPhotos[2].url}
+              alt={productPhotos[2].alt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 33vw"
+              style={{
+                objectFit: 'cover',
+                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+              className="group-hover:scale-105"
+            />
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '1.5rem',
+                left: '1.75rem',
+                right: '1.75rem',
+              }}
+            >
+              <span
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  padding: '0.25rem 0.55rem',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.625rem',
+                  fontWeight: 600,
+                  color: '#111827',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  marginBottom: '0.35rem',
+                  borderRadius: '2px',
+                }}
+              >
+                {productPhotos[2].tag}
+              </span>
+              <p
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.8125rem',
+                  color: '#ffffff',
+                  margin: 0,
+                }}
+              >
+                {productPhotos[2].caption}
+              </p>
+            </div>
+          </div>
+
+          {/* Photo 4: Triplet Detail 2 (Span 4) */}
+          <div
+            className="photo-grid-item group"
+            onClick={() => setSelectedPhoto(productPhotos[3])}
+            style={{
+              gridColumn: 'span 4',
+              position: 'relative',
+              height: '400px',
+              overflow: 'hidden',
+              borderRadius: 0,
+              border: 'none',
+              backgroundColor: '#151514',
+              cursor: 'pointer',
+            }}
+          >
+            <Image
+              src={productPhotos[3].url}
+              alt={productPhotos[3].alt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 33vw"
+              style={{
+                objectFit: 'cover',
+                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+              className="group-hover:scale-105"
+            />
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '1.5rem',
+                left: '1.75rem',
+                right: '1.75rem',
+              }}
+            >
+              <span
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  padding: '0.25rem 0.55rem',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.625rem',
+                  fontWeight: 600,
+                  color: '#111827',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  marginBottom: '0.35rem',
+                  borderRadius: '2px',
+                }}
+              >
+                {productPhotos[3].tag}
+              </span>
+              <p
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.8125rem',
+                  color: '#ffffff',
+                  margin: 0,
+                }}
+              >
+                {productPhotos[3].caption}
+              </p>
+            </div>
+          </div>
+
+          {/* Photo 5: Triplet Detail 3 (Span 4) */}
+          <div
+            className="photo-grid-item group"
+            onClick={() => setSelectedPhoto(productPhotos[4])}
+            style={{
+              gridColumn: 'span 4',
+              position: 'relative',
+              height: '400px',
+              overflow: 'hidden',
+              borderRadius: 0,
+              border: 'none',
+              backgroundColor: '#151514',
+              cursor: 'pointer',
+            }}
+          >
+            <Image
+              src={productPhotos[4].url}
+              alt={productPhotos[4].alt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 33vw"
+              style={{
+                objectFit: 'cover',
+                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+              className="group-hover:scale-105"
+            />
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '1.5rem',
+                left: '1.75rem',
+                right: '1.75rem',
+              }}
+            >
+              <span
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  padding: '0.25rem 0.55rem',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.625rem',
+                  fontWeight: 600,
+                  color: '#111827',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  marginBottom: '0.35rem',
+                  borderRadius: '2px',
+                }}
+              >
+                {productPhotos[4].tag}
+              </span>
+              <p
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '0.8125rem',
+                  color: '#ffffff',
+                  margin: 0,
+                }}
+              >
+                {productPhotos[4].caption}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* ========================================================= */}
+      {/* 5. FAMILIAR PRODUCTS (Related Luminaire Families) */}
+      {/* ========================================================= */}
+      {relatedProducts && relatedProducts.length > 0 && (
+        <section
+          style={{
+            borderTop: '1px solid #e5e7eb',
+            paddingTop: '4.5rem',
+            paddingBottom: '6rem',
+            backgroundColor: '#ffffff',
+          }}
+        >
+          <div className="container" style={{ maxWidth: '1440px' }}>
+            <h3
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: '1.5rem',
+                fontWeight: 600,
+                color: '#111111',
+                marginBottom: '2rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+              }}
+            >
+              Related Luminaire Families
+            </h3>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(12, 1fr)',
+                gap: '1.5rem',
+              }}
+            >
+              {relatedProducts.slice(0, 3).map((rel) => (
+                <div
+                  key={rel.id}
+                  style={{
+                    gridColumn: 'span 4',
+                  }}
+                  className="related-col"
+                >
+                  <Link
+                    href={`/products/${rel.slug}`}
+                    style={{
+                      display: 'block',
+                      position: 'relative',
+                      height: '320px',
+                      overflow: 'hidden',
+                      backgroundColor: '#f3f4f6',
+                      border: '1px solid #e5e7eb',
+                      textDecoration: 'none',
+                    }}
+                    className="mosaic-item group"
+                  >
+                    <Image
+                      src={rel.heroImage.url}
+                      alt={rel.name}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 33vw"
+                      style={{
+                        objectFit: 'cover',
+                        transition: 'transform 0.5s ease',
+                      }}
+                      className="group-hover:scale-105"
+                    />
+
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '1rem',
+                        left: '1rem',
+                      }}
+                    >
+                      <span
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                          backdropFilter: 'blur(8px)',
+                          padding: '0.35rem 0.75rem',
+                          fontFamily: 'var(--font-sans)',
+                          fontSize: '0.8125rem',
+                          fontWeight: 600,
+                          color: '#111111',
+                          letterSpacing: '0.04em',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {rel.codeLabel || rel.name}
+                      </span>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ========================================================= */}
       {/* 6. LIGHTBOX MODAL FOR UNIQUE PRODUCT PHOTO PREVIEW */}
