@@ -708,13 +708,15 @@ a {
   .related-col {
     grid-column: span 12 !important;
   }
-  .photo-grid-feature {
-    grid-column: span 12 !important;
-    height: 380px !important;
-  }
-  .photo-grid-tall {
+  .photo-grid-feature,
+  .photo-grid-half {
     grid-column: span 12 !important;
     height: 340px !important;
+  }
+  .photo-grid-tall,
+  .photo-grid-third {
+    grid-column: span 12 !important;
+    height: 280px !important;
   }
   .photo-grid-item {
     grid-column: span 12 !important;

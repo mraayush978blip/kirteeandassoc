@@ -63,17 +63,8 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
     }
   };
 
-  // Build 5 distinct architectural product perspective photos with deduplication
-  const uniqueUrls = new Set<string>();
-  const rawImages: { url: string; alt?: string; caption?: string }[] = [];
-  [product.heroImage, ...(product.gallery || [])].filter(Boolean).forEach((img) => {
-    if (img && img.url && !uniqueUrls.has(img.url)) {
-      uniqueUrls.add(img.url);
-      rawImages.push(img);
-    }
-  });
-
-  const fallbackDetails = [
+  // Curated pool of high-res architectural lighting perspectives
+  const architecturalPool = [
     {
       url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
       alt: `${product.name} spatial interior installation view`,
@@ -87,36 +78,56 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
       caption: 'Micro-engineered fractal apertures delivering zero-glare, high visual comfort emission.',
     },
     {
-      url: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} material geometry and form`,
+      url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} contemporary architectural pavilion`,
       tag: '03 / GRAZING EMISSION',
       caption: 'High-uniformity beam distribution accentuating monolithic masonry and textures.',
     },
     {
-      url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1600&q=85',
+      url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=85',
       alt: `${product.name} twilight ambient atmosphere`,
       tag: '04 / AMBIENT WARMTH',
       caption: 'Warm spectral balance creating emotionally resonant transitions between interior and exterior.',
     },
     {
-      url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} mechanical mounting detail`,
+      url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1600&q=85',
+      alt: `${product.name} refined material craftsmanship and finish`,
       tag: '05 / TACTILE CRAFTSMANSHIP',
       caption: 'Concealed mechanical junction and pure material finishing with microscopic tolerances.',
     },
   ];
 
-  const productPhotos = fallbackDetails.map((fallback, idx) => {
-    if (rawImages[idx]) {
-      return {
-        url: rawImages[idx].url,
-        alt: rawImages[idx].alt || fallback.alt,
-        tag: fallback.tag,
-        caption: rawImages[idx].caption || fallback.caption,
-      };
+  // Guarantee 5 distinct, deduplicated images
+  const usedUrls = new Set<string>();
+  const productPhotos: { url: string; alt: string; tag: string; caption: string }[] = [];
+
+  const rawProductImgs = [product.heroImage, ...(product.gallery || [])].filter(Boolean);
+  for (const img of rawProductImgs) {
+    if (img && img.url && !usedUrls.has(img.url) && productPhotos.length < 5) {
+      usedUrls.add(img.url);
+      const tagIndex = productPhotos.length;
+      productPhotos.push({
+        url: img.url,
+        alt: img.alt || `${product.name} architectural view ${tagIndex + 1}`,
+        tag: architecturalPool[tagIndex]?.tag || `0${tagIndex + 1} / DETAIL PERSPECTIVE`,
+        caption: img.caption || architecturalPool[tagIndex]?.caption || 'Precision architectural luminaire optical performance.',
+      });
     }
-    return fallback;
-  });
+  }
+
+  for (const poolItem of architecturalPool) {
+    if (productPhotos.length >= 5) break;
+    if (!usedUrls.has(poolItem.url)) {
+      usedUrls.add(poolItem.url);
+      const tagIndex = productPhotos.length;
+      productPhotos.push({
+        url: poolItem.url,
+        alt: poolItem.alt,
+        tag: `0${tagIndex + 1} / ${poolItem.tag.split('/ ')[1] || 'PERSPECTIVE'}`,
+        caption: poolItem.caption,
+      });
+    }
+  }
 
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh', overflowX: 'hidden' }}>
@@ -647,7 +658,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
       </section>
 
       {/* ========================================================= */}
-      {/* 4. UNIQUE PRODUCT PERSPECTIVES PHOTO GRID (EDGE-TO-EDGE FULL SCREEN) */}
+      {/* 4. UNIQUE PRODUCT PERSPECTIVES PHOTO GRID (FRAMED WITH BALANCED RATIOS) */}
       {/* ========================================================= */}
       <section
         id="product-gallery-grid"
@@ -655,12 +666,14 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
           width: '100%',
           backgroundColor: '#ffffff',
           paddingTop: '3.5rem',
-          paddingBottom: 0,
-          overflow: 'hidden',
+          paddingBottom: '3.5rem',
+          paddingLeft: 'clamp(1.5rem, 4vw, 3.75rem)',
+          paddingRight: 'clamp(1.5rem, 4vw, 3.75rem)',
+          boxSizing: 'border-box',
         }}
       >
-        {/* Gallery Section Header Container */}
-        <div className="container" style={{ maxWidth: '1440px', marginBottom: '2.5rem' }}>
+        {/* Gallery Section Header Container - aligns with the photos */}
+        <div style={{ maxWidth: '1440px', marginBottom: '2.25rem' }}>
           <span
             style={{
               display: 'inline-block',
@@ -701,7 +714,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
           </p>
         </div>
 
-        {/* FULL SCREEN EDGE-TO-EDGE ZERO-GAP PHOTO GRID */}
+        {/* ELEGANT MODULAR ZERO-GAP PHOTO GRID WITH BALANCED RATIOS */}
         <div
           style={{
             width: '100%',
@@ -711,16 +724,18 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             margin: 0,
             padding: 0,
             backgroundColor: '#0A0A09',
+            borderRadius: '4px',
+            overflow: 'hidden',
           }}
         >
-          {/* Photo 1: Large Feature Installation (Span 7) */}
+          {/* Photo 1: Panel 1 (Span 6 - 50% width) */}
           <div
-            className="photo-grid-feature group"
+            className="photo-grid-half group"
             onClick={() => setSelectedPhoto(productPhotos[0])}
             style={{
-              gridColumn: 'span 7',
+              gridColumn: 'span 6',
               position: 'relative',
-              height: '560px',
+              height: '460px',
               overflow: 'hidden',
               borderRadius: 0,
               border: 'none',
@@ -732,7 +747,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[0].url}
               alt={productPhotos[0].alt}
               fill
-              sizes="(max-width: 1024px) 100vw, 60vw"
+              sizes="(max-width: 900px) 100vw, 50vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -782,7 +797,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     color: '#ffffff',
                     margin: 0,
                     textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                    maxWidth: '520px',
+                    maxWidth: '480px',
                   }}
                 >
                   {productPhotos[0].caption}
@@ -807,14 +822,14 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             </div>
           </div>
 
-          {/* Photo 2: Tall Detail Card (Span 5) */}
+          {/* Photo 2: Panel 2 (Span 6 - 50% width) */}
           <div
-            className="photo-grid-tall group"
+            className="photo-grid-half group"
             onClick={() => setSelectedPhoto(productPhotos[1])}
             style={{
-              gridColumn: 'span 5',
+              gridColumn: 'span 6',
               position: 'relative',
-              height: '560px',
+              height: '460px',
               overflow: 'hidden',
               borderRadius: 0,
               border: 'none',
@@ -826,7 +841,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[1].url}
               alt={productPhotos[1].alt}
               fill
-              sizes="(max-width: 1024px) 100vw, 40vw"
+              sizes="(max-width: 900px) 100vw, 50vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -876,6 +891,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     color: '#ffffff',
                     margin: 0,
                     textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                    maxWidth: '480px',
                   }}
                 >
                   {productPhotos[1].caption}
@@ -900,14 +916,14 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             </div>
           </div>
 
-          {/* Photo 3: Triplet Detail 1 (Span 4) */}
+          {/* Photo 3: Panel 3 (Span 4 - 33.3% width) */}
           <div
-            className="photo-grid-item group"
+            className="photo-grid-third group"
             onClick={() => setSelectedPhoto(productPhotos[2])}
             style={{
               gridColumn: 'span 4',
               position: 'relative',
-              height: '400px',
+              height: '360px',
               overflow: 'hidden',
               borderRadius: 0,
               border: 'none',
@@ -919,7 +935,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[2].url}
               alt={productPhotos[2].alt}
               fill
-              sizes="(max-width: 1024px) 100vw, 33vw"
+              sizes="(max-width: 900px) 100vw, 33vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -971,14 +987,14 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             </div>
           </div>
 
-          {/* Photo 4: Triplet Detail 2 (Span 4) */}
+          {/* Photo 4: Panel 4 (Span 4 - 33.3% width) */}
           <div
-            className="photo-grid-item group"
+            className="photo-grid-third group"
             onClick={() => setSelectedPhoto(productPhotos[3])}
             style={{
               gridColumn: 'span 4',
               position: 'relative',
-              height: '400px',
+              height: '360px',
               overflow: 'hidden',
               borderRadius: 0,
               border: 'none',
@@ -990,7 +1006,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[3].url}
               alt={productPhotos[3].alt}
               fill
-              sizes="(max-width: 1024px) 100vw, 33vw"
+              sizes="(max-width: 900px) 100vw, 33vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -1042,14 +1058,14 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             </div>
           </div>
 
-          {/* Photo 5: Triplet Detail 3 (Span 4) */}
+          {/* Photo 5: Panel 5 (Span 4 - 33.3% width) */}
           <div
-            className="photo-grid-item group"
+            className="photo-grid-third group"
             onClick={() => setSelectedPhoto(productPhotos[4])}
             style={{
               gridColumn: 'span 4',
               position: 'relative',
-              height: '400px',
+              height: '360px',
               overflow: 'hidden',
               borderRadius: 0,
               border: 'none',
@@ -1061,7 +1077,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[4].url}
               alt={productPhotos[4].alt}
               fill
-              sizes="(max-width: 1024px) 100vw, 33vw"
+              sizes="(max-width: 900px) 100vw, 33vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
