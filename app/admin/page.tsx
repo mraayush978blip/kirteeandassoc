@@ -72,7 +72,7 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
   const [currentUser, setCurrentUser] = useState<{ email: string; role: string; id?: string } | null>(null);
-  const [loginEmail, setLoginEmail] = useState<string>('zenvora204@gmail.com');
+  const [loginEmail, setLoginEmail] = useState<string>('');
   const [loginPassword, setLoginPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -923,6 +923,8 @@ export default function AdminPage() {
                 <input
                   type="email"
                   required
+                  placeholder="admin@zenvora.com"
+                  autoComplete="email"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   style={{
