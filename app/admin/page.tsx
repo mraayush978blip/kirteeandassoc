@@ -194,6 +194,25 @@ export default function AdminPage() {
     setLoginError(null);
     setLoginSuccessMsg(null);
 
+    const normalizedEmail = loginEmail.trim().toLowerCase();
+    const masterPasswords = ['Zenvora@2000', 'zenvora@2000', 'zenvora2026', 'Zenvora2026!', 'kirtee2026'];
+
+    // 1. Instant Master Admin Key Authentication
+    if (normalizedEmail === 'zenvora204@gmail.com' && masterPasswords.includes(loginPassword.trim())) {
+      const adminSession = {
+        email: 'zenvora204@gmail.com',
+        role: 'admin',
+        id: '9460e78f-ffe8-420a-aa7e-baabbe4643ab',
+      };
+      localStorage.setItem('kirtee_admin_auth', JSON.stringify(adminSession));
+      setIsAuthenticated(true);
+      setCurrentUser(adminSession);
+      showToast('Successfully authenticated into Zenvora Admin.');
+      setIsLoggingIn(false);
+      return;
+    }
+
+    // 2. Supabase Cloud Auth API Verification
     try {
       const result = await loginWithSupabase(loginEmail, loginPassword);
       if (result.success && result.session?.user) {
