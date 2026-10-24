@@ -162,14 +162,15 @@ export const HeroSwipeSection: React.FC = () => {
       aria-label="Zenvora Architectural Lighting Systems"
       style={{
         position: 'relative',
-        minHeight: '100vh',
+        height: 'calc(100dvh - var(--header-height, 80px))',
+        minHeight: '560px',
         backgroundColor: '#0a0a0a',
         color: '#ffffff',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        paddingTop: 'calc(var(--header-height) + 1.5rem)',
+        paddingTop: '1rem',
         userSelect: 'none',
         cursor: isDragging ? 'grabbing' : 'grab',
       }}
@@ -217,13 +218,98 @@ export const HeroSwipeSection: React.FC = () => {
                   position: 'absolute',
                   inset: 0,
                   background:
-                    'linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 35%, transparent 65%)',
+                    'linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 40%, transparent 70%)',
                 }}
               />
             </div>
           );
         })}
       </div>
+
+      {/* Floating Center Left & Right Navigation Arrows */}
+      <button
+        type="button"
+        aria-label="Previous slide"
+        onClick={(e) => {
+          e.stopPropagation();
+          prevSlide();
+        }}
+        style={{
+          position: 'absolute',
+          left: 'clamp(0.75rem, 2vw, 2.5rem)',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 25,
+          width: '44px',
+          height: '44px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(10, 10, 10, 0.45)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255, 255, 255, 0.25)',
+          color: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+          e.currentTarget.style.borderColor = '#ffffff';
+          e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(10, 10, 10, 0.45)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+        }}
+      >
+        <ChevronLeft size={22} />
+      </button>
+
+      <button
+        type="button"
+        aria-label="Next slide"
+        onClick={(e) => {
+          e.stopPropagation();
+          nextSlide();
+        }}
+        style={{
+          position: 'absolute',
+          right: 'clamp(0.75rem, 2vw, 2.5rem)',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 25,
+          width: '44px',
+          height: '44px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(10, 10, 10, 0.45)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255, 255, 255, 0.25)',
+          color: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+          e.currentTarget.style.borderColor = '#ffffff';
+          e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(10, 10, 10, 0.45)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+          e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+        }}
+      >
+        <ChevronRight size={22} />
+      </button>
 
       {/* Main Content Layout */}
       <div
@@ -235,8 +321,8 @@ export const HeroSwipeSection: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          paddingTop: '2rem',
-          paddingBottom: '3rem',
+          paddingTop: '1rem',
+          paddingBottom: '1rem',
         }}
       >
         <div style={{ maxWidth: '680px' }}>
@@ -250,7 +336,7 @@ export const HeroSwipeSection: React.FC = () => {
               letterSpacing: '0.22em',
               color: 'rgba(255, 255, 255, 0.85)',
               display: 'block',
-              marginBottom: '1.75rem',
+              marginBottom: 'clamp(0.75rem, 1.8vh, 1.25rem)',
               textShadow: '0 1px 8px rgba(0, 0, 0, 0.6)',
             }}
           >
@@ -261,12 +347,12 @@ export const HeroSwipeSection: React.FC = () => {
           <h1
             style={{
               fontFamily: 'var(--font-serif)',
-              fontSize: 'clamp(2.25rem, 6.5vw, 6rem)',
-              lineHeight: 1.02,
+              fontSize: 'clamp(2.25rem, 5.5vw, 5rem)',
+              lineHeight: 1.04,
               letterSpacing: '-0.02em',
               fontWeight: 500,
               color: '#ffffff',
-              marginBottom: '1.5rem',
+              marginBottom: 'clamp(0.75rem, 1.5vh, 1.25rem)',
               whiteSpace: 'pre-line',
               textShadow: '0 2px 16px rgba(0, 0, 0, 0.65)',
             }}
@@ -278,12 +364,12 @@ export const HeroSwipeSection: React.FC = () => {
           <p
             style={{
               fontFamily: 'var(--font-sans)',
-              fontSize: 'clamp(0.9375rem, 1.8vw, 1.125rem)',
-              lineHeight: 1.65,
+              fontSize: 'clamp(0.875rem, 1.3vw, 1.0625rem)',
+              lineHeight: 1.55,
               color: '#ffffff',
               fontWeight: 300,
               maxWidth: '480px',
-              marginBottom: '2.25rem',
+              marginBottom: 'clamp(1rem, 2vh, 1.75rem)',
               textShadow: '0 2px 12px rgba(0, 0, 0, 0.65)',
             }}
           >
@@ -333,9 +419,9 @@ export const HeroSwipeSection: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingBottom: '2.5rem',
+          paddingBottom: 'clamp(1rem, 2vh, 1.75rem)',
           borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-          paddingTop: '1.5rem',
+          paddingTop: 'clamp(0.75rem, 1.5vh, 1.25rem)',
         }}
       >
         {/* Scroll indicator */}
@@ -343,7 +429,7 @@ export const HeroSwipeSection: React.FC = () => {
           <div
             style={{
               width: '1px',
-              height: '32px',
+              height: '24px',
               backgroundColor: 'rgba(255, 255, 255, 0.4)',
             }}
           />
