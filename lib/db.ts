@@ -27,8 +27,13 @@ export function getDbPool(): Pool | null {
       connectionString.includes('vercel-storage.com') ||
       connectionString.includes('sslmode=require');
 
+    // Clean connection string to prevent pg-connection-string from forcing strict ssl: true
+    const cleanConnectionString = connectionString
+      .replace(/[?&]sslmode=[^&]+/g, '')
+      .replace(/\?$/, '');
+
     const config: PoolConfig = {
-      connectionString,
+      connectionString: cleanConnectionString,
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,

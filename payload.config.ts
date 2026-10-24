@@ -30,7 +30,12 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || 'postgres://postgres:postgres@127.0.0.1:5432/kirtee_assoc',
+      connectionString: (process.env.DATABASE_URI || process.env.DATABASE_URL || 'postgres://postgres:postgres@127.0.0.1:5432/kirtee_assoc')
+        .replace(/[?&]sslmode=[^&]+/g, '')
+        .replace(/\?$/, ''),
+      ssl: {
+        rejectUnauthorized: false,
+      },
     },
   }),
   sharp,
