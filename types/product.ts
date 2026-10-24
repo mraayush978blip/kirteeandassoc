@@ -63,6 +63,24 @@ export interface Product {
   specifications: ProductSpecification[];
   downloads: ProductDownload[];
   
+  // Product Specific Social Links
+  socialLinks?: {
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+  };
+
+  // Customizable Subpage Section Overrides (Zero-hardcoding)
+  brochureButtonText?: string;
+  specsEyebrow?: string;
+  specsHeading?: string;
+  specsDescription?: string;
+  galleryEyebrow?: string;
+  galleryHeading?: string;
+  galleryDescription?: string;
+  relatedHeading?: string;
+
   // Product Relationships
   relatedProductSlugs?: string[];
 

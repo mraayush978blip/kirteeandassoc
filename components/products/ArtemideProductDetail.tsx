@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Product, ProductSpecification } from '@/types/product';
 import { ChevronLeft, ChevronRight, Download, X, Maximize2 } from 'lucide-react';
-import { FacebookIcon, XTwitterIcon, LinkedinIcon } from '@/components/ui/Icons';
+import { FacebookIcon, XTwitterIcon, LinkedinIcon, InstagramIcon } from '@/components/ui/Icons';
 
 export interface ArtemideProductDetailProps {
   product: Product;
@@ -328,139 +328,206 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
 
             {/* Right Column: Actions Row + Narrative */}
             <div style={{ gridColumn: 'span 12' }} className="lg:col-span-8">
-              {/* Top Row: Download Brochure Pill & Social Icons */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-end',
-                  gap: '1rem',
-                  marginBottom: '2rem',
-                  flexWrap: 'wrap',
-                }}
-              >
-                {/* Download Brochure Pill Button */}
-                <button
-                  type="button"
-                  onClick={handleDownloadBrochure}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.45rem',
-                    padding: '0.55rem 1.35rem',
-                    borderRadius: '9999px',
-                    border: '1px solid #111827',
-                    backgroundColor: 'transparent',
-                    color: '#111827',
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.8125rem',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#111827';
-                    e.currentTarget.style.color = '#ffffff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#111827';
-                  }}
-                >
-                  <span>Download Brochure</span>
-                  <Download size={13} strokeWidth={2} />
-                </button>
+              {/* Top Row: Download Brochure Pill & Social Icons (Only show if at least one link is configured) */}
+              {(() => {
+                const brochureUrl = product.downloads?.[0]?.fileUrl?.trim();
+                const hasBrochure = Boolean(brochureUrl && brochureUrl !== '#' && brochureUrl !== '');
 
-                {/* Social Share Round Icons: Facebook, X, LinkedIn */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <button
-                    type="button"
-                    onClick={() => handleShare('facebook')}
-                    aria-label="Share on Facebook"
+                const fbUrl = product.socialLinks?.facebook?.trim();
+                const twitterUrl = product.socialLinks?.twitter?.trim();
+                const linkedinUrl = product.socialLinks?.linkedin?.trim();
+                const instaUrl = product.socialLinks?.instagram?.trim();
+
+                const hasFb = Boolean(fbUrl && fbUrl !== '');
+                const hasTwitter = Boolean(twitterUrl && twitterUrl !== '');
+                const hasLinkedin = Boolean(linkedinUrl && linkedinUrl !== '');
+                const hasInsta = Boolean(instaUrl && instaUrl !== '');
+                const hasSocial = hasFb || hasTwitter || hasLinkedin || hasInsta;
+
+                if (!hasBrochure && !hasSocial) return null;
+
+                return (
+                  <div
                     style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      border: '1px solid #d1d5db',
-                      background: 'none',
-                      color: '#4b5563',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      transition: 'border-color 0.2s ease, color 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#111827';
-                      e.currentTarget.style.color = '#111827';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = '#d1d5db';
-                      e.currentTarget.style.color = '#4b5563';
+                      justifyContent: 'flex-end',
+                      gap: '1rem',
+                      marginBottom: '2rem',
+                      flexWrap: 'wrap',
                     }}
                   >
-                    <FacebookIcon size={14} />
-                  </button>
+                    {/* Download Brochure Pill Button */}
+                    {hasBrochure && (
+                      <a
+                        href={brochureUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          padding: '0.55rem 1.35rem',
+                          borderRadius: '9999px',
+                          border: '1px solid #111827',
+                          backgroundColor: 'transparent',
+                          color: '#111827',
+                          fontFamily: 'var(--font-sans)',
+                          fontSize: '0.8125rem',
+                          fontWeight: 500,
+                          cursor: 'pointer',
+                          textDecoration: 'none',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#111827';
+                          e.currentTarget.style.color = '#ffffff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = '#111827';
+                        }}
+                      >
+                        <span>{product.brochureButtonText || product.downloads?.[0]?.title || 'Download Brochure'}</span>
+                        <Download size={13} strokeWidth={2} />
+                      </a>
+                    )}
 
-                  <button
-                    type="button"
-                    onClick={() => handleShare('twitter')}
-                    aria-label="Share on X"
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      border: '1px solid #d1d5db',
-                      background: 'none',
-                      color: '#4b5563',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      transition: 'border-color 0.2s ease, color 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#111827';
-                      e.currentTarget.style.color = '#111827';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = '#d1d5db';
-                      e.currentTarget.style.color = '#4b5563';
-                    }}
-                  >
-                    <XTwitterIcon size={13} />
-                  </button>
+                    {/* Social Share Round Icons (Only configured platforms) */}
+                    {hasSocial && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                        {hasFb && (
+                          <a
+                            href={fbUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Facebook Profile"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              border: '1px solid #d1d5db',
+                              background: 'none',
+                              color: '#4b5563',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              textDecoration: 'none',
+                              transition: 'border-color 0.2s ease, color 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.borderColor = '#111827';
+                              e.currentTarget.style.color = '#111827';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.borderColor = '#d1d5db';
+                              e.currentTarget.style.color = '#4b5563';
+                            }}
+                          >
+                            <FacebookIcon size={14} />
+                          </a>
+                        )}
 
-                  <button
-                    type="button"
-                    onClick={() => handleShare('linkedin')}
-                    aria-label="Share on LinkedIn"
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      border: '1px solid #d1d5db',
-                      background: 'none',
-                      color: '#4b5563',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      transition: 'border-color 0.2s ease, color 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#111827';
-                      e.currentTarget.style.color = '#111827';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = '#d1d5db';
-                      e.currentTarget.style.color = '#4b5563';
-                    }}
-                  >
-                    <LinkedinIcon size={13} />
-                  </button>
-                </div>
-              </div>
+                        {hasTwitter && (
+                          <a
+                            href={twitterUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="X (Twitter) Profile"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              border: '1px solid #d1d5db',
+                              background: 'none',
+                              color: '#4b5563',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              textDecoration: 'none',
+                              transition: 'border-color 0.2s ease, color 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.borderColor = '#111827';
+                              e.currentTarget.style.color = '#111827';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.borderColor = '#d1d5db';
+                              e.currentTarget.style.color = '#4b5563';
+                            }}
+                          >
+                            <XTwitterIcon size={13} />
+                          </a>
+                        )}
+
+                        {hasLinkedin && (
+                          <a
+                            href={linkedinUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="LinkedIn Profile"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              border: '1px solid #d1d5db',
+                              background: 'none',
+                              color: '#4b5563',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              textDecoration: 'none',
+                              transition: 'border-color 0.2s ease, color 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.borderColor = '#111827';
+                              e.currentTarget.style.color = '#111827';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.borderColor = '#d1d5db';
+                              e.currentTarget.style.color = '#4b5563';
+                            }}
+                          >
+                            <LinkedinIcon size={13} />
+                          </a>
+                        )}
+
+                        {hasInsta && (
+                          <a
+                            href={instaUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Instagram Profile"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              border: '1px solid #d1d5db',
+                              background: 'none',
+                              color: '#4b5563',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              textDecoration: 'none',
+                              transition: 'border-color 0.2s ease, color 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.borderColor = '#111827';
+                              e.currentTarget.style.color = '#111827';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.borderColor = '#d1d5db';
+                              e.currentTarget.style.color = '#4b5563';
+                            }}
+                          >
+                            <InstagramIcon size={14} />
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* Editorial Narrative Text */}
               <div style={{ position: 'relative', paddingBottom: '2rem' }}>
@@ -568,7 +635,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     marginBottom: '0.5rem',
                   }}
                 >
-                  ENGINEERING &amp; PHOTOMETRIC MATRIX
+                  {product.specsEyebrow || 'ENGINEERING & PHOTOMETRIC MATRIX'}
                 </span>
                 <h2
                   style={{
@@ -580,7 +647,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     margin: 0,
                   }}
                 >
-                  Technical Specifications
+                  {product.specsHeading || 'Technical Specifications'}
                 </h2>
                 <p
                   style={{
@@ -592,7 +659,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     lineHeight: 1.6,
                   }}
                 >
-                  Precision photometric data, electrical ratings, and mechanical dimensions measured in accordance with IESNA LM-79 &amp; LM-80 laboratory standards.
+                  {product.specsDescription || 'Precision photometric data, electrical ratings, and mechanical dimensions measured in accordance with laboratory standards.'}
                 </p>
               </div>
 
@@ -686,7 +753,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               marginBottom: '0.5rem',
             }}
           >
-            VISUAL PERSPECTIVES &amp; CRAFT
+            {product.galleryEyebrow || 'VISUAL PERSPECTIVES & CRAFT'}
           </span>
           <h2
             style={{
@@ -698,7 +765,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               margin: 0,
             }}
           >
-            Architectural Installation &amp; Detail Gallery
+            {product.galleryHeading || 'Architectural Installation & Detail Gallery'}
           </h2>
           <p
             style={{
@@ -710,7 +777,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               lineHeight: 1.6,
             }}
           >
-            Photographic portfolio capturing {product.name}&apos;s optical precision, tactile surface craft, and luminous dialogue within architectural spaces.
+            {product.galleryDescription || `Photographic portfolio capturing ${product.name}'s optical precision, tactile surface craft, and luminous dialogue within architectural spaces.`}
           </p>
         </div>
 
@@ -1158,7 +1225,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                 letterSpacing: '0.04em',
               }}
             >
-              Related Luminaire Families
+              {product.relatedHeading || 'Related Luminaire Families'}
             </h3>
 
             <div

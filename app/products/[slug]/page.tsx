@@ -1,17 +1,20 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProductBySlug, getAllProducts, getRelatedProducts } from '@/lib/data/products';
+import { getProductBySlugFromDb, getProductsFromDb } from '@/lib/db';
 import { ArtemideProductDetail } from '@/components/products/ArtemideProductDetail';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { siteConfig } from '@/config/site';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  const allProducts = getAllProducts();
+  const allProducts = await getProductsFromDb();
   const params = allProducts.map((product) => ({
     slug: product.slug,
   }));
@@ -21,7 +24,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlugFromDb(slug);
 
   if (!product) {
     return {
@@ -52,13 +55,16 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlugFromDb(slug);
 
   if (!product) {
     notFound();
   }
 
-  const relatedProducts = getRelatedProducts(product);
+  const allProducts = await getProductsFromDb();
+  const relatedProducts = allProducts
+    .filter((p) => p.slug !== product.slug && p.catalogType === product.catalogType && p.status === 'published')
+    .slice(0, 3);
 
   return (
     <>

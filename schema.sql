@@ -83,9 +83,29 @@ CREATE TABLE IF NOT EXISTS products (
     gallery_urls JSONB DEFAULT '[]'::jsonb,
     specifications JSONB DEFAULT '[]'::jsonb,
     downloads JSONB DEFAULT '[]'::jsonb,
+    social_links JSONB DEFAULT '{}'::jsonb,
+    brochure_button_text TEXT,
+    specs_eyebrow TEXT,
+    specs_heading TEXT,
+    specs_description TEXT,
+    gallery_eyebrow TEXT,
+    gallery_heading TEXT,
+    gallery_description TEXT,
+    related_heading TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Safe column additions if products table already exists
+ALTER TABLE products ADD COLUMN IF NOT EXISTS social_links JSONB DEFAULT '{}'::jsonb;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS brochure_button_text TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS specs_eyebrow TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS specs_heading TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS specs_description TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS gallery_eyebrow TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS gallery_heading TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS gallery_description TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS related_heading TEXT;
 
 -- =====================================================================
 -- 6. CONTACT SUBMISSIONS / SPECIFICATION INQUIRIES

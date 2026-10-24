@@ -1,30 +1,34 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { getProductsByType } from '@/lib/data/products';
+import { getProductsFromDb } from '@/lib/db';
 import { ArtemideCategoryView } from '@/components/products/ArtemideCategoryView';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { siteConfig } from '@/config/site';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata: Metadata = {
-  title: 'WET GOODS | Exterior & Subterranean Systems',
+  title: 'WET GOODS | Architectural Submerged & Outdoor Systems',
   description:
-    'Architectural exterior, in-ground subterranean luminaires, and underwater optical projectors built with continuous IP68 submersion sealing, IK10 impact resistance, and marine-grade alloys.',
+    'Architectural outdoor, submerged, and weatherproof luminaires engineered for extreme environmental durability, facade grazing, and subterranean reveals.',
   openGraph: {
     title: 'WET GOODS | Kirtee & Associates Architectural Collection',
     description:
-      'Architectural exterior, in-ground subterranean luminaires, and underwater optical projectors built with continuous IP68 submersion sealing, IK10 impact resistance, and marine-grade alloys.',
+      'Architectural outdoor, submerged, and weatherproof luminaires engineered for extreme environmental durability, facade grazing, and subterranean reveals.',
   },
 };
 
-export default function WetGoodsPage() {
-  const wetProducts = getProductsByType('wet');
+export default async function WetGoodsPage() {
+  const allProducts = await getProductsFromDb();
+  const wetProducts = allProducts.filter((p) => p.status === 'published' && p.catalogType === 'wet');
 
   return (
     <>
       <ArtemideCategoryView
         title="WET GOODS"
         categoryType="wet"
-        description="Architectural exterior, in-ground subterranean luminaires, and underwater optical projectors built with continuous IP68 submersion sealing, IK10 impact resistance, and marine-grade alloys. Engineered to withstand extreme atmospheric conditions while delivering uncompromising optical precision."
+        description="Architectural outdoor, submerged, and weatherproof luminaires engineered for extreme environmental durability, facade grazing, and subterranean reveals."
         products={wetProducts}
       />
       <JsonLd

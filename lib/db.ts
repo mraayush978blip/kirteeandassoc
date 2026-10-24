@@ -236,6 +236,15 @@ export async function getProductsFromDb(): Promise<Product[]> {
         gallery: Array.isArray(r.gallery_urls) ? r.gallery_urls : [],
         specifications: Array.isArray(r.specifications) ? r.specifications : [],
         downloads: Array.isArray(r.downloads) ? r.downloads : [],
+        socialLinks: r.social_links || (r.downloads?.[0]?.socialLinks ? r.downloads[0].socialLinks : undefined),
+        brochureButtonText: r.brochure_button_text || undefined,
+        specsEyebrow: r.specs_eyebrow || undefined,
+        specsHeading: r.specs_heading || undefined,
+        specsDescription: r.specs_description || undefined,
+        galleryEyebrow: r.gallery_eyebrow || undefined,
+        galleryHeading: r.gallery_heading || undefined,
+        galleryDescription: r.gallery_description || undefined,
+        relatedHeading: r.related_heading || undefined,
         seo: {
           metaTitle: `${r.name} | Kirtee & Associates`,
           metaDescription: r.short_description || r.name,
@@ -261,6 +270,14 @@ export async function getProductsFromDb(): Promise<Product[]> {
 
   // 3. Fallback to default in-memory catalog
   return fallbackProducts;
+}
+
+export async function getProductBySlugFromDb(slug: string): Promise<Product | undefined> {
+  const all = await getProductsFromDb();
+  if (slug === 'outdoor-in-ground-ingraze-frame') {
+    return all.find((p) => p.slug === 'ingraze-frame-1000' && p.status === 'published');
+  }
+  return all.find((p) => p.slug === slug && p.status === 'published');
 }
 
 export async function saveProductToDb(product: Partial<Product>): Promise<{ success: boolean; id: string; error?: string }> {
@@ -302,10 +319,20 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
     gallery: product.gallery || [],
     specifications: product.specifications || [],
     downloads: product.downloads || [],
+    socialLinks: product.socialLinks || {},
+    brochureButtonText: product.brochureButtonText || '',
+    specsEyebrow: product.specsEyebrow || '',
+    specsHeading: product.specsHeading || '',
+    specsDescription: product.specsDescription || '',
+    galleryEyebrow: product.galleryEyebrow || '',
+    galleryHeading: product.galleryHeading || '',
+    galleryDescription: product.galleryDescription || '',
+    relatedHeading: product.relatedHeading || '',
     seo: product.seo || {
       metaTitle: `${name} | Kirtee & Associates`,
       metaDescription: product.shortDescription || name,
     },
+    createdAt: product.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 

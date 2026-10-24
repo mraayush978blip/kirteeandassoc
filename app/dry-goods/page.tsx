@@ -1,9 +1,12 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { getProductsByType } from '@/lib/data/products';
+import { getProductsFromDb } from '@/lib/db';
 import { ArtemideCategoryView } from '@/components/products/ArtemideCategoryView';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { siteConfig } from '@/config/site';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: 'DRY GOODS | Architectural Indoor Systems',
@@ -16,8 +19,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DryGoodsPage() {
-  const dryProducts = getProductsByType('dry');
+export default async function DryGoodsPage() {
+  const allProducts = await getProductsFromDb();
+  const dryProducts = allProducts.filter((p) => p.status === 'published' && p.catalogType === 'dry');
 
   return (
     <>

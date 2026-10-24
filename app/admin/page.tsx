@@ -505,6 +505,12 @@ export default function AdminPage() {
           fileType: 'PDF',
         },
       ],
+      socialLinks: {
+        facebook: '',
+        twitter: '',
+        linkedin: '',
+        instagram: '',
+      },
       isFeatured: true,
       order: products.length + 1,
     });
@@ -2617,6 +2623,70 @@ export default function AdminPage() {
                   }}
                   style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
                 />
+                <span style={{ fontSize: '0.7rem', color: '#6b7280', marginTop: '0.2rem', display: 'block' }}>
+                  Leave empty if you do not want to show the "Download Brochure" button on the product sub-page.
+                </span>
+              </div>
+
+              {/* Product Social Media Links */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                  Product Social Links (Leave empty to hide social buttons on product sub-page)
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', color: '#6b7280', marginBottom: '0.2rem' }}>Facebook URL</label>
+                    <input
+                      type="url"
+                      placeholder="https://facebook.com/..."
+                      value={editingProduct.socialLinks?.facebook || ''}
+                      onChange={(e) => setEditingProduct({
+                        ...editingProduct,
+                        socialLinks: { ...editingProduct.socialLinks, facebook: e.target.value }
+                      })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', color: '#6b7280', marginBottom: '0.2rem' }}>X / Twitter URL</label>
+                    <input
+                      type="url"
+                      placeholder="https://x.com/..."
+                      value={editingProduct.socialLinks?.twitter || ''}
+                      onChange={(e) => setEditingProduct({
+                        ...editingProduct,
+                        socialLinks: { ...editingProduct.socialLinks, twitter: e.target.value }
+                      })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', color: '#6b7280', marginBottom: '0.2rem' }}>LinkedIn URL</label>
+                    <input
+                      type="url"
+                      placeholder="https://linkedin.com/in/..."
+                      value={editingProduct.socialLinks?.linkedin || ''}
+                      onChange={(e) => setEditingProduct({
+                        ...editingProduct,
+                        socialLinks: { ...editingProduct.socialLinks, linkedin: e.target.value }
+                      })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', color: '#6b7280', marginBottom: '0.2rem' }}>Instagram URL</label>
+                    <input
+                      type="url"
+                      placeholder="https://instagram.com/..."
+                      value={editingProduct.socialLinks?.instagram || ''}
+                      onChange={(e) => setEditingProduct({
+                        ...editingProduct,
+                        socialLinks: { ...editingProduct.socialLinks, instagram: e.target.value }
+                      })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Dynamic Technical Specifications Section */}
@@ -2740,6 +2810,124 @@ export default function AdminPage() {
                 >
                   <Crop size={15} /> Open Photo Grid Builder
                 </button>
+              </div>
+
+              {/* Sub-Page Custom Section Headings & Labels (Zero Hardcoding) */}
+              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1.25rem' }}>
+                <div style={{ marginBottom: '0.75rem' }}>
+                  <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '0.9375rem', fontWeight: 600, color: '#111827' }}>
+                    Sub-Page Section Headings &amp; Custom Text (Zero-Hardcoding)
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>
+                    Customize every heading, eyebrow label, and descriptive paragraph appearing on this product's sub-page.
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#4b5563', marginBottom: '0.2rem' }}>
+                      Brochure Button Text
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Download Brochure"
+                      value={editingProduct.brochureButtonText || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, brochureButtonText: e.target.value })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#4b5563', marginBottom: '0.2rem' }}>
+                      Related Products Section Title
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Related Luminaire Families"
+                      value={editingProduct.relatedHeading || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, relatedHeading: e.target.value })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#4b5563', marginBottom: '0.2rem' }}>
+                      Technical Specs Eyebrow
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. ENGINEERING & PHOTOMETRIC MATRIX"
+                      value={editingProduct.specsEyebrow || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, specsEyebrow: e.target.value })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#4b5563', marginBottom: '0.2rem' }}>
+                      Technical Specs Heading
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Technical Specifications"
+                      value={editingProduct.specsHeading || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, specsHeading: e.target.value })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#4b5563', marginBottom: '0.2rem' }}>
+                      Technical Specs Description Paragraph
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Precision photometric data, electrical ratings, and mechanical dimensions measured in accordance with laboratory standards."
+                      value={editingProduct.specsDescription || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, specsDescription: e.target.value })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#4b5563', marginBottom: '0.2rem' }}>
+                      Visual Gallery Eyebrow
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. VISUAL PERSPECTIVES & CRAFT"
+                      value={editingProduct.galleryEyebrow || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, galleryEyebrow: e.target.value })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#4b5563', marginBottom: '0.2rem' }}>
+                      Visual Gallery Heading
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Architectural Installation & Detail Gallery"
+                      value={editingProduct.galleryHeading || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, galleryHeading: e.target.value })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#4b5563', marginBottom: '0.2rem' }}>
+                      Visual Gallery Description Paragraph
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Photographic portfolio capturing optical precision, tactile craft..."
+                      value={editingProduct.galleryDescription || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, galleryDescription: e.target.value })}
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Submit Buttons */}
