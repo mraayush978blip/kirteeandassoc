@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS products (
     gallery_urls JSONB DEFAULT '[]'::jsonb,
     specifications JSONB DEFAULT '[]'::jsonb,
     downloads JSONB DEFAULT '[]'::jsonb,
+    hero_carousel_images JSONB DEFAULT '[]'::jsonb,
     social_links JSONB DEFAULT '{}'::jsonb,
     brochure_button_text TEXT,
     specs_eyebrow TEXT,
@@ -97,6 +98,7 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 -- Safe column additions if products table already exists
+ALTER TABLE products ADD COLUMN IF NOT EXISTS hero_carousel_images JSONB DEFAULT '[]'::jsonb;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS social_links JSONB DEFAULT '{}'::jsonb;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS brochure_button_text TEXT;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS specs_eyebrow TEXT;

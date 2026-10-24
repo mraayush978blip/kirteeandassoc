@@ -16,8 +16,13 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
   product,
   relatedProducts,
 }) => {
-  const allImages = [product.heroImage, ...(product.gallery || [])].filter(Boolean);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const allImages = (product.heroCarouselImages && product.heroCarouselImages.length > 0)
+    ? product.heroCarouselImages
+    : [product.heroImage, ...(product.gallery || [])].filter(Boolean);
+  const pinnedIndex = allImages.findIndex(
+    (img) => img.isPrimary || (product.heroImage && img.url === product.heroImage.url)
+  );
+  const [currentImageIndex, setCurrentImageIndex] = useState(pinnedIndex >= 0 ? pinnedIndex : 0);
   const [selectedPhoto, setSelectedPhoto] = useState<{
     url: string;
     alt: string;
@@ -101,7 +106,11 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
   const usedUrls = new Set<string>();
   const productPhotos: { url: string; alt: string; tag: string; caption: string }[] = [];
 
-  const rawProductImgs = [product.heroImage, ...(product.gallery || [])].filter(Boolean);
+  const rawProductImgs = [
+    product.heroImage,
+    ...(product.heroCarouselImages || []),
+    ...(product.gallery || []),
+  ].filter(Boolean);
   for (const img of rawProductImgs) {
     if (img && img.url && !usedUrls.has(img.url) && productPhotos.length < 5) {
       usedUrls.add(img.url);

@@ -41,9 +41,13 @@ import {
   Send,
   SlidersHorizontal,
   ChevronRight,
+  Pin,
+  Star,
+  Upload,
+  ArrowLeft,
 } from 'lucide-react';
 import { formatBytes } from '@/lib/format';
-import { Product, ProductSpecification } from '@/types/product';
+import { Product, ProductSpecification, ProductImage } from '@/types/product';
 import { loginWithSupabase } from '@/lib/supabase-auth';
 import {
   HeroSlideConfig,
@@ -125,6 +129,8 @@ export default function AdminPage() {
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const [isGridBuilderOpen, setIsGridBuilderOpen] = useState(false);
+  const [newCarouselUrl, setNewCarouselUrl] = useState('');
+  const carouselFileInputRef = useRef<HTMLInputElement>(null);
 
   // 4. Projects State
   const [projectsList, setProjectsList] = useState<ProjectConfig[]>(DEFAULT_PROJECTS);
@@ -490,6 +496,14 @@ export default function AdminPage() {
         alt: 'Luminaire hero view',
         isPrimary: true,
       },
+      heroCarouselImages: [
+        {
+          id: `hero-${Date.now()}`,
+          url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80',
+          alt: 'Luminaire hero view',
+          isPrimary: true,
+        },
+      ],
       specifications: [
         { id: 's1', label: 'Luminous Flux', value: '2,884', unit: 'lm', group: 'Optical' },
         { id: 's2', label: 'Color Temperature', value: '3000K Warm White', unit: '', group: 'Optical' },
@@ -514,11 +528,26 @@ export default function AdminPage() {
       isFeatured: true,
       order: products.length + 1,
     });
+    setNewCarouselUrl('');
     setIsProductModalOpen(true);
   };
 
   const openEditProductForm = (p: Product) => {
-    setEditingProduct({ ...p });
+    const heroCarouselImages = (p.heroCarouselImages && p.heroCarouselImages.length > 0)
+      ? [...p.heroCarouselImages]
+      : (p.heroImage ? [{ ...p.heroImage, isPrimary: true }] : []);
+
+    const activeHeroUrl = p.heroImage?.url;
+    const syncedImages = heroCarouselImages.map((img, idx) => ({
+      ...img,
+      isPrimary: activeHeroUrl ? img.url === activeHeroUrl : idx === 0,
+    }));
+
+    setNewCarouselUrl('');
+    setEditingProduct({
+      ...p,
+      heroCarouselImages: syncedImages,
+    });
     setIsProductModalOpen(true);
   };
 
@@ -629,6 +658,143 @@ export default function AdminPage() {
     const copy = [...editingProduct.specifications];
     copy[index] = { ...copy[index], [field]: val };
     setEditingProduct({ ...editingProduct, specifications: copy });
+  };
+
+  // -------------------------------------------------------------
+  // Product Sub-Page Top Showcase Slider & Catalog Pinning Helpers
+  // -------------------------------------------------------------
+  const handleCarouselFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const objectUrl = URL.createObjectURL(file);
+    setCropperModal({
+      isOpen: true,
+      imageSrc: objectUrl,
+      aspectPreset: '16:9',
+      onSuccess: (croppedDataUrl) => {
+        addCarouselImage(croppedDataUrl, file.name.replace(/\.[^/.]+$/, ''));
+      },
+    });
+    e.target.value = '';
+  };
+
+  const addCarouselImage = (url: string, altText?: string) => {
+    if (!editingProduct) return;
+    const current = editingProduct.heroCarouselImages ? [...editingProduct.heroCarouselImages] : [];
+    const isFirst = current.length === 0;
+    const newImg: ProductImage = {
+      id: `cimg-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      url,
+      alt: altText || `${editingProduct.name || 'Luminaire'} showcase view`,
+      isPrimary: isFirst,
+    };
+    const updated = [...current, newImg];
+    const updatedHero = isFirst || !editingProduct.heroImage?.url ? newImg : editingProduct.heroImage;
+    setEditingProduct({
+      ...editingProduct,
+      heroImage: updatedHero,
+      heroCarouselImages: updated,
+    });
+    showToast(isFirst ? 'Showcase image added & pinned to catalog card!' : 'Showcase slider image added!');
+  };
+
+  const pinCarouselImage = (index: number) => {
+    if (!editingProduct || !editingProduct.heroCarouselImages) return;
+    const images = [...editingProduct.heroCarouselImages];
+    const target = images[index];
+    if (!target) return;
+
+    const updated = images.map((img, idx) => ({
+      ...img,
+      isPrimary: idx === index,
+    }));
+
+    const newHero: ProductImage = {
+      id: target.id || `img-${Date.now()}`,
+      url: target.url,
+      alt: target.alt || editingProduct.name || 'Hero Luminaire',
+      isPrimary: true,
+    };
+
+    setEditingProduct({
+      ...editingProduct,
+      heroImage: newHero,
+      heroCarouselImages: updated,
+    });
+    showToast(`📌 Pinned "${target.alt || 'Selected Image'}" to show on Product Page & Catalog Cards!`);
+  };
+
+  const moveCarouselImage = (index: number, direction: 'left' | 'right') => {
+    if (!editingProduct || !editingProduct.heroCarouselImages) return;
+    const images = [...editingProduct.heroCarouselImages];
+    const targetIndex = direction === 'left' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= images.length) return;
+    const temp = images[index];
+    images[index] = images[targetIndex];
+    images[targetIndex] = temp;
+    setEditingProduct({
+      ...editingProduct,
+      heroCarouselImages: images,
+    });
+  };
+
+  const removeCarouselImage = (index: number) => {
+    if (!editingProduct || !editingProduct.heroCarouselImages) return;
+    const images = [...editingProduct.heroCarouselImages];
+    const [removed] = images.splice(index, 1);
+    let newHero = editingProduct.heroImage;
+    if (removed && (removed.url === editingProduct.heroImage?.url || removed.isPrimary)) {
+      if (images.length > 0) {
+        images[0].isPrimary = true;
+        newHero = images[0];
+      }
+    }
+    setEditingProduct({
+      ...editingProduct,
+      heroImage: newHero,
+      heroCarouselImages: images,
+    });
+    showToast('Image removed from showcase slider.');
+  };
+
+  const updateCarouselImageAlt = (index: number, alt: string) => {
+    if (!editingProduct || !editingProduct.heroCarouselImages) return;
+    const images = [...editingProduct.heroCarouselImages];
+    images[index] = { ...images[index], alt };
+    let newHero = editingProduct.heroImage;
+    if (images[index].isPrimary && newHero) {
+      newHero = { ...newHero, alt };
+    }
+    setEditingProduct({
+      ...editingProduct,
+      heroImage: newHero,
+      heroCarouselImages: images,
+    });
+  };
+
+  const cropCarouselImage = (index: number) => {
+    if (!editingProduct || !editingProduct.heroCarouselImages) return;
+    const target = editingProduct.heroCarouselImages[index];
+    if (!target) return;
+    setCropperModal({
+      isOpen: true,
+      imageSrc: target.url,
+      aspectPreset: '16:9',
+      onSuccess: (croppedUrl) => {
+        const images = [...(editingProduct.heroCarouselImages || [])];
+        images[index] = { ...images[index], url: croppedUrl };
+        let newHero = editingProduct.heroImage;
+        if (images[index].isPrimary) {
+          newHero = { ...images[index], url: croppedUrl, isPrimary: true };
+        }
+        setEditingProduct({
+          ...editingProduct,
+          heroImage: newHero,
+          heroCarouselImages: images,
+        });
+        showToast('Cropped image updated successfully!');
+      },
+    });
   };
 
   // -------------------------------------------------------------
@@ -2603,6 +2769,374 @@ export default function AdminPage() {
                   onChange={(e) => setEditingProduct({ ...editingProduct, editorialStory: e.target.value, fullDescription: e.target.value })}
                   style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', resize: 'vertical' }}
                 />
+              </div>
+
+              {/* Top Sub-Page Carousel Showcase Images & Product Page Pinning */}
+              <div
+                style={{
+                  border: '1px solid #dbeafe',
+                  borderRadius: '8px',
+                  backgroundColor: '#f8fafc',
+                  padding: '1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                      <span style={{ fontSize: '1.15rem' }}>📸</span>
+                      <h4 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: '#0f172a' }}>
+                        Top Sub-Page Carousel Showcase Images (Slider)
+                      </h4>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.75rem', color: '#475569', maxWidth: '640px', lineHeight: 1.45 }}>
+                      Manage the top full-width slider shown at the very top of the product sub-page.
+                      Click <strong>"📌 Pin this one to show on product page"</strong> on any image to designate it as the primary card image shown on catalog listing pages (<code>/dry-goods</code>, <code>/wet-goods</code>, <code>/products</code>).
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="file"
+                      ref={carouselFileInputRef}
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleCarouselFileUpload}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => carouselFileInputRef.current?.click()}
+                      style={{
+                        padding: '0.5rem 0.85rem',
+                        borderRadius: '4px',
+                        border: '1px solid #2563eb',
+                        backgroundColor: '#2563eb',
+                        color: '#ffffff',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        boxShadow: '0 1px 3px rgba(37,99,235,0.2)',
+                      }}
+                    >
+                      <Upload size={14} /> Upload &amp; Crop (WebP)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Add Image by URL Bar */}
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input
+                    type="url"
+                    placeholder="Or paste direct image URL (Unsplash, Supabase, CDN)..."
+                    value={newCarouselUrl}
+                    onChange={(e) => setNewCarouselUrl(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (newCarouselUrl.trim()) {
+                          addCarouselImage(newCarouselUrl.trim());
+                          setNewCarouselUrl('');
+                        }
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '4px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.8125rem',
+                      backgroundColor: '#ffffff',
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (newCarouselUrl.trim()) {
+                        addCarouselImage(newCarouselUrl.trim());
+                        setNewCarouselUrl('');
+                      }
+                    }}
+                    disabled={!newCarouselUrl.trim()}
+                    style={{
+                      padding: '0.5rem 0.85rem',
+                      borderRadius: '4px',
+                      border: '1px solid #cbd5e1',
+                      backgroundColor: newCarouselUrl.trim() ? '#0f172a' : '#e2e8f0',
+                      color: newCarouselUrl.trim() ? '#ffffff' : '#94a3b8',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: newCarouselUrl.trim() ? 'pointer' : 'not-allowed',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                    }}
+                  >
+                    <Plus size={14} /> Add Image URL
+                  </button>
+                </div>
+
+                {/* Carousel Image Cards List */}
+                {(!editingProduct.heroCarouselImages || editingProduct.heroCarouselImages.length === 0) ? (
+                  <div
+                    style={{
+                      padding: '1.5rem',
+                      border: '1px dashed #cbd5e1',
+                      borderRadius: '6px',
+                      textAlign: 'center',
+                      backgroundColor: '#ffffff',
+                    }}
+                  >
+                    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.8125rem', color: '#64748b' }}>
+                      No slider showcase images configured yet.
+                    </p>
+                    <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8' }}>
+                      Click "Upload &amp; Crop (WebP)" or paste an image URL above to add the first image.
+                    </p>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                      gap: '1rem',
+                    }}
+                  >
+                    {editingProduct.heroCarouselImages.map((cImg, cIdx) => {
+                      const isPinned = cImg.isPrimary || (editingProduct.heroImage && cImg.url === editingProduct.heroImage.url);
+                      return (
+                        <div
+                          key={cImg.id || `cimg-${cIdx}`}
+                          style={{
+                            border: isPinned ? '2px solid #059669' : '1px solid #e2e8f0',
+                            borderRadius: '6px',
+                            backgroundColor: '#ffffff',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            boxShadow: isPinned ? '0 4px 12px rgba(5,150,105,0.15)' : '0 1px 3px rgba(0,0,0,0.04)',
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          {/* Image Thumbnail with Overlay Badges */}
+                          <div style={{ position: 'relative', width: '100%', height: '150px', backgroundColor: '#e2e8f0' }}>
+                            <Image
+                              src={cImg.url}
+                              alt={cImg.alt || `Slide ${cIdx + 1}`}
+                              fill
+                              sizes="300px"
+                              style={{ objectFit: 'cover' }}
+                            />
+
+                            {/* Slide Number Badge */}
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: '0.5rem',
+                                left: '0.5rem',
+                                padding: '0.2rem 0.5rem',
+                                borderRadius: '3px',
+                                backgroundColor: 'rgba(0,0,0,0.7)',
+                                backdropFilter: 'blur(4px)',
+                                color: '#ffffff',
+                                fontSize: '0.6875rem',
+                                fontWeight: 700,
+                                zIndex: 2,
+                              }}
+                            >
+                              SLIDE #{cIdx + 1}
+                            </div>
+
+                            {/* Pinned Status or Pin Action Button */}
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: '0.5rem',
+                                right: '0.5rem',
+                                zIndex: 2,
+                              }}
+                            >
+                              {isPinned ? (
+                                <div
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.3rem',
+                                    backgroundColor: '#059669',
+                                    color: '#ffffff',
+                                    padding: '0.25rem 0.6rem',
+                                    borderRadius: '3px',
+                                    fontSize: '0.6875rem',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.04em',
+                                    boxShadow: '0 2px 6px rgba(5,150,105,0.4)',
+                                  }}
+                                >
+                                  <Star size={11} fill="#ffffff" /> PINNED TO PRODUCT CARD
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => pinCarouselImage(cIdx)}
+                                  title="Pin this image to show as the main card photo when users browse the product catalog"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem',
+                                    backgroundColor: 'rgba(15, 23, 42, 0.88)',
+                                    color: '#ffffff',
+                                    border: 'none',
+                                    padding: '0.3rem 0.6rem',
+                                    borderRadius: '3px',
+                                    fontSize: '0.6875rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    backdropFilter: 'blur(4px)',
+                                    transition: 'background-color 0.2s ease',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#059669';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(15, 23, 42, 0.88)';
+                                  }}
+                                >
+                                  <Pin size={11} /> Pin this one to show on product page
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Info & Action Controls */}
+                          <div style={{ padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <span
+                                style={{
+                                  fontSize: '0.7rem',
+                                  fontWeight: 600,
+                                  color: isPinned ? '#059669' : '#64748b',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.25rem',
+                                }}
+                              >
+                                {isPinned ? (
+                                  <>
+                                    <Check size={12} strokeWidth={3} /> Shown on Product Listing Page
+                                  </>
+                                ) : (
+                                  `Subpage Slide View ${cIdx + 1}`
+                                )}
+                              </span>
+
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                {/* Re-order Left */}
+                                <button
+                                  type="button"
+                                  onClick={() => moveCarouselImage(cIdx, 'left')}
+                                  disabled={cIdx === 0}
+                                  title="Move slide left"
+                                  style={{
+                                    padding: '0.25rem 0.4rem',
+                                    borderRadius: '3px',
+                                    border: '1px solid #cbd5e1',
+                                    backgroundColor: '#f1f5f9',
+                                    color: cIdx === 0 ? '#cbd5e1' : '#334155',
+                                    cursor: cIdx === 0 ? 'not-allowed' : 'pointer',
+                                    fontSize: '0.7rem',
+                                  }}
+                                >
+                                  ◀
+                                </button>
+
+                                {/* Re-order Right */}
+                                <button
+                                  type="button"
+                                  onClick={() => moveCarouselImage(cIdx, 'right')}
+                                  disabled={cIdx === (editingProduct.heroCarouselImages?.length || 1) - 1}
+                                  title="Move slide right"
+                                  style={{
+                                    padding: '0.25rem 0.4rem',
+                                    borderRadius: '3px',
+                                    border: '1px solid #cbd5e1',
+                                    backgroundColor: '#f1f5f9',
+                                    color: cIdx === (editingProduct.heroCarouselImages?.length || 1) - 1 ? '#cbd5e1' : '#334155',
+                                    cursor: cIdx === (editingProduct.heroCarouselImages?.length || 1) - 1 ? 'not-allowed' : 'pointer',
+                                    fontSize: '0.7rem',
+                                  }}
+                                >
+                                  ▶
+                                </button>
+
+                                {/* Crop Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => cropCarouselImage(cIdx)}
+                                  title="Crop & optimize image"
+                                  style={{
+                                    padding: '0.25rem 0.45rem',
+                                    borderRadius: '3px',
+                                    border: '1px solid #cbd5e1',
+                                    backgroundColor: '#f8fafc',
+                                    color: '#2563eb',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    fontSize: '0.7rem',
+                                  }}
+                                >
+                                  <Crop size={12} />
+                                </button>
+
+                                {/* Delete Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => removeCarouselImage(cIdx)}
+                                  title="Delete slide"
+                                  style={{
+                                    padding: '0.25rem 0.45rem',
+                                    borderRadius: '3px',
+                                    border: '1px solid #fecaca',
+                                    backgroundColor: '#fef2f2',
+                                    color: '#dc2626',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    fontSize: '0.7rem',
+                                  }}
+                                >
+                                  <Trash2 size={12} />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Caption / Alt text input */}
+                            <div>
+                              <input
+                                type="text"
+                                placeholder="Image caption / alt text (e.g. Honeycomb diffuser angle view)"
+                                value={cImg.alt || ''}
+                                onChange={(e) => updateCarouselImageAlt(cIdx, e.target.value)}
+                                style={{
+                                  width: '100%',
+                                  padding: '0.35rem 0.55rem',
+                                  borderRadius: '3px',
+                                  border: '1px solid #e2e8f0',
+                                  fontSize: '0.75rem',
+                                  color: '#334155',
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Documentation & Google Drive Format Link */}

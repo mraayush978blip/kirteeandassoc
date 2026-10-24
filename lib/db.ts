@@ -233,6 +233,18 @@ export async function getProductsFromDb(): Promise<Product[]> {
           alt: r.hero_image_alt || r.name,
           isPrimary: true,
         },
+        heroCarouselImages: Array.isArray(r.hero_carousel_images) && r.hero_carousel_images.length > 0
+          ? r.hero_carousel_images
+          : (Array.isArray(r.gallery_urls) && r.gallery_urls.length > 0
+              ? r.gallery_urls
+              : [
+                  {
+                    id: r.hero_image_id || `img-${r.slug}`,
+                    url: r.hero_image_url || 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80',
+                    alt: r.hero_image_alt || r.name,
+                    isPrimary: true,
+                  },
+                ]),
         gallery: Array.isArray(r.gallery_urls) ? r.gallery_urls : [],
         specifications: Array.isArray(r.specifications) ? r.specifications : [],
         downloads: Array.isArray(r.downloads) ? r.downloads : [],
@@ -316,6 +328,9 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
       alt: name,
       isPrimary: true,
     },
+    heroCarouselImages: (product.heroCarouselImages && product.heroCarouselImages.length > 0)
+      ? product.heroCarouselImages
+      : (product.heroImage ? [product.heroImage] : []),
     gallery: product.gallery || [],
     specifications: product.specifications || [],
     downloads: product.downloads || [],
@@ -353,18 +368,19 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
 
   // 2. Sync to PostgreSQL if database connection is available
   try {
+    // Attempt with hero_carousel_images column
     await query(
       `
       INSERT INTO products (
         id, slug, sku, name, code_label, designer, catalog_type, category_id,
         subcategory, tagline, short_description, full_description, editorial_story,
         tags, status, is_featured, order_index, hero_image_url, hero_image_alt,
-        gallery_urls, specifications, downloads, updated_at
+        gallery_urls, specifications, downloads, hero_carousel_images, updated_at
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8,
         $9, $10, $11, $12, $13,
         $14, $15, $16, $17, $18, $19,
-        $20, $21, $22, NOW()
+        $20, $21, $22, $23, NOW()
       )
       ON CONFLICT (id) DO UPDATE SET
         slug = EXCLUDED.slug,
@@ -388,6 +404,7 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
         gallery_urls = EXCLUDED.gallery_urls,
         specifications = EXCLUDED.specifications,
         downloads = EXCLUDED.downloads,
+        hero_carousel_images = EXCLUDED.hero_carousel_images,
         updated_at = NOW()
     `,
       [
@@ -413,10 +430,77 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
         JSON.stringify(fullProduct.gallery || []),
         JSON.stringify(fullProduct.specifications || []),
         JSON.stringify(fullProduct.downloads || []),
+        JSON.stringify(fullProduct.heroCarouselImages || []),
       ]
     );
   } catch (err: unknown) {
-    console.warn('[DB Products Sync Skipped]: Saved locally, DB sync pending valid credentials.');
+    try {
+      // Fallback query if hero_carousel_images is not yet migrated in PostgreSQL
+      await query(
+        `
+        INSERT INTO products (
+          id, slug, sku, name, code_label, designer, catalog_type, category_id,
+          subcategory, tagline, short_description, full_description, editorial_story,
+          tags, status, is_featured, order_index, hero_image_url, hero_image_alt,
+          gallery_urls, specifications, downloads, updated_at
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8,
+          $9, $10, $11, $12, $13,
+          $14, $15, $16, $17, $18, $19,
+          $20, $21, $22, NOW()
+        )
+        ON CONFLICT (id) DO UPDATE SET
+          slug = EXCLUDED.slug,
+          sku = EXCLUDED.sku,
+          name = EXCLUDED.name,
+          code_label = EXCLUDED.code_label,
+          designer = EXCLUDED.designer,
+          catalog_type = EXCLUDED.catalog_type,
+          category_id = EXCLUDED.category_id,
+          subcategory = EXCLUDED.subcategory,
+          tagline = EXCLUDED.tagline,
+          short_description = EXCLUDED.short_description,
+          full_description = EXCLUDED.full_description,
+          editorial_story = EXCLUDED.editorial_story,
+          tags = EXCLUDED.tags,
+          status = EXCLUDED.status,
+          is_featured = EXCLUDED.is_featured,
+          order_index = EXCLUDED.order_index,
+          hero_image_url = EXCLUDED.hero_image_url,
+          hero_image_alt = EXCLUDED.hero_image_alt,
+          gallery_urls = EXCLUDED.gallery_urls,
+          specifications = EXCLUDED.specifications,
+          downloads = EXCLUDED.downloads,
+          updated_at = NOW()
+      `,
+        [
+          id,
+          slug,
+          fullProduct.sku || '',
+          name,
+          fullProduct.codeLabel || name.toUpperCase(),
+          fullProduct.designer || 'Kirtee & Associates Studio',
+          catalogType,
+          categoryId,
+          fullProduct.subcategory || '',
+          fullProduct.tagline || '',
+          fullProduct.shortDescription || '',
+          fullProduct.fullDescription || '',
+          fullProduct.editorialStory || fullProduct.fullDescription || '',
+          fullProduct.tags || [],
+          fullProduct.status || 'published',
+          Boolean(fullProduct.isFeatured),
+          fullProduct.order || 1,
+          fullProduct.heroImage?.url || '',
+          fullProduct.heroImage?.alt || name,
+          JSON.stringify(fullProduct.gallery || []),
+          JSON.stringify(fullProduct.specifications || []),
+          JSON.stringify(fullProduct.downloads || []),
+        ]
+      );
+    } catch {
+      console.warn('[DB Products Sync Skipped]: Saved locally, DB sync pending valid credentials.');
+    }
   }
 
   return { success: true, id };

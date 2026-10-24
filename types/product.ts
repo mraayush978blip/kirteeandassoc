@@ -57,6 +57,7 @@ export interface Product {
   
   // Media
   heroImage: ProductImage;
+  heroCarouselImages?: ProductImage[]; // Top subpage hero carousel slider images
   gallery: ProductImage[];
 
   // Technical Specifications & Downloads
