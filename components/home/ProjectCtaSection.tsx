@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft } from 'lucide-react';
 
 const ctaImages = [
   {
@@ -26,29 +26,37 @@ export const ProjectCtaSection: React.FC = () => {
   return (
     <section
       style={{
-        backgroundColor: '#282b32',
+        backgroundColor: '#0a0a09',
         color: '#ffffff',
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
         overflow: 'hidden',
+        position: 'relative',
       }}
     >
       <div
-        className="container"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(12, 1fr)',
-          alignItems: 'center',
+          alignItems: 'stretch',
+          minHeight: 'clamp(460px, 45vw, 640px)',
+          width: '100%',
         }}
       >
         {/* Left Column: Call to Action */}
         <div
           style={{
             gridColumn: 'span 12',
-            padding: 'clamp(4rem, 7vw, 6.5rem) clamp(1.5rem, 4vw, 4rem)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            paddingTop: 'clamp(4rem, 6vw, 6.5rem)',
+            paddingBottom: 'clamp(4rem, 6vw, 6.5rem)',
+            paddingLeft: 'clamp(1.5rem, 4.5vw, 6rem)',
+            paddingRight: 'clamp(1.5rem, 3.5vw, 4.5rem)',
           }}
           className="lg:col-span-6"
         >
-          <div style={{ maxWidth: '520px' }}>
+          <div style={{ maxWidth: '520px', width: '100%' }}>
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -121,13 +129,16 @@ export const ProjectCtaSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Swipeable/Togglable Image Showcase */}
+        {/* Right Column: Full-Bleed Right Edge Image */}
         <div
           style={{
             gridColumn: 'span 12',
             position: 'relative',
-            height: 'clamp(440px, 40vw, 680px)',
-            backgroundColor: '#353943',
+            minHeight: 'clamp(380px, 40vw, 640px)',
+            width: '100%',
+            backgroundColor: '#0a0a09',
+            marginRight: 0,
+            paddingRight: 0,
           }}
           className="lg:col-span-6"
         >
@@ -138,7 +149,7 @@ export const ProjectCtaSection: React.FC = () => {
                 position: 'absolute',
                 inset: 0,
                 opacity: idx === activeImageIdx ? 1 : 0,
-                transition: 'opacity 0.7s ease',
+                transition: 'opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
                 pointerEvents: idx === activeImageIdx ? 'auto' : 'none',
               }}
             >
@@ -147,36 +158,52 @@ export const ProjectCtaSection: React.FC = () => {
                 alt={img.alt}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                style={{ objectFit: 'cover' }}
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                }}
               />
             </div>
           ))}
 
-          {/* Toggle Arrow Button from Screenshot */}
+          {/* Toggle Arrow Button */}
           <button
             type="button"
             onClick={toggleImage}
             aria-label="Toggle next project image"
             style={{
               position: 'absolute',
-              left: '1.5rem',
+              left: '1.75rem',
               top: '50%',
               transform: 'translateY(-50%)',
-              width: '38px',
-              height: '38px',
+              width: '42px',
+              height: '42px',
               borderRadius: '50%',
-              backgroundColor: 'rgba(0, 0, 0, 0.65)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
+              backgroundColor: 'rgba(10, 10, 9, 0.75)',
+              border: '1px solid rgba(255, 255, 255, 0.35)',
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               zIndex: 20,
-              backdropFilter: 'blur(8px)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
+              e.currentTarget.style.borderColor = '#ffffff';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(10, 10, 9, 0.75)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
             }}
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={20} />
           </button>
         </div>
       </div>
