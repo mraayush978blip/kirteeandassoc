@@ -199,9 +199,9 @@ export const ContactForm: React.FC = () => {
     width: '100%',
     borderRadius: '9999px',
     border: '1px solid #e5e7eb',
-    padding: '0.9rem 1.4rem',
+    padding: '1.1rem 1.65rem',
     fontFamily: 'var(--font-sans)',
-    fontSize: '0.9375rem',
+    fontSize: '1.0625rem',
     color: '#1f2937',
     backgroundColor: '#ffffff',
     outline: 'none',
@@ -210,15 +210,15 @@ export const ContactForm: React.FC = () => {
 
   const textareaStyle: React.CSSProperties = {
     width: '100%',
-    borderRadius: '16px',
+    borderRadius: '20px',
     border: '1px solid #e5e7eb',
-    padding: '1.1rem 1.4rem',
+    padding: '1.25rem 1.65rem',
     fontFamily: 'var(--font-sans)',
-    fontSize: '0.9375rem',
+    fontSize: '1.0625rem',
     color: '#1f2937',
     backgroundColor: '#ffffff',
     outline: 'none',
-    minHeight: '140px',
+    minHeight: '175px',
     resize: 'vertical',
     transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
   };
@@ -227,10 +227,10 @@ export const ContactForm: React.FC = () => {
     <div
       style={{
         backgroundColor: '#ffffff',
-        borderRadius: '24px',
+        borderRadius: '28px',
         border: '1px solid #f0f0f2',
-        boxShadow: '0 20px 48px -12px rgba(0, 0, 0, 0.05)',
-        padding: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+        boxShadow: '0 24px 50px -12px rgba(0, 0, 0, 0.06)',
+        padding: 'clamp(2.25rem, 4.5vw, 3.5rem)',
       }}
     >
       <form onSubmit={handleSubmit} noValidate>
@@ -253,16 +253,16 @@ export const ContactForm: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              padding: '0.85rem 1.25rem',
+              padding: '0.95rem 1.35rem',
               backgroundColor: '#fef2f2',
               border: '1px solid #fecaca',
-              borderRadius: '12px',
+              borderRadius: '14px',
               color: '#991b1b',
-              marginBottom: '1.25rem',
-              fontSize: '0.875rem',
+              marginBottom: '1.5rem',
+              fontSize: '0.9375rem',
             }}
           >
-            <AlertCircle size={16} />
+            <AlertCircle size={18} />
             <span>{serverError}</span>
           </div>
         )}
@@ -271,9 +271,9 @@ export const ContactForm: React.FC = () => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '1rem',
-            marginBottom: '1rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '1.25rem',
+            marginBottom: '1.25rem',
           }}
         >
           <div>
@@ -293,7 +293,7 @@ export const ContactForm: React.FC = () => {
               onBlur={(e) => (e.currentTarget.style.borderColor = errors.name ? '#ef4444' : '#e5e7eb')}
             />
             {errors.name && (
-              <span style={{ fontSize: '0.75rem', color: '#ef4444', marginLeft: '1rem', marginTop: '0.25rem', display: 'block' }}>
+              <span style={{ fontSize: '0.8125rem', color: '#ef4444', marginLeft: '1.25rem', marginTop: '0.35rem', display: 'block' }}>
                 {errors.name}
               </span>
             )}
@@ -316,9 +316,9 @@ export const ContactForm: React.FC = () => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '1rem',
-            marginBottom: '1rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '1.25rem',
+            marginBottom: '1.25rem',
           }}
         >
           <div>
@@ -338,7 +338,7 @@ export const ContactForm: React.FC = () => {
               onBlur={(e) => (e.currentTarget.style.borderColor = errors.email ? '#ef4444' : '#e5e7eb')}
             />
             {errors.email && (
-              <span style={{ fontSize: '0.75rem', color: '#ef4444', marginLeft: '1rem', marginTop: '0.25rem', display: 'block' }}>
+              <span style={{ fontSize: '0.8125rem', color: '#ef4444', marginLeft: '1.25rem', marginTop: '0.35rem', display: 'block' }}>
                 {errors.email}
               </span>
             )}
@@ -358,7 +358,7 @@ export const ContactForm: React.FC = () => {
         </div>
 
         {/* Row 3: Subject * */}
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '1.25rem' }}>
           <input
             type="text"
             placeholder="Subject *"
@@ -375,14 +375,14 @@ export const ContactForm: React.FC = () => {
             onBlur={(e) => (e.currentTarget.style.borderColor = errors.subject ? '#ef4444' : '#e5e7eb')}
           />
           {errors.subject && (
-            <span style={{ fontSize: '0.75rem', color: '#ef4444', marginLeft: '1rem', marginTop: '0.25rem', display: 'block' }}>
+            <span style={{ fontSize: '0.8125rem', color: '#ef4444', marginLeft: '1.25rem', marginTop: '0.35rem', display: 'block' }}>
               {errors.subject}
             </span>
           )}
         </div>
 
         {/* Row 4: Message Textarea */}
-        <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ marginBottom: '1.75rem' }}>
           <textarea
             placeholder="Tell us how we can help you *"
             value={formData.message}
@@ -398,7 +398,7 @@ export const ContactForm: React.FC = () => {
             onBlur={(e) => (e.currentTarget.style.borderColor = errors.message ? '#ef4444' : '#e5e7eb')}
           />
           {errors.message && (
-            <span style={{ fontSize: '0.75rem', color: '#ef4444', marginLeft: '1rem', marginTop: '0.25rem', display: 'block' }}>
+            <span style={{ fontSize: '0.8125rem', color: '#ef4444', marginLeft: '1.25rem', marginTop: '0.35rem', display: 'block' }}>
               {errors.message}
             </span>
           )}
@@ -413,9 +413,9 @@ export const ContactForm: React.FC = () => {
             borderRadius: '9999px',
             backgroundColor: '#282b32', // Architectural Slate Grey (no pure black)
             color: '#ffffff',
-            padding: '1rem 2rem',
+            padding: '1.15rem 2.5rem',
             fontFamily: 'var(--font-sans)',
-            fontSize: '0.9375rem',
+            fontSize: '1.0625rem',
             fontWeight: 600,
             border: 'none',
             cursor: isSubmitting ? 'not-allowed' : 'pointer',
@@ -441,7 +441,7 @@ export const ContactForm: React.FC = () => {
         >
           {isSubmitting ? (
             <>
-              <Loader2 size={16} className="animate-spin" />
+              <Loader2 size={18} className="animate-spin" />
               <span>Submitting...</span>
             </>
           ) : (

@@ -668,10 +668,11 @@ a {
 .contact-detail-link {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.15rem;
   text-decoration: none;
-  color: #4b5563;
-  font-size: 0.9375rem;
+  color: #374151;
+  font-size: 1.0625rem;
+  font-weight: 500;
   transition: color 0.2s ease;
 }
 
@@ -681,17 +682,17 @@ a {
 
 .floating-chat-bubble {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 50px;
-  height: 50px;
+  bottom: 2.25rem;
+  right: 2.25rem;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background-color: #282b32; /* Architectural slate grey, no pitch black */
+  background-color: #111827;
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   z-index: 50;
   transition: transform 0.2s ease, background-color 0.2s ease;

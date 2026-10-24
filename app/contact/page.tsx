@@ -29,31 +29,31 @@ export default function ContactPage() {
     >
       <main
         style={{
-          paddingTop: 'calc(var(--header-height) + 3.5rem)',
-          paddingBottom: 'clamp(4rem, 7vw, 6.5rem)',
+          paddingTop: 'calc(var(--header-height) + clamp(2.5rem, 4.5vh, 4.5rem))',
+          paddingBottom: 'clamp(4rem, 6vh, 6.5rem)',
         }}
       >
-        <div className="container" style={{ maxWidth: '1240px' }}>
+        <div className="container" style={{ maxWidth: '1440px', paddingLeft: 'clamp(1.5rem, 4vw, 4rem)', paddingRight: 'clamp(1.5rem, 4vw, 4rem)' }}>
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(12, 1fr)',
-              gap: 'clamp(2.5rem, 5vw, 5rem)',
+              gap: 'clamp(3rem, 6vw, 6.5rem)',
               alignItems: 'center',
             }}
           >
             {/* Left Column: Contact Us Text & Info */}
             <div style={{ gridColumn: 'span 12' }} className="lg:col-span-6">
-              <div style={{ maxWidth: '480px' }}>
+              <div style={{ maxWidth: '580px' }}>
                 <h1
                   style={{
                     fontFamily: 'var(--font-sans)',
-                    fontSize: 'clamp(2.75rem, 4.5vw, 3.75rem)',
+                    fontSize: 'clamp(3.25rem, 5.5vw, 4.75rem)',
                     fontWeight: 600,
                     color: '#111827',
-                    letterSpacing: '-0.025em',
-                    lineHeight: 1.1,
-                    marginBottom: '1.75rem',
+                    letterSpacing: '-0.03em',
+                    lineHeight: 1.06,
+                    marginBottom: '1.5rem',
                   }}
                 >
                   Contact us
@@ -62,11 +62,11 @@ export default function ContactPage() {
                 <p
                   style={{
                     fontFamily: 'var(--font-sans)',
-                    fontSize: '1.0625rem',
-                    color: '#374151',
-                    lineHeight: 1.55,
+                    fontSize: 'clamp(1.1875rem, 1.8vw, 1.35rem)',
+                    color: '#1f2937',
+                    lineHeight: 1.5,
                     marginBottom: '1.25rem',
-                    fontWeight: 400,
+                    fontWeight: 500,
                   }}
                 >
                   Our Onok Lighting team will be delighted to assist you.
@@ -75,27 +75,53 @@ export default function ContactPage() {
                 <p
                   style={{
                     fontFamily: 'var(--font-sans)',
-                    fontSize: '0.9375rem',
+                    fontSize: 'clamp(1rem, 1.3vw, 1.125rem)',
                     color: '#4b5563',
-                    lineHeight: 1.65,
-                    marginBottom: 'clamp(2.5rem, 4.5vw, 4rem)',
-                    fontWeight: 300,
+                    lineHeight: 1.7,
+                    marginBottom: 'clamp(2.5rem, 4vw, 3.5rem)',
+                    fontWeight: 400,
                   }}
                 >
                   If you would like more information about our products or services, or wish to make a technical or commercial enquiry, please contact us using the form below.
                 </p>
 
                 {/* Direct Contact Details */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   {/* Email */}
                   <a href="mailto:onok@onok.es" className="contact-detail-link">
-                    <Mail size={17} style={{ color: '#6b7280', flexShrink: 0 }} />
+                    <div
+                      style={{
+                        width: '46px',
+                        height: '46px',
+                        borderRadius: '50%',
+                        backgroundColor: '#f3f4f6',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Mail size={20} style={{ color: '#111827' }} />
+                    </div>
                     <span>onok@onok.es</span>
                   </a>
 
                   {/* Phone */}
                   <a href="tel:+34962259020" className="contact-detail-link">
-                    <Phone size={17} style={{ color: '#6b7280', flexShrink: 0 }} />
+                    <div
+                      style={{
+                        width: '46px',
+                        height: '46px',
+                        borderRadius: '50%',
+                        backgroundColor: '#f3f4f6',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Phone size={20} style={{ color: '#111827' }} />
+                    </div>
                     <span>+34 962259020</span>
                   </a>
 
@@ -104,21 +130,35 @@ export default function ContactPage() {
                     style={{
                       display: 'flex',
                       alignItems: 'flex-start',
-                      gap: '1rem',
+                      gap: '1.15rem',
                       color: '#4b5563',
-                      fontSize: '0.9375rem',
+                      fontSize: '1.0625rem',
                       lineHeight: 1.55,
                     }}
                   >
-                    <MapPin size={17} style={{ color: '#6b7280', flexShrink: 0, marginTop: '3px' }} />
+                    <div
+                      style={{
+                        width: '46px',
+                        height: '46px',
+                        borderRadius: '50%',
+                        backgroundColor: '#f3f4f6',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        marginTop: '2px',
+                      }}
+                    >
+                      <MapPin size={20} style={{ color: '#111827' }} />
+                    </div>
                     <div>
-                      <span style={{ display: 'block', fontWeight: 500, color: '#374151' }}>
+                      <span style={{ display: 'block', fontWeight: 600, color: '#111827', fontSize: '1.0625rem' }}>
                         Onok Luz Técnica, S.L
                       </span>
-                      <span style={{ display: 'block', color: '#6b7280', fontSize: '0.875rem' }}>
+                      <span style={{ display: 'block', color: '#6b7280', fontSize: '0.9375rem', marginTop: '0.15rem' }}>
                         Polígono industrial B, Parcela 3
                       </span>
-                      <span style={{ display: 'block', color: '#6b7280', fontSize: '0.875rem' }}>
+                      <span style={{ display: 'block', color: '#6b7280', fontSize: '0.9375rem' }}>
                         46800 Xàtiva, España
                       </span>
                     </div>
