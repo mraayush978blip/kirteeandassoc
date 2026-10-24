@@ -31,25 +31,28 @@
     "order": 1,
     "heroImage": {
       "id": "img-calipso",
-      "url": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80",
-      "alt": "Calipso architectural honeycomb luminaire with high-performance optical geometry",
+      "url": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=80",
+      "alt": "Calipso warm ambient illumination in contemporary living space",
       "isPrimary": true
     },
     "heroCarouselImages": [
       {
         "id": "img-calipso-1",
         "alt": "Calipso luminaire front detail",
-        "url": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80"
+        "url": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80",
+        "isPrimary": false
       },
       {
         "id": "img-calipso-2",
         "alt": "Calipso honeycomb texture and light emission pattern",
-        "url": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1600&q=80"
+        "url": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1600&q=80",
+        "isPrimary": false
       },
       {
         "id": "img-calipso-3",
         "alt": "Calipso warm ambient illumination in contemporary living space",
-        "url": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=80"
+        "url": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=80",
+        "isPrimary": true
       }
     ],
     "gallery": [
@@ -148,10 +151,10 @@
     "seo": {
       "metaTitle": "aayush | Kirtee & Associates",
       "metaDescription": "Organic honeycomb architectural luminaire generated from fractal moon algorithms, offering diffuse comfort and emotional lighting geometry.",
-      "ogImage": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80"
+      "ogImage": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=80"
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
-    "updatedAt": "2026-10-24T06:25:06.369Z"
+    "updatedAt": "2026-10-24T06:48:51.933Z"
   },
   {
     "id": "prod-a24",
@@ -247,7 +250,7 @@
       "ogImage": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
-    "updatedAt": "2026-10-21T14:08:57.572Z"
+    "updatedAt": "2026-10-24T06:47:45.864Z"
   },
   {
     "id": "prod-a39",
@@ -426,6 +429,6 @@
       "ogImage": "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=1600&q=80"
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
-    "updatedAt": "2026-10-21T14:08:57.572Z"
+    "updatedAt": "2026-10-24T06:47:45.864Z"
   }
 ]

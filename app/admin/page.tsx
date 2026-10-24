@@ -1532,39 +1532,79 @@ export default function AdminPage() {
                     }}
                   >
                     <Image src={slide.imageUrl} alt={slide.imageAlt} fill style={{ objectFit: 'cover' }} sizes="400px" />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCropperModal({
-                          isOpen: true,
-                          imageSrc: slide.imageUrl,
-                          aspectPreset: '16:9',
-                          onSuccess: (croppedUrl) => {
-                            const updated = [...heroSlides];
-                            updated[index].imageUrl = croppedUrl;
-                            saveHeroSlides(updated);
-                          },
-                        });
-                      }}
-                      style={{
-                        position: 'absolute',
-                        bottom: '0.75rem',
-                        left: '0.75rem',
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        border: 'none',
-                        borderRadius: '4px',
-                        padding: '0.35rem 0.65rem',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: '#111827',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.35rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Crop size={14} /> Recrop Image
-                    </button>
+                    <div style={{ position: 'absolute', bottom: '0.75rem', left: '0.75rem', display: 'flex', gap: '0.4rem', zIndex: 2 }}>
+                      <label
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                          border: 'none',
+                          borderRadius: '4px',
+                          padding: '0.35rem 0.65rem',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          color: '#111827',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          cursor: 'pointer',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        <Upload size={13} /> Change Image
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const objectUrl = URL.createObjectURL(file);
+                            setCropperModal({
+                              isOpen: true,
+                              imageSrc: objectUrl,
+                              aspectPreset: '16:9',
+                              onSuccess: (croppedUrl) => {
+                                const updated = [...heroSlides];
+                                updated[index].imageUrl = croppedUrl;
+                                saveHeroSlides(updated);
+                              },
+                            });
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCropperModal({
+                            isOpen: true,
+                            imageSrc: slide.imageUrl,
+                            aspectPreset: '16:9',
+                            onSuccess: (croppedUrl) => {
+                              const updated = [...heroSlides];
+                              updated[index].imageUrl = croppedUrl;
+                              saveHeroSlides(updated);
+                            },
+                          });
+                        }}
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                          border: 'none',
+                          borderRadius: '4px',
+                          padding: '0.35rem 0.65rem',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          color: '#111827',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          cursor: 'pointer',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        <Crop size={13} /> Recrop
+                      </button>
+                    </div>
                   </div>
 
                   {/* Slide Editable Content */}
@@ -3659,6 +3699,282 @@ export default function AdminPage() {
                   Save Project
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Hero Slide Modal */}
+      {isAddSlideModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            backgroundColor: 'rgba(10, 10, 9, 0.85)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.5rem',
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '700px',
+              backgroundColor: '#ffffff',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ padding: '1.25rem 1.75rem', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f9fafb' }}>
+              <div>
+                <h3 style={{ margin: '0 0 0.2rem 0', fontSize: '1.0625rem', fontWeight: 700, color: '#111827' }}>
+                  Add New Homepage Hero Slide
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>
+                  Configure full-width banner image, editorial headlines, and call-to-action button.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddSlideModalOpen(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.4rem', color: '#6b7280' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '1.75rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* Image Preview & Upload Controls */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                  Slide Background Banner Photo
+                </label>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                  <div
+                    style={{
+                      width: '240px',
+                      height: '135px',
+                      position: 'relative',
+                      borderRadius: '6px',
+                      overflow: 'hidden',
+                      backgroundColor: '#111827',
+                      border: '1px solid #e5e7eb',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {newSlideData.imageUrl ? (
+                      <Image
+                        src={newSlideData.imageUrl}
+                        alt={newSlideData.imageAlt || 'Preview'}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: '0.75rem' }}>
+                        No Image Selected
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <label
+                        style={{
+                          padding: '0.5rem 0.85rem',
+                          borderRadius: '4px',
+                          border: '1px solid #2563eb',
+                          backgroundColor: '#2563eb',
+                          color: '#ffffff',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                        }}
+                      >
+                        <Upload size={14} /> Upload &amp; Crop (WebP)
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const objectUrl = URL.createObjectURL(file);
+                            setCropperModal({
+                              isOpen: true,
+                              imageSrc: objectUrl,
+                              aspectPreset: '16:9',
+                              onSuccess: (croppedUrl) => {
+                                setNewSlideData((prev) => ({ ...prev, imageUrl: croppedUrl }));
+                              },
+                            });
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+
+                      {newSlideData.imageUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCropperModal({
+                              isOpen: true,
+                              imageSrc: newSlideData.imageUrl,
+                              aspectPreset: '16:9',
+                              onSuccess: (croppedUrl) => {
+                                setNewSlideData((prev) => ({ ...prev, imageUrl: croppedUrl }));
+                              },
+                            });
+                          }}
+                          style={{
+                            padding: '0.5rem 0.85rem',
+                            borderRadius: '4px',
+                            border: '1px solid #d1d5db',
+                            backgroundColor: '#ffffff',
+                            color: '#374151',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                          }}
+                        >
+                          <Crop size={14} /> Recrop
+                        </button>
+                      )}
+                    </div>
+
+                    <div>
+                      <input
+                        type="url"
+                        placeholder="Or paste direct image URL (Unsplash, Supabase, CDN)..."
+                        value={newSlideData.imageUrl}
+                        onChange={(e) => setNewSlideData({ ...newSlideData, imageUrl: e.target.value })}
+                        style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.75rem' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Eyebrow & Headline */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                    Category / Eyebrow
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. ARCHITECTURAL LIGHTING SYSTEMS"
+                    value={newSlideData.eyebrow}
+                    onChange={(e) => setNewSlideData({ ...newSlideData, eyebrow: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                    Headline Title (Use newline for 2 lines)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. LIGHT.\nREFINED."
+                    value={newSlideData.title}
+                    onChange={(e) => setNewSlideData({ ...newSlideData, title: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Subtitle */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                  Editorial Subtitle
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g. Bespoke architectural lighting systems engineered for exceptional spaces."
+                  value={newSlideData.subtitle}
+                  onChange={(e) => setNewSlideData({ ...newSlideData, subtitle: e.target.value })}
+                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', resize: 'vertical' }}
+                />
+              </div>
+
+              {/* Button Text & Link */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                    Button Label
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. EXPLORE COLLECTIONS"
+                    value={newSlideData.ctaText}
+                    onChange={(e) => setNewSlideData({ ...newSlideData, ctaText: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                    Button Link (URL / Route)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. /products or /dry-goods"
+                    value={newSlideData.ctaHref}
+                    onChange={(e) => setNewSlideData({ ...newSlideData, ctaHref: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div style={{ padding: '1rem 1.75rem', borderTop: '1px solid #e5e7eb', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', backgroundColor: '#f9fafb' }}>
+              <button
+                type="button"
+                onClick={() => setIsAddSlideModalOpen(false)}
+                style={{ padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid #d1d5db', backgroundColor: '#ffffff', color: '#374151', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!newSlideData.imageUrl) {
+                    showToast('Please select or upload an image for the hero slide.', 'error');
+                    return;
+                  }
+                  const slideToAdd: HeroSlideConfig = {
+                    ...newSlideData,
+                    id: newSlideData.id || `hero-${Date.now()}`,
+                    slotId: newSlideData.slotId || `hero-slide-${Date.now()}`,
+                    order: heroSlides.length + 1,
+                  };
+                  const updated = [...heroSlides, slideToAdd];
+                  saveHeroSlides(updated);
+                  setIsAddSlideModalOpen(false);
+                  showToast('Hero slide added successfully!');
+                }}
+                style={{ padding: '0.5rem 1.5rem', borderRadius: '4px', border: 'none', backgroundColor: '#111827', color: '#ffffff', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Add Hero Slide
+              </button>
             </div>
           </div>
         </div>
