@@ -25,7 +25,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ heroImage, galle
           position: 'relative',
           width: '100%',
           aspectRatio: '16/11',
-          backgroundColor: '#050608',
+          backgroundColor: '#353943',
           border: '1px solid var(--color-border)',
           borderRadius: 'var(--radius-xs)',
           overflow: 'hidden',
@@ -108,7 +108,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ heroImage, galle
                 style={{
                   position: 'relative',
                   aspectRatio: '16/10',
-                  backgroundColor: '#050608',
+                  backgroundColor: '#353943',
                   border: '1px solid',
                   borderColor: isSelected ? 'var(--color-accent)' : 'var(--color-border)',
                   borderRadius: 'var(--radius-xs)',

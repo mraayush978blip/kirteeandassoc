@@ -32,7 +32,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           position: 'relative',
           width: '100%',
           aspectRatio: '16/10',
-          backgroundColor: '#050607',
+          backgroundColor: '#353943',
           overflow: 'hidden',
           display: 'block',
         }}

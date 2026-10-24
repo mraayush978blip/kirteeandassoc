@@ -56,19 +56,34 @@ const heroSlides: HeroSlide[] = [
 
 export const HeroSwipeSection: React.FC = () => {
   const { getImage } = useSiteImages();
+  const [slides, setSlides] = useState<HeroSlide[]>(heroSlides);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  // Fetch dynamic hero slides from site settings / DB with resilient static fallback
+  useEffect(() => {
+    fetch('/api/content?key=hero_slides')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setSlides(data.data);
+        }
+      })
+      .catch(() => {
+        // Fallback to static slides in case server is slow or offline
+      });
   }, []);
 
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
   const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  }, []);
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
 
   // Auto-advance slides every 3 seconds
   useEffect(() => {
@@ -139,7 +154,7 @@ export const HeroSwipeSection: React.FC = () => {
     setDragOffset(0);
   };
 
-  const active = heroSlides[currentSlide];
+  const active = slides[currentSlide] || slides[0] || heroSlides[0];
 
   return (
     <section
@@ -168,7 +183,7 @@ export const HeroSwipeSection: React.FC = () => {
     >
       {/* Background Swipeable Image Slides */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-        {heroSlides.map((slide, index) => {
+        {slides.map((slide, index) => {
           const isActive = index === currentSlide;
           const resolved = getImage(slide.slotId, slide.imageUrl, slide.imageAlt);
           return (
@@ -356,12 +371,12 @@ export const HeroSwipeSection: React.FC = () => {
               letterSpacing: '0.1em',
             }}
           >
-            0{currentSlide + 1} / 0{heroSlides.length}
+            0{currentSlide + 1} / 0{slides.length}
           </span>
 
           {/* Dots */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            {heroSlides.map((slide, index) => (
+            {slides.map((slide, index) => (
               <button
                 key={slide.id}
                 type="button"

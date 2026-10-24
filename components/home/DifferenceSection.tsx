@@ -29,7 +29,7 @@ export const DifferenceSection: React.FC = () => {
       id="philosophy"
       style={{
         backgroundColor: '#ffffff',
-        color: '#111111',
+        color: '#2d333e',
         paddingTop: 'clamp(5rem, 8vw, 8rem)',
         paddingBottom: 'clamp(5rem, 8vw, 8rem)',
       }}
@@ -57,7 +57,7 @@ export const DifferenceSection: React.FC = () => {
                 marginBottom: '1.25rem',
               }}
             >
-              WHY KIRTEE &amp; ASSOCIATES BESPOKE
+              OUR ARCHITECTURAL PHILOSOPHY
             </span>
             <h2
               style={{
@@ -66,7 +66,7 @@ export const DifferenceSection: React.FC = () => {
                 lineHeight: 1.08,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
-                color: '#111111',
+                color: '#2d333e',
               }}
             >
               WE DON&apos;T JUST LIGHT SPACES. WE DEFINE THEM.
@@ -85,7 +85,7 @@ export const DifferenceSection: React.FC = () => {
               style={{
                 fontSize: '1.0625rem',
                 lineHeight: 1.75,
-                color: '#4b5563',
+                color: '#5b6370',
                 maxWidth: '460px',
               }}
             >
@@ -127,7 +127,7 @@ export const DifferenceSection: React.FC = () => {
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                   marginBottom: '0.75rem',
-                  color: '#111111',
+                  color: '#2d333e',
                 }}
               >
                 {item.title}

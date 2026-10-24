@@ -2,40 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { CheckCircle2, AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
-import { siteConfig } from '@/config/site';
-
-interface InquiryType {
-  id: string;
-  label: string;
-  defaultSubject: string;
-}
-
-const inquiryTypes: InquiryType[] = [
-  { id: 'commercial', label: 'Project Specification', defaultSubject: 'Commercial Architectural Specification' },
-  { id: 'bespoke', label: 'Bespoke Commission', defaultSubject: 'Bespoke Luminaire Adaptation Inquiry' },
-  { id: 'photometrics', label: 'Photometric Data (IES)', defaultSubject: 'Request for Certified IES & Photometric Files' },
-  { id: 'sample', label: 'Sample & Mockup', defaultSubject: 'Physical Luminaire Sample Request' },
-];
+import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 
 export const ContactForm: React.FC = () => {
   const searchParams = useSearchParams();
   const paramProduct = searchParams.get('product') || '';
   const paramTopic = searchParams.get('topic') || '';
 
-  const [activeType, setActiveType] = useState<string>(
-    paramTopic || (paramProduct ? 'bespoke' : 'commercial')
-  );
-
   const [formData, setFormData] = useState({
     name: '',
     company: '',
     email: '',
     phone: '',
-    project: '',
-    subject: paramProduct ? `Specification regarding ${paramProduct}` : 'Commercial Architectural Specification',
-    message: paramProduct ? `Hello Divvya, we would like to review technical specifications, photometrics, and sample availability for ${paramProduct}.` : '',
-    consent: true,
+    subject: paramProduct ? `Inquiry regarding ${paramProduct}` : (paramTopic || ''),
+    message: '',
     websiteHoneypot: '',
   });
 
@@ -43,10 +23,8 @@ export const ContactForm: React.FC = () => {
     if (paramProduct) {
       setFormData((prev) => ({
         ...prev,
-        subject: `Specification regarding ${paramProduct}`,
-        message: `Hello Divvya, we would like to review technical specifications, photometrics, and sample availability for ${paramProduct}.`,
+        subject: `Inquiry regarding ${paramProduct}`,
       }));
-      setActiveType('bespoke');
     }
   }, [paramProduct]);
 
@@ -55,27 +33,17 @@ export const ContactForm: React.FC = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleTypeSelect = (type: InquiryType) => {
-    setActiveType(type.id);
-    setFormData((prev) => ({
-      ...prev,
-      subject: type.defaultSubject,
-    }));
-  };
-
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!formData.name.trim()) errs.name = 'Please enter your full name.';
+    if (!formData.name.trim()) errs.name = 'Name is required';
     if (!formData.email.trim()) {
-      errs.email = 'Please enter your email address.';
+      errs.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errs.email = 'Please provide a valid work email address.';
+      errs.email = 'Valid email is required';
     }
-    if (!formData.message.trim() || formData.message.trim().length < 10) {
-      errs.message = 'Please provide project details (minimum 10 characters).';
-    }
-    if (!formData.consent) {
-      errs.consent = 'Please confirm specification consent to proceed.';
+    if (!formData.subject.trim()) errs.subject = 'Subject is required';
+    if (!formData.message.trim() || formData.message.trim().length < 5) {
+      errs.message = 'Please tell us how we can help you';
     }
     return errs;
   };
@@ -99,7 +67,7 @@ export const ContactForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('/api/contact', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -107,25 +75,23 @@ export const ContactForm: React.FC = () => {
           email: formData.email,
           phone: formData.phone,
           company: formData.company,
-          topic: `${formData.subject}${formData.project ? ` [Project: ${formData.project}]` : ''}`,
-          product: paramProduct,
+          topic: formData.subject,
+          product: paramProduct || null,
           message: formData.message,
-          consent: formData.consent,
+          consent: true,
+          websiteHoneypot: formData.websiteHoneypot,
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || 'Submission failed. Please try again.');
-      }
+      const data = await response.json();
 
-      setSubmitSuccess(true);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setServerError(err.message);
+      if (response.ok && data.success) {
+        setSubmitSuccess(true);
       } else {
-        setServerError('Unable to transmit inquiry. Please contact our studio directly.');
+        setServerError(data.message || 'Something went wrong. Please try again.');
       }
+    } catch {
+      setServerError('Unable to connect to the server. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -133,18 +99,32 @@ export const ContactForm: React.FC = () => {
 
   if (submitSuccess) {
     return (
-      <div className="contact-card" style={{ padding: 'clamp(2.5rem, 5vw, 4rem) 2rem', textAlign: 'center' }}>
+      <div
+        style={{
+          backgroundColor: '#ffffff',
+          borderRadius: '24px',
+          border: '1px solid #eef0f2',
+          boxShadow: '0 20px 48px -12px rgba(0, 0, 0, 0.05)',
+          padding: 'clamp(2.5rem, 5vw, 4rem) 2.5rem',
+          textAlign: 'center',
+          minHeight: '480px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <div
           style={{
             width: '56px',
             height: '56px',
             borderRadius: '50%',
-            backgroundColor: '#111111',
+            backgroundColor: '#374151',
             color: '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 1.5rem auto',
+            marginBottom: '1.5rem',
           }}
         >
           <CheckCircle2 size={28} />
@@ -152,30 +132,26 @@ export const ContactForm: React.FC = () => {
 
         <h3
           style={{
-            fontFamily: 'var(--font-serif)',
-            fontSize: 'clamp(1.5rem, 3vw, 2rem)',
-            fontWeight: 500,
-            color: '#111111',
-            letterSpacing: '0.02em',
-            textTransform: 'uppercase',
+            fontFamily: 'var(--font-sans)',
+            fontSize: '1.5rem',
+            fontWeight: 600,
+            color: '#111827',
             marginBottom: '0.75rem',
           }}
         >
-          Inquiry Received
+          Thank You
         </h3>
 
         <p
           style={{
             fontSize: '0.9375rem',
-            lineHeight: 1.7,
-            color: '#4b5563',
-            maxWidth: '520px',
+            lineHeight: 1.65,
+            color: '#6b7280',
+            maxWidth: '380px',
             margin: '0 auto 2rem auto',
           }}
         >
-          Thank you for contacting Kirtee &amp; Associates. Your inquiry has been routed to{' '}
-          <strong>Divvya</strong> and our architectural specification team. We will review your project
-          parameters and respond with technical submittals within one business day.
+          Your enquiry has been received. Our team will review your message and get back to you shortly.
         </p>
 
         <button
@@ -187,89 +163,76 @@ export const ContactForm: React.FC = () => {
               company: '',
               email: '',
               phone: '',
-              project: '',
-              subject: 'Commercial Architectural Specification',
+              subject: '',
               message: '',
-              consent: true,
               websiteHoneypot: '',
             });
           }}
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.75rem 1.5rem',
-            backgroundColor: '#ffffff',
-            border: '1px solid #111111',
-            borderRadius: '2px',
+            borderRadius: '9999px',
+            padding: '0.75rem 2rem',
+            backgroundColor: 'transparent',
+            border: '1px solid #374151',
+            color: '#374151',
             fontFamily: 'var(--font-sans)',
-            fontSize: '0.8125rem',
+            fontSize: '0.875rem',
             fontWeight: 600,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: '#111111',
             cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#374151';
+            e.currentTarget.style.color = '#ffffff';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = '#374151';
           }}
         >
-          <span>Submit Another Specification</span>
+          Send Another Message
         </button>
       </div>
     );
   }
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    borderRadius: '9999px',
+    border: '1px solid #e5e7eb',
+    padding: '0.9rem 1.4rem',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.9375rem',
+    color: '#1f2937',
+    backgroundColor: '#ffffff',
+    outline: 'none',
+    transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+  };
+
+  const textareaStyle: React.CSSProperties = {
+    width: '100%',
+    borderRadius: '16px',
+    border: '1px solid #e5e7eb',
+    padding: '1.1rem 1.4rem',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.9375rem',
+    color: '#1f2937',
+    backgroundColor: '#ffffff',
+    outline: 'none',
+    minHeight: '140px',
+    resize: 'vertical',
+    transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+  };
+
   return (
-    <div className="contact-card">
-      <div style={{ marginBottom: '2rem' }}>
-        <h2
-          style={{
-            fontFamily: 'var(--font-serif)',
-            fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
-            fontWeight: 500,
-            color: '#111111',
-            letterSpacing: '0.02em',
-            textTransform: 'uppercase',
-            marginBottom: '0.5rem',
-          }}
-        >
-          Specification Inquiry
-        </h2>
-        <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, lineHeight: 1.6 }}>
-          Submit project parameters, luminaire schedules, or bespoke engineering requirements for direct consultation.
-        </p>
-      </div>
-
-      {/* Inquiry Type Tabs */}
-      <div style={{ marginBottom: '1.75rem' }}>
-        <span
-          style={{
-            display: 'block',
-            fontSize: '0.6875rem',
-            fontWeight: 600,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: '#6b7280',
-            marginBottom: '0.65rem',
-          }}
-        >
-          Inquiry Classification
-        </span>
-        <div className="contact-pills-container" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          {inquiryTypes.map((type) => {
-            const isSelected = activeType === type.id;
-            return (
-              <button
-                key={type.id}
-                type="button"
-                onClick={() => handleTypeSelect(type)}
-                className={`contact-tag-pill ${isSelected ? 'active' : ''}`}
-              >
-                {type.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
+    <div
+      style={{
+        backgroundColor: '#ffffff',
+        borderRadius: '24px',
+        border: '1px solid #f0f0f2',
+        boxShadow: '0 20px 48px -12px rgba(0, 0, 0, 0.05)',
+        padding: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+      }}
+    >
       <form onSubmit={handleSubmit} noValidate>
         {/* Spam Honeypot */}
         <div style={{ display: 'none' }} aria-hidden="true">
@@ -286,286 +249,203 @@ export const ContactForm: React.FC = () => {
 
         {serverError && (
           <div
-            role="alert"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
-              padding: '0.875rem 1rem',
+              padding: '0.85rem 1.25rem',
               backgroundColor: '#fef2f2',
               border: '1px solid #fecaca',
-              borderRadius: '2px',
+              borderRadius: '12px',
               color: '#991b1b',
-              marginBottom: '1.5rem',
+              marginBottom: '1.25rem',
               fontSize: '0.875rem',
             }}
           >
-            <AlertCircle size={18} style={{ flexShrink: 0 }} />
+            <AlertCircle size={16} />
             <span>{serverError}</span>
           </div>
         )}
 
-        {/* Name & Studio / Firm */}
-        <div className="contact-form-row contact-form-row-2col" style={{ marginBottom: '1.25rem' }}>
+        {/* Row 1: Name * and Company */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1rem',
+            marginBottom: '1rem',
+          }}
+        >
           <div>
-            <label
-              htmlFor="contact-name"
-              style={{
-                display: 'block',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                color: '#374151',
-                marginBottom: '0.4rem',
-              }}
-            >
-              Full Name <span style={{ color: '#ef4444' }}>*</span>
-            </label>
             <input
-              id="contact-name"
               type="text"
-              placeholder="e.g. Ar. Devendra Rathore"
+              placeholder="Name *"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="contact-input-field"
-              style={{ borderColor: errors.name ? '#ef4444' : undefined }}
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                if (errors.name) setErrors({ ...errors, name: '' });
+              }}
+              style={{
+                ...inputStyle,
+                borderColor: errors.name ? '#ef4444' : '#e5e7eb',
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#4b5563')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = errors.name ? '#ef4444' : '#e5e7eb')}
             />
             {errors.name && (
-              <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.35rem', display: 'block' }}>
+              <span style={{ fontSize: '0.75rem', color: '#ef4444', marginLeft: '1rem', marginTop: '0.25rem', display: 'block' }}>
                 {errors.name}
               </span>
             )}
           </div>
 
           <div>
-            <label
-              htmlFor="contact-company"
-              style={{
-                display: 'block',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                color: '#374151',
-                marginBottom: '0.4rem',
-              }}
-            >
-              Studio / Architecture Practice
-            </label>
             <input
-              id="contact-company"
               type="text"
-              placeholder="e.g. Studio Lotus / Foster + Partners"
+              placeholder="Company"
               value={formData.company}
               onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-              className="contact-input-field"
+              style={inputStyle}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#4b5563')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = '#e5e7eb')}
             />
           </div>
         </div>
 
-        {/* Email & Phone */}
-        <div className="contact-form-row contact-form-row-2col" style={{ marginBottom: '1.25rem' }}>
+        {/* Row 2: Email * and Phone */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1rem',
+            marginBottom: '1rem',
+          }}
+        >
           <div>
-            <label
-              htmlFor="contact-email"
-              style={{
-                display: 'block',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                color: '#374151',
-                marginBottom: '0.4rem',
-              }}
-            >
-              Email Address <span style={{ color: '#ef4444' }}>*</span>
-            </label>
             <input
-              id="contact-email"
               type="email"
-              placeholder="name@studiopractice.com"
+              placeholder="Email *"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="contact-input-field"
-              style={{ borderColor: errors.email ? '#ef4444' : undefined }}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                if (errors.email) setErrors({ ...errors, email: '' });
+              }}
+              style={{
+                ...inputStyle,
+                borderColor: errors.email ? '#ef4444' : '#e5e7eb',
+              }}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#4b5563')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = errors.email ? '#ef4444' : '#e5e7eb')}
             />
             {errors.email && (
-              <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.35rem', display: 'block' }}>
+              <span style={{ fontSize: '0.75rem', color: '#ef4444', marginLeft: '1rem', marginTop: '0.25rem', display: 'block' }}>
                 {errors.email}
               </span>
             )}
           </div>
 
           <div>
-            <label
-              htmlFor="contact-phone"
-              style={{
-                display: 'block',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                color: '#374151',
-                marginBottom: '0.4rem',
-              }}
-            >
-              Telephone / Mobile
-            </label>
             <input
-              id="contact-phone"
               type="tel"
-              placeholder="+91 98765 43210"
+              placeholder="+91"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="contact-input-field"
+              style={inputStyle}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#4b5563')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = '#e5e7eb')}
             />
           </div>
         </div>
 
-        {/* Project Name / Location */}
-        <div style={{ marginBottom: '1.25rem' }}>
-          <label
-            htmlFor="contact-project"
-            style={{
-              display: 'block',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: '#374151',
-              marginBottom: '0.4rem',
-            }}
-          >
-            Project Name / Location
-          </label>
+        {/* Row 3: Subject * */}
+        <div style={{ marginBottom: '1rem' }}>
           <input
-            id="contact-project"
             type="text"
-            placeholder="e.g. Alibaug Private Villa or Mumbai Commercial Tower"
-            value={formData.project}
-            onChange={(e) => setFormData({ ...formData, project: e.target.value })}
-            className="contact-input-field"
+            placeholder="Subject *"
+            value={formData.subject}
+            onChange={(e) => {
+              setFormData({ ...formData, subject: e.target.value });
+              if (errors.subject) setErrors({ ...errors, subject: '' });
+            }}
+            style={{
+              ...inputStyle,
+              borderColor: errors.subject ? '#ef4444' : '#e5e7eb',
+            }}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#4b5563')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = errors.subject ? '#ef4444' : '#e5e7eb')}
           />
+          {errors.subject && (
+            <span style={{ fontSize: '0.75rem', color: '#ef4444', marginLeft: '1rem', marginTop: '0.25rem', display: 'block' }}>
+              {errors.subject}
+            </span>
+          )}
         </div>
 
-        {/* Message / Requirements */}
+        {/* Row 4: Message Textarea */}
         <div style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor="contact-message"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: '#374151',
-              marginBottom: '0.4rem',
-            }}
-          >
-            <span>Project Details &amp; Optical Notes <span style={{ color: '#ef4444' }}>*</span></span>
-            <span style={{ fontSize: '0.6875rem', color: '#9ca3af', fontWeight: 400, textTransform: 'none' }}>
-              Beam angles, CCT, mounting constraints, or schedules
-            </span>
-          </label>
           <textarea
-            id="contact-message"
-            rows={5}
-            placeholder="Please outline your luminaire requirements, target lux level, mounting constraints, or custom finishing specifications..."
+            placeholder="Tell us how we can help you *"
             value={formData.message}
-            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-            className="contact-input-field"
-            style={{
-              resize: 'vertical',
-              minHeight: '130px',
-              borderColor: errors.message ? '#ef4444' : undefined,
+            onChange={(e) => {
+              setFormData({ ...formData, message: e.target.value });
+              if (errors.message) setErrors({ ...errors, message: '' });
             }}
+            style={{
+              ...textareaStyle,
+              borderColor: errors.message ? '#ef4444' : '#e5e7eb',
+            }}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#4b5563')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = errors.message ? '#ef4444' : '#e5e7eb')}
           />
           {errors.message && (
-            <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.35rem', display: 'block' }}>
+            <span style={{ fontSize: '0.75rem', color: '#ef4444', marginLeft: '1rem', marginTop: '0.25rem', display: 'block' }}>
               {errors.message}
             </span>
           )}
         </div>
 
-        {/* Consent Checkbox */}
-        <div style={{ marginBottom: '1.75rem' }}>
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '0.6rem',
-              cursor: 'pointer',
-              fontSize: '0.8125rem',
-              color: '#4b5563',
-              lineHeight: 1.5,
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={formData.consent}
-              onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
-              style={{
-                marginTop: '0.2rem',
-                accentColor: '#111111',
-                width: '16px',
-                height: '16px',
-                cursor: 'pointer',
-              }}
-            />
-            <span>
-              I agree to transmit this architectural inquiry to Kirtee &amp; Associates for technical review, photometric data preparation, and quotation.
-            </span>
-          </label>
-          {errors.consent && (
-            <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.35rem', display: 'block' }}>
-              {errors.consent}
-            </span>
-          )}
-        </div>
-
-        {/* Submit Button */}
+        {/* Row 5: Submit Button (Pill Rounded, Architectural Grey) */}
         <button
           type="submit"
           disabled={isSubmitting}
           style={{
             width: '100%',
-            backgroundColor: '#111111',
+            borderRadius: '9999px',
+            backgroundColor: '#282b32', // Architectural Slate Grey (no pure black)
             color: '#ffffff',
-            padding: '1.05rem 2rem',
-            fontSize: '0.8125rem',
+            padding: '1rem 2rem',
+            fontFamily: 'var(--font-sans)',
+            fontSize: '0.9375rem',
             fontWeight: 600,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
             border: 'none',
-            borderRadius: '2px',
             cursor: isSubmitting ? 'not-allowed' : 'pointer',
             opacity: isSubmitting ? 0.75 : 1,
-            transition: 'background-color 0.2s ease',
+            transition: 'background-color 0.2s ease, transform 0.15s ease',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.6rem',
+            gap: '0.5rem',
           }}
           onMouseEnter={(e) => {
-            if (!isSubmitting) e.currentTarget.style.backgroundColor = '#2a2a2a';
+            if (!isSubmitting) {
+              e.currentTarget.style.backgroundColor = '#374151';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }
           }}
           onMouseLeave={(e) => {
-            if (!isSubmitting) e.currentTarget.style.backgroundColor = '#111111';
+            if (!isSubmitting) {
+              e.currentTarget.style.backgroundColor = '#282b32';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }
           }}
         >
           {isSubmitting ? (
             <>
               <Loader2 size={16} className="animate-spin" />
-              <span>Transmitting Inquiry...</span>
+              <span>Submitting...</span>
             </>
           ) : (
-            <>
-              <span>Transmit Specification Inquiry</span>
-              <ArrowRight size={15} />
-            </>
+            <span>Submit</span>
           )}
         </button>
       </form>

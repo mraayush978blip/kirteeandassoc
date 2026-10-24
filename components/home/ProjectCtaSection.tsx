@@ -26,7 +26,7 @@ export const ProjectCtaSection: React.FC = () => {
   return (
     <section
       style={{
-        backgroundColor: '#0c0d10',
+        backgroundColor: '#282b32',
         color: '#ffffff',
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
         overflow: 'hidden',
@@ -127,7 +127,7 @@ export const ProjectCtaSection: React.FC = () => {
             gridColumn: 'span 12',
             position: 'relative',
             height: 'clamp(440px, 40vw, 680px)',
-            backgroundColor: '#050608',
+            backgroundColor: '#353943',
           }}
           className="lg:col-span-6"
         >

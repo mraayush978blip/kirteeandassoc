@@ -6,12 +6,17 @@ import { usePathname } from 'next/navigation';
 import { X, Phone, ArrowUpRight, ChevronDown } from 'lucide-react';
 
 export const Header: React.FC = () => {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dropdownContainerRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+
+  // Eliminate duplicate header on admin routes
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   useEffect(() => {
     const handleScroll = () => {

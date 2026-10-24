@@ -69,6 +69,28 @@ export const ProjectsSwipeSection: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [showProjects, setShowProjects] = useState<boolean>(false);
+  const [projectList, setProjectList] = useState<ProjectItem[]>(projects);
+
+  // Check showOnWebsite master toggle and load dynamic projects
+  React.useEffect(() => {
+    fetch('/api/content?key=projects')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          if (data.data.settings && data.data.settings.showOnWebsite !== undefined) {
+            setShowProjects(data.data.settings.showOnWebsite);
+          }
+          if (data.data.projects && Array.isArray(data.data.projects) && data.data.projects.length > 0) {
+            setProjectList(data.data.projects);
+          }
+        }
+      })
+      .catch(() => {
+        // Fallback default: false per user preference
+        setShowProjects(false);
+      });
+  }, []);
 
   // Check scroll boundary
   const checkScroll = () => {
@@ -77,6 +99,11 @@ export const ProjectsSwipeSection: React.FC = () => {
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
   };
+
+  // If master toggle is OFF, gracefully hide section from website
+  if (!showProjects) {
+    return null;
+  }
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return;

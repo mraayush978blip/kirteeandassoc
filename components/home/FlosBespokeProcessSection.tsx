@@ -65,7 +65,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
       aria-label="Flos Bespoke Process"
       style={{
         backgroundColor: '#ffffff',
-        color: '#111111',
+        color: '#2d333e',
         paddingTop: 'clamp(5rem, 8vw, 8rem)',
         paddingBottom: 'clamp(5rem, 8vw, 8rem)',
         overflow: 'hidden',
@@ -123,7 +123,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 letterSpacing: '0.18em',
-                color: '#111111',
+                color: '#2d333e',
                 display: 'block',
                 marginBottom: 'clamp(1.75rem, 3vw, 2.5rem)',
               }}
@@ -172,7 +172,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
                         fontSize: '0.8125rem',
                         fontWeight: 500,
                         letterSpacing: '0.04em',
-                        color: isActive ? '#111111' : '#a8a8a8',
+                        color: isActive ? '#2d333e' : '#a8a8a8',
                         display: 'block',
                         marginBottom: '0.25rem',
                         transition: 'color 0.3s ease',
@@ -190,7 +190,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
                         fontWeight: 400,
                         lineHeight: 1.15,
                         letterSpacing: '-0.02em',
-                        color: isActive ? '#111111' : '#a8a8a8',
+                        color: isActive ? '#2d333e' : '#a8a8a8',
                         margin: 0,
                         transition: 'color 0.3s ease',
                       }}
@@ -237,7 +237,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.75rem',
-                  backgroundColor: '#111111',
+                  backgroundColor: '#374151',
                   color: '#ffffff',
                   padding: '0.875rem 2rem',
                   fontSize: '0.75rem',
@@ -248,10 +248,10 @@ export const FlosBespokeProcessSection: React.FC = () => {
                   transition: 'background-color 0.2s ease, transform 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#333333';
+                  e.currentTarget.style.backgroundColor = '#4b5563';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#111111';
+                  e.currentTarget.style.backgroundColor = '#374151';
                 }}
               >
                 <span>START A BESPOKE PROJECT</span>

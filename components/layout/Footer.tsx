@@ -2,16 +2,23 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { LinkedinIcon, InstagramIcon } from '@/components/ui/Icons';
 import { Phone, Mail, MapPin } from 'lucide-react';
 
 export const Footer: React.FC = () => {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
+
+  // Hide public footer on admin panel
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <footer
       style={{
-        backgroundColor: '#0c0d10',
+        backgroundColor: '#24272e',
         color: '#ffffff',
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
         paddingTop: 'clamp(4rem, 6vw, 6rem)',

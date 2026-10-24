@@ -86,7 +86,7 @@ export const HeroSlider: React.FC = () => {
         maxHeight: '920px',
         width: '100%',
         overflow: 'hidden',
-        backgroundColor: '#0a0a0a',
+        backgroundColor: '#282b32',
         paddingTop: 'var(--header-height)',
       }}
     >
@@ -190,7 +190,7 @@ export const HeroSlider: React.FC = () => {
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.color = '#000000';
+              e.currentTarget.style.color = '#282b32';
               e.currentTarget.style.borderColor = '#ffffff';
             }}
             onMouseLeave={(e) => {

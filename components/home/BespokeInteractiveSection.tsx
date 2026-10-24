@@ -35,7 +35,7 @@ export const BespokeInteractiveSection: React.FC = () => {
       id="bespoke-design"
       style={{
         backgroundColor: '#d8d4cd',
-        color: '#111111',
+        color: '#2d333e',
         paddingTop: 'clamp(5rem, 8vw, 8rem)',
         paddingBottom: 'clamp(5rem, 8vw, 8rem)',
         overflow: 'hidden',
@@ -74,7 +74,7 @@ export const BespokeInteractiveSection: React.FC = () => {
                 lineHeight: 1.08,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
-                color: '#111111',
+                color: '#2d333e',
                 marginBottom: '1.5rem',
               }}
             >
@@ -125,7 +125,7 @@ export const BespokeInteractiveSection: React.FC = () => {
                       fontWeight: 600,
                       letterSpacing: '0.08em',
                       textTransform: 'uppercase',
-                      color: '#111111',
+                      color: '#2d333e',
                       marginBottom: '0.2rem',
                     }}
                   >
@@ -150,8 +150,8 @@ export const BespokeInteractiveSection: React.FC = () => {
               className="btn btn-pill"
               style={{
                 backgroundColor: 'transparent',
-                color: '#111111',
-                border: '1px solid #111111',
+                color: '#2d333e',
+                border: '1px solid #2d333e',
                 padding: '0.875rem 2rem',
                 fontSize: '0.8125rem',
                 fontWeight: 600,
@@ -163,12 +163,12 @@ export const BespokeInteractiveSection: React.FC = () => {
                 transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#111111';
+                e.currentTarget.style.backgroundColor = '#374151';
                 e.currentTarget.style.color = '#ffffff';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#111111';
+                e.currentTarget.style.color = '#2d333e';
               }}
             >
               <span>START A BESPOKE PROJECT</span>
@@ -237,11 +237,11 @@ export const BespokeInteractiveSection: React.FC = () => {
                         width: '16px',
                         height: '16px',
                         borderRadius: '50%',
-                        border: '1.5px solid #111111',
+                        border: '1.5px solid #2d333e',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundColor: isHovered ? '#111111' : 'transparent',
+                        backgroundColor: isHovered ? '#374151' : 'transparent',
                         transition: 'background-color 0.2s ease',
                       }}
                     >
@@ -250,7 +250,7 @@ export const BespokeInteractiveSection: React.FC = () => {
                           width: '4px',
                           height: '4px',
                           borderRadius: '50%',
-                          backgroundColor: isHovered ? '#ffffff' : '#111111',
+                          backgroundColor: isHovered ? '#ffffff' : '#2d333e',
                         }}
                       />
                     </div>
@@ -274,7 +274,7 @@ export const BespokeInteractiveSection: React.FC = () => {
                           fontFamily: 'var(--font-sans)',
                           fontSize: '0.8125rem',
                           fontWeight: 600,
-                          color: '#111111',
+                          color: '#2d333e',
                         }}
                       >
                         {spot.value}

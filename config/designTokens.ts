@@ -39,10 +39,10 @@ export interface DesignSystemTokens {
 
 export const defaultDesignTokens: DesignSystemTokens = {
   colors: {
-    primaryBackground: '#0a0b0d',
-    secondaryBackground: '#16181d',
-    surface: '#121417',
-    surfaceElevated: '#1a1d22',
+    primaryBackground: '#282b32',
+    secondaryBackground: '#353943',
+    surface: '#30343e',
+    surfaceElevated: '#3a3f4b',
     primaryText: '#f8f9fa',
     secondaryText: '#a0a6b1',
     mutedText: '#6e7683',
@@ -51,7 +51,7 @@ export const defaultDesignTokens: DesignSystemTokens = {
     border: 'rgba(255, 255, 255, 0.08)',
     borderFocus: '#c5a880',
     buttonBackground: '#c5a880',
-    buttonText: '#0a0b0d',
+    buttonText: '#282b32',
     buttonHover: '#d6bc98',
     buttonActive: '#b5976e',
   },

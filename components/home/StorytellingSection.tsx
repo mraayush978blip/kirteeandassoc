@@ -91,7 +91,7 @@ export const StorytellingSection: React.FC<StorytellingSectionProps> = ({ data }
               position: 'relative',
               width: '100%',
               aspectRatio: '4/5',
-              backgroundColor: '#050608',
+              backgroundColor: '#353943',
               border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-xs)',
               overflow: 'hidden',
