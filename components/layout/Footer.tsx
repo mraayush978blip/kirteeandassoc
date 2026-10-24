@@ -18,7 +18,7 @@ export const Footer: React.FC = () => {
   return (
     <footer
       style={{
-        backgroundColor: '#24272e',
+        backgroundColor: '#0a0a09',
         color: '#ffffff',
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
         paddingTop: 'clamp(4rem, 6vw, 6rem)',
@@ -312,15 +312,6 @@ export const Footer: React.FC = () => {
               onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.45)')}
             >
               Terms of Use
-            </Link>
-            <span style={{ color: 'rgba(255, 255, 255, 0.3)' }}>|</span>
-            <Link
-              href="/ad"
-              style={{ color: 'rgba(255, 255, 255, 0.6)', textDecoration: 'none', fontWeight: 600 }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#c5a880')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)')}
-            >
-              Admin Studio
             </Link>
           </div>
         </div>

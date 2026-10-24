@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   Sliders,
@@ -65,10 +65,21 @@ import { ImageCropperModal } from '@/components/admin/ImageCropperModal';
 
 type AdminTab = 'dashboard' | 'home' | 'products' | 'projects' | 'contact' | 'settings';
 
-export default function AdminPage() {
+function AdminDashboardContent() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
   const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(false);
+
+  const navigateTab = (tab: AdminTab) => {
+    setActiveTab(tab);
+    if (tab === 'dashboard') {
+      router.push('/ad');
+    } else {
+      router.push(`/ad/${tab}`);
+    }
+  };
 
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -196,7 +207,8 @@ export default function AdminPage() {
       }
     } catch {}
     setIsAuthChecking(false);
-    router.replace('/ad/login');
+    const targetUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/ad';
+    router.replace(`/ad/login?redirect=${encodeURIComponent(targetUrl)}`);
   }, [router]);
 
   const handleLogout = () => {
@@ -204,6 +216,14 @@ export default function AdminPage() {
     setIsAuthenticated(false);
     setCurrentUser(null);
     router.replace('/ad/login');
+  };
+
+  const closeProductModal = () => {
+    setIsProductModalOpen(false);
+    setEditingProduct(null);
+    if (pathname && (pathname.includes('/products/new') || pathname.includes('/products/edit'))) {
+      router.push('/ad/products');
+    }
   };
 
   // -------------------------------------------------------------
@@ -227,6 +247,43 @@ export default function AdminPage() {
     } catch {}
   }, []);
 
+  // Synchronize URL route with activeTab and forms/modals
+  useEffect(() => {
+    if (!pathname) return;
+    const pathWithoutAd = pathname.replace(/^\/ad\/?/, '');
+    const segments = pathWithoutAd.split('/').filter(Boolean);
+    const mainSection = segments[0] || 'dashboard';
+
+    if (mainSection === 'home') {
+      setActiveTab('home');
+    } else if (mainSection === 'products') {
+      setActiveTab('products');
+      const action = segments[1];
+      if (action === 'new') {
+        if (!isProductModalOpen && !editingProduct) {
+          openNewProductForm(false);
+        }
+      } else if (action === 'edit') {
+        const editId = searchParams.get('id');
+        const editSlug = searchParams.get('slug');
+        if ((editId || editSlug) && products.length > 0 && !isProductModalOpen) {
+          const found = products.find((p) => p.id === editId || p.slug === editSlug);
+          if (found) {
+            openEditProductForm(found, false);
+          }
+        }
+      }
+    } else if (mainSection === 'projects') {
+      setActiveTab('projects');
+    } else if (mainSection === 'contact') {
+      setActiveTab('contact');
+    } else if (mainSection === 'settings') {
+      setActiveTab('settings');
+    } else {
+      setActiveTab('dashboard');
+    }
+  }, [pathname, searchParams, products, isProductModalOpen, editingProduct]);
+
   // Continuously auto-save product changes to localStorage while modal is open
   useEffect(() => {
     if (isProductModalOpen && editingProduct) {
@@ -247,6 +304,7 @@ export default function AdminPage() {
     if (!productDraft) return;
     setEditingProduct(productDraft.product);
     setIsProductModalOpen(true);
+    router.push('/ad/products/new');
     showToast(`Restored draft from ${productDraft.savedAt}.`);
   };
 
@@ -255,8 +313,7 @@ export default function AdminPage() {
       localStorage.removeItem('zenvora_product_draft');
     } catch {}
     setProductDraft(null);
-    setIsProductModalOpen(false);
-    setEditingProduct(null);
+    closeProductModal();
     showToast('Unsaved product draft discarded.');
   };
 
@@ -492,60 +549,78 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   // Product Form Management
   // -------------------------------------------------------------
-  const openNewProductForm = () => {
-    setEditingProduct({
-      name: '',
-      slug: '',
-      sku: `ZN-${Date.now().toString().slice(-4)}`,
-      catalogType: productCategoryFilter === 'wet' ? 'wet' : 'dry',
-      tagline: 'Precision architectural luminaire',
-      shortDescription: '',
-      fullDescription: '',
-      editorialStory: '',
-      designer: 'ZENVORA Studio',
-      heroImage: {
-        id: `hero-${Date.now()}`,
-        url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80',
-        alt: 'Luminaire hero view',
-        isPrimary: true,
-      },
-      heroCarouselImages: [
-        {
+  const openNewProductForm = (updateUrl = true) => {
+    let initialProduct: Partial<Product> | null = null;
+    try {
+      const draft = localStorage.getItem('zenvora_product_draft');
+      if (draft) {
+        const parsed = JSON.parse(draft);
+        if (parsed && parsed.product) {
+          initialProduct = parsed.product;
+        }
+      }
+    } catch {}
+
+    if (initialProduct) {
+      setEditingProduct(initialProduct);
+    } else {
+      setEditingProduct({
+        name: '',
+        slug: '',
+        sku: `ZN-${Date.now().toString().slice(-4)}`,
+        catalogType: productCategoryFilter === 'wet' ? 'wet' : 'dry',
+        tagline: 'Precision architectural luminaire',
+        shortDescription: '',
+        fullDescription: '',
+        editorialStory: '',
+        designer: 'ZENVORA Studio',
+        heroImage: {
           id: `hero-${Date.now()}`,
           url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80',
           alt: 'Luminaire hero view',
           isPrimary: true,
         },
-      ],
-      specifications: [
-        { id: 's1', label: 'Luminous Flux', value: '2,884', unit: 'lm', group: 'Optical' },
-        { id: 's2', label: 'Color Temperature', value: '3000K Warm White', unit: '', group: 'Optical' },
-        { id: 's3', label: 'Color Rendering', value: 'CRI 90 (R9 > 50)', unit: '', group: 'Optical' },
-        { id: 's4', label: 'Power Consumption', value: '28', unit: 'W', group: 'Electrical' },
-      ],
-      gallery: [],
-      downloads: [
-        {
-          id: 'dl-1',
-          title: 'Technical Datasheet & Photometrics (Google Drive)',
-          fileUrl: '',
-          fileType: 'PDF',
+        heroCarouselImages: [
+          {
+            id: `hero-${Date.now()}`,
+            url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80',
+            alt: 'Luminaire hero view',
+            isPrimary: true,
+          },
+        ],
+        specifications: [
+          { id: 's1', label: 'Luminous Flux', value: '2,884', unit: 'lm', group: 'Optical' },
+          { id: 's2', label: 'Color Temperature', value: '3000K Warm White', unit: '', group: 'Optical' },
+          { id: 's3', label: 'Color Rendering', value: 'CRI 90 (R9 > 50)', unit: '', group: 'Optical' },
+          { id: 's4', label: 'Power Consumption', value: '28', unit: 'W', group: 'Electrical' },
+        ],
+        gallery: [],
+        downloads: [
+          {
+            id: 'dl-1',
+            title: 'Technical Datasheet & Photometrics (Google Drive)',
+            fileUrl: '',
+            fileType: 'PDF',
+          },
+        ],
+        socialLinks: {
+          facebook: '',
+          twitter: '',
+          linkedin: '',
+          instagram: '',
         },
-      ],
-      socialLinks: {
-        facebook: '',
-        twitter: '',
-        linkedin: '',
-        instagram: '',
-      },
-      isFeatured: true,
-      order: products.length + 1,
-    });
+        isFeatured: true,
+        order: products.length + 1,
+      });
+    }
     setNewCarouselUrl('');
     setIsProductModalOpen(true);
+    if (updateUrl) {
+      router.push('/ad/products/new');
+    }
   };
 
-  const openEditProductForm = (p: Product) => {
+  const openEditProductForm = (p: Product, updateUrl = true) => {
     const heroCarouselImages = (p.heroCarouselImages && p.heroCarouselImages.length > 0)
       ? [...p.heroCarouselImages]
       : (p.heroImage ? [{ ...p.heroImage, isPrimary: true }] : []);
@@ -562,6 +637,9 @@ export default function AdminPage() {
       heroCarouselImages: syncedImages,
     });
     setIsProductModalOpen(true);
+    if (updateUrl) {
+      router.push(`/ad/products/edit?id=${encodeURIComponent(p.id)}`);
+    }
   };
 
   const duplicateProduct = async (p: Product) => {
@@ -632,7 +710,7 @@ export default function AdminPage() {
           localStorage.removeItem('zenvora_product_draft');
         } catch {}
         setProductDraft(null);
-        setIsProductModalOpen(false);
+        closeProductModal();
         fetchProducts();
       } else {
         showToast(data.message || 'Error saving product', 'error');
@@ -935,7 +1013,7 @@ export default function AdminPage() {
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setActiveTab(tab.id as AdminTab)}
+                  onClick={() => navigateTab(tab.id as AdminTab)}
                   style={{
                     width: '100%',
                     display: 'flex',
@@ -1167,7 +1245,7 @@ export default function AdminPage() {
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
                 <div
-                  onClick={() => setActiveTab('home')}
+                  onClick={() => navigateTab('home')}
                   style={{
                     backgroundColor: '#ffffff',
                     border: '1px solid #e5e7eb',
@@ -1195,10 +1273,7 @@ export default function AdminPage() {
                 </div>
 
                 <div
-                  onClick={() => {
-                    setActiveTab('products');
-                    openNewProductForm();
-                  }}
+                  onClick={() => openNewProductForm()}
                   style={{
                     backgroundColor: '#ffffff',
                     border: '1px solid #e5e7eb',
@@ -1226,7 +1301,7 @@ export default function AdminPage() {
                 </div>
 
                 <div
-                  onClick={() => setActiveTab('settings')}
+                  onClick={() => navigateTab('settings')}
                   style={{
                     backgroundColor: '#ffffff',
                     border: '1px solid #e5e7eb',
@@ -1621,7 +1696,7 @@ export default function AdminPage() {
 
               <button
                 type="button"
-                onClick={openNewProductForm}
+                onClick={() => openNewProductForm(true)}
                 style={{
                   backgroundColor: '#111827',
                   color: '#ffffff',
@@ -2635,7 +2710,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsProductModalOpen(false)}
+                  onClick={closeProductModal}
                   title="Close (changes remain saved in local draft)"
                   style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 >
@@ -3414,7 +3489,7 @@ export default function AdminPage() {
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
                 <button
                   type="button"
-                  onClick={() => setIsProductModalOpen(false)}
+                  onClick={closeProductModal}
                   style={{ padding: '0.6rem 1.25rem', borderRadius: '4px', border: '1px solid #d1d5db', backgroundColor: '#ffffff', fontSize: '0.8125rem', cursor: 'pointer' }}
                 >
                   Cancel
@@ -3900,5 +3975,24 @@ export default function AdminPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f1216' }}>
+          <div style={{ textAlign: 'center', color: '#ffffff' }}>
+            <RefreshCw size={28} className="animate-spin" style={{ margin: '0 auto 1rem', color: '#60a5fa' }} />
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', letterSpacing: '0.1em' }}>
+              LOADING ZENVORA CONSOLE...
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <AdminDashboardContent />
+    </Suspense>
   );
 }

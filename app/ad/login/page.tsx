@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Lock, Mail, Eye, EyeOff, AlertCircle, ArrowRight, ShieldCheck, RefreshCw } from 'lucide-react';
 import { loginWithSupabase } from '@/lib/supabase-auth';
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/ad';
+
   const [loginEmail, setLoginEmail] = useState<string>('');
   const [loginPassword, setLoginPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -15,20 +18,20 @@ export default function AdminLoginPage() {
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
 
-  // If already authenticated, redirect to /ad
+  // If already authenticated, redirect to targetUrl or /ad
   useEffect(() => {
     try {
       const saved = localStorage.getItem('kirtee_admin_auth');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && parsed.email) {
-          router.replace('/ad');
+          router.replace(redirectUrl);
           return;
         }
       }
     } catch {}
     setIsCheckingAuth(false);
-  }, [router]);
+  }, [router, redirectUrl]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +49,7 @@ export default function AdminLoginPage() {
         id: '9460e78f-ffe8-420a-aa7e-baabbe4643ab',
       };
       localStorage.setItem('kirtee_admin_auth', JSON.stringify(adminSession));
-      router.push('/ad');
+      router.push(redirectUrl);
       return;
     }
 
@@ -60,7 +63,7 @@ export default function AdminLoginPage() {
           id: result.session.user.id || '9460e78f-ffe8-420a-aa7e-baabbe4643ab',
         };
         localStorage.setItem('kirtee_admin_auth', JSON.stringify(adminSession));
-        router.push('/ad');
+        router.push(redirectUrl);
       } else {
         setLoginError(result.error || 'Authentication failed. Please verify credentials.');
       }
@@ -322,5 +325,24 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0c0e12' }}>
+          <div style={{ textAlign: 'center', color: '#ffffff' }}>
+            <RefreshCw size={28} className="animate-spin" style={{ margin: '0 auto 1rem', color: '#60a5fa' }} />
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', letterSpacing: '0.1em' }}>
+              INITIALIZING ADMINISTRATIVE ACCESS...
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <AdminLoginForm />
+    </Suspense>
   );
 }
