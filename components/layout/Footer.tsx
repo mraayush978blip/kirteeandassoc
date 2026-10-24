@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   // Hide public footer on admin panel
-  if (pathname?.startsWith('/admin')) {
+  if (pathname?.startsWith('/admin') || pathname?.startsWith('/ad')) {
     return null;
   }
 
@@ -315,7 +315,7 @@ export const Footer: React.FC = () => {
             </Link>
             <span style={{ color: 'rgba(255, 255, 255, 0.3)' }}>|</span>
             <Link
-              href="/admin"
+              href="/ad"
               style={{ color: 'rgba(255, 255, 255, 0.6)', textDecoration: 'none', fontWeight: 600 }}
               onMouseEnter={(e) => (e.currentTarget.style.color = '#c5a880')}
               onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)')}

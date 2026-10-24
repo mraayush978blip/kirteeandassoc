@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
   const dropdownContainerRef = useRef<HTMLDivElement>(null);
 
   // Eliminate duplicate header on admin routes
-  if (pathname?.startsWith('/admin')) {
+  if (pathname?.startsWith('/admin') || pathname?.startsWith('/ad')) {
     return null;
   }
 
@@ -59,7 +59,7 @@ export const Header: React.FC = () => {
 
   const isProductsActive =
     pathname.startsWith('/products') || pathname === '/dry-goods' || pathname === '/wet-goods';
-  const isLightHeader = !pathname.startsWith('/admin');
+  const isLightHeader = !pathname.startsWith('/admin') && !pathname.startsWith('/ad');
 
   return (
     <>

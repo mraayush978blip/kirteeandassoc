@@ -19,6 +19,15 @@ const nextConfig: NextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/admin',
+        destination: '/ad',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
