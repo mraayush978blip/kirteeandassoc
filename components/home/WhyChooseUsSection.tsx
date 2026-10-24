@@ -61,14 +61,14 @@ export const WhyChooseUsSection: React.FC = () => {
     <section
       id="why-choose-us"
       style={{
-        backgroundColor: '#fafafa',
-        color: '#111827',
-        paddingTop: 'clamp(4.5rem, 7vw, 7rem)',
-        paddingBottom: 'clamp(4.5rem, 7vw, 7rem)',
+        backgroundColor: '#F3EFEA',
+        color: '#1C1917',
+        paddingTop: 'clamp(5rem, 7.5vw, 7.5rem)',
+        paddingBottom: 'clamp(5rem, 7.5vw, 7.5rem)',
         position: 'relative',
         overflow: 'hidden',
-        borderTop: '1px solid #f0f0f2',
-        borderBottom: '1px solid #f0f0f2',
+        borderTop: '1px solid #E5DFD5',
+        borderBottom: '1px solid #E5DFD5',
       }}
     >
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
@@ -79,7 +79,7 @@ export const WhyChooseUsSection: React.FC = () => {
             gridTemplateColumns: 'repeat(12, 1fr)',
             gap: 'clamp(1.5rem, 4vw, 3rem)',
             alignItems: 'flex-end',
-            marginBottom: 'clamp(2.5rem, 4.5vw, 4rem)',
+            marginBottom: 'clamp(2.75rem, 5vw, 4.25rem)',
           }}
         >
           <div style={{ gridColumn: 'span 12' }} className="lg:col-span-8">
@@ -89,8 +89,8 @@ export const WhyChooseUsSection: React.FC = () => {
                 fontSize: '0.6875rem',
                 fontWeight: 600,
                 textTransform: 'uppercase',
-                letterSpacing: '0.2em',
-                color: '#6b7280',
+                letterSpacing: '0.22em',
+                color: '#7C7467',
                 display: 'block',
                 marginBottom: '0.85rem',
               }}
@@ -105,7 +105,7 @@ export const WhyChooseUsSection: React.FC = () => {
                 lineHeight: 1.15,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
-                color: '#111827',
+                color: '#1C1917',
                 margin: 0,
               }}
             >
@@ -119,7 +119,7 @@ export const WhyChooseUsSection: React.FC = () => {
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.9375rem',
                 lineHeight: 1.65,
-                color: '#4b5563',
+                color: '#57534E',
                 margin: 0,
               }}
             >
@@ -150,13 +150,13 @@ export const WhyChooseUsSection: React.FC = () => {
                   backgroundColor: '#ffffff',
                   borderRadius: '6px',
                   overflow: 'hidden',
-                  border: isHovered ? '1px solid #111827' : '1px solid #e5e7eb',
+                  border: isHovered ? '1px solid #1C1917' : '1px solid #E5DFD5',
                   cursor: 'pointer',
                   transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                   transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
                   boxShadow: isHovered
-                    ? '0 16px 32px rgba(0, 0, 0, 0.08)'
-                    : '0 1px 3px rgba(0, 0, 0, 0.03)',
+                    ? '0 16px 32px rgba(28, 25, 23, 0.08)'
+                    : '0 2px 8px rgba(28, 25, 23, 0.03)',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
@@ -169,7 +169,7 @@ export const WhyChooseUsSection: React.FC = () => {
                     height: '220px',
                     width: '100%',
                     overflow: 'hidden',
-                    backgroundColor: '#f3f4f6',
+                    backgroundColor: '#EBE5DC',
                   }}
                 >
                   <Image
@@ -207,7 +207,7 @@ export const WhyChooseUsSection: React.FC = () => {
                         padding: '0.3rem 0.6rem',
                         borderRadius: '3px',
                         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        color: '#111827',
+                        color: '#1C1917',
                         backdropFilter: 'blur(8px)',
                         WebkitBackdropFilter: 'blur(8px)',
                         boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
@@ -224,7 +224,7 @@ export const WhyChooseUsSection: React.FC = () => {
                         padding: '0.3rem 0.55rem',
                         borderRadius: '3px',
                         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        color: '#6b7280',
+                        color: '#7C7467',
                         backdropFilter: 'blur(8px)',
                         WebkitBackdropFilter: 'blur(8px)',
                         boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
@@ -235,7 +235,7 @@ export const WhyChooseUsSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Card Content (Clean & Minimal) */}
+                {/* Card Content */}
                 <div
                   style={{
                     padding: '1.5rem 1.25rem',
@@ -253,8 +253,9 @@ export const WhyChooseUsSection: React.FC = () => {
                         fontFamily: 'var(--font-mono)',
                         fontSize: '0.6875rem',
                         fontWeight: 600,
-                        color: '#374151',
-                        backgroundColor: '#f3f4f6',
+                        color: '#44403C',
+                        backgroundColor: '#F3EFEA',
+                        border: '1px solid #E5DFD5',
                         padding: '0.2rem 0.55rem',
                         borderRadius: '3px',
                         marginBottom: '0.75rem',
@@ -271,7 +272,7 @@ export const WhyChooseUsSection: React.FC = () => {
                         fontSize: '1.125rem',
                         fontWeight: 600,
                         letterSpacing: '-0.01em',
-                        color: '#111827',
+                        color: '#1C1917',
                         margin: '0 0 0.45rem 0',
                         lineHeight: 1.35,
                       }}
@@ -285,7 +286,7 @@ export const WhyChooseUsSection: React.FC = () => {
                         fontFamily: 'var(--font-sans)',
                         fontSize: '0.8125rem',
                         lineHeight: 1.6,
-                        color: '#6b7280',
+                        color: '#57534E',
                         margin: 0,
                       }}
                     >
@@ -303,7 +304,7 @@ export const WhyChooseUsSection: React.FC = () => {
           style={{
             marginTop: '3.5rem',
             paddingTop: '2rem',
-            borderTop: '1px solid #e5e7eb',
+            borderTop: '1px solid #E5DFD5',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
@@ -317,7 +318,7 @@ export const WhyChooseUsSection: React.FC = () => {
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
-                backgroundColor: '#10b981',
+                backgroundColor: '#10B981',
                 boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.15)',
               }}
             />
@@ -325,7 +326,7 @@ export const WhyChooseUsSection: React.FC = () => {
               style={{
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.875rem',
-                color: '#4b5563',
+                color: '#57534E',
               }}
             >
               Direct technical access to photometric engineers &amp; custom luminaire prototyping.
@@ -338,24 +339,24 @@ export const WhyChooseUsSection: React.FC = () => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.45rem',
-              color: '#111827',
+              color: '#1C1917',
               fontFamily: 'var(--font-sans)',
               fontSize: '0.8125rem',
               fontWeight: 600,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
               textDecoration: 'none',
-              borderBottom: '1px solid #111827',
+              borderBottom: '1px solid #1C1917',
               paddingBottom: '0.2rem',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#2563eb';
-              e.currentTarget.style.borderColor = '#2563eb';
+              e.currentTarget.style.color = '#B45309';
+              e.currentTarget.style.borderColor = '#B45309';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#111827';
-              e.currentTarget.style.borderColor = '#111827';
+              e.currentTarget.style.color = '#1C1917';
+              e.currentTarget.style.borderColor = '#1C1917';
             }}
           >
             <span>Request Specification Package</span>
