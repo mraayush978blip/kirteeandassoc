@@ -61,30 +61,16 @@ export const WhyChooseUsSection: React.FC = () => {
     <section
       id="why-choose-us"
       style={{
-        backgroundColor: '#0c0e12',
-        color: '#ffffff',
-        paddingTop: 'clamp(5rem, 8vw, 7.5rem)',
-        paddingBottom: 'clamp(5rem, 8vw, 7.5rem)',
+        backgroundColor: '#fafafa',
+        color: '#111827',
+        paddingTop: 'clamp(4.5rem, 7vw, 7rem)',
+        paddingBottom: 'clamp(4.5rem, 7vw, 7rem)',
         position: 'relative',
         overflow: 'hidden',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        borderTop: '1px solid #f0f0f2',
+        borderBottom: '1px solid #f0f0f2',
       }}
     >
-      {/* Background Architectural Ambient Radial Glow */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '-15%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '900px',
-          height: '450px',
-          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         {/* Editorial Section Header */}
         <div
@@ -93,7 +79,7 @@ export const WhyChooseUsSection: React.FC = () => {
             gridTemplateColumns: 'repeat(12, 1fr)',
             gap: 'clamp(1.5rem, 4vw, 3rem)',
             alignItems: 'flex-end',
-            marginBottom: 'clamp(3rem, 5vw, 4.5rem)',
+            marginBottom: 'clamp(2.5rem, 4.5vw, 4rem)',
           }}
         >
           <div style={{ gridColumn: 'span 12' }} className="lg:col-span-8">
@@ -103,10 +89,10 @@ export const WhyChooseUsSection: React.FC = () => {
                 fontSize: '0.6875rem',
                 fontWeight: 600,
                 textTransform: 'uppercase',
-                letterSpacing: '0.22em',
-                color: '#9ca3af',
+                letterSpacing: '0.2em',
+                color: '#6b7280',
                 display: 'block',
-                marginBottom: '1rem',
+                marginBottom: '0.85rem',
               }}
             >
               WHY SPECIFY ZENVORA
@@ -115,11 +101,11 @@ export const WhyChooseUsSection: React.FC = () => {
             <h2
               style={{
                 fontFamily: 'var(--font-serif)',
-                fontSize: 'clamp(2.25rem, 4.5vw, 3.5rem)',
-                lineHeight: 1.1,
+                fontSize: 'clamp(2rem, 4vw, 3.25rem)',
+                lineHeight: 1.15,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
-                color: '#ffffff',
+                color: '#111827',
                 margin: 0,
               }}
             >
@@ -132,8 +118,8 @@ export const WhyChooseUsSection: React.FC = () => {
               style={{
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.9375rem',
-                lineHeight: 1.7,
-                color: '#9ca3af',
+                lineHeight: 1.65,
+                color: '#4b5563',
                 margin: 0,
               }}
             >
@@ -143,7 +129,7 @@ export const WhyChooseUsSection: React.FC = () => {
           </div>
         </div>
 
-        {/* 4 Luxury Architectural Photographic Tiles */}
+        {/* 4 Minimalist & Clean Architectural Cards */}
         <div
           style={{
             display: 'grid',
@@ -161,145 +147,151 @@ export const WhyChooseUsSection: React.FC = () => {
                 onMouseLeave={() => setHoveredPillar(null)}
                 style={{
                   gridColumn: 'span 12',
-                  position: 'relative',
-                  height: '480px',
-                  borderRadius: '4px',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '6px',
                   overflow: 'hidden',
-                  border: isHovered ? '1px solid rgba(255, 255, 255, 0.45)' : '1px solid rgba(255, 255, 255, 0.1)',
-                  backgroundColor: '#14171d',
+                  border: isHovered ? '1px solid #111827' : '1px solid #e5e7eb',
                   cursor: 'pointer',
-                  transition: 'border-color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease',
-                  transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                  transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
                   boxShadow: isHovered
-                    ? '0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.05)'
-                    : '0 4px 16px rgba(0, 0, 0, 0.3)',
+                    ? '0 16px 32px rgba(0, 0, 0, 0.08)'
+                    : '0 1px 3px rgba(0, 0, 0, 0.03)',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
                 className="lg:col-span-3 sm:col-span-6 group"
               >
-                {/* Background Architectural Photo with Smooth Zoom */}
-                <Image
-                  src={pillar.image}
-                  alt={pillar.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  style={{
-                    objectFit: 'cover',
-                    transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                  className="group-hover:scale-110"
-                />
-
-                {/* Dark Luxury Vignette Overlay */}
+                {/* Image Container */}
                 <div
                   style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background:
-                      'linear-gradient(180deg, rgba(12, 14, 18, 0.4) 0%, rgba(12, 14, 18, 0.65) 50%, rgba(12, 14, 18, 0.96) 100%)',
-                    transition: 'opacity 0.4s ease',
-                  }}
-                />
-
-                {/* Top Badge: Index and Category */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '1.5rem',
-                    left: '1.5rem',
-                    right: '1.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    zIndex: 3,
+                    position: 'relative',
+                    height: '220px',
+                    width: '100%',
+                    overflow: 'hidden',
+                    backgroundColor: '#f3f4f6',
                   }}
                 >
-                  <span
+                  <Image
+                    src={pillar.image}
+                    alt={pillar.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.625rem',
-                      fontWeight: 600,
-                      letterSpacing: '0.14em',
-                      textTransform: 'uppercase',
-                      padding: '0.35rem 0.65rem',
-                      borderRadius: '2px',
-                      backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.5)',
-                      color: isHovered ? '#0c0e12' : '#e5e7eb',
-                      backdropFilter: 'blur(8px)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      transition: 'all 0.3s ease',
+                      objectFit: 'cover',
+                      transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
-                  >
-                    {pillar.tag}
-                  </span>
+                    className="group-hover:scale-105"
+                  />
 
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8125rem',
-                      fontWeight: 600,
-                      color: isHovered ? '#ffffff' : '#6b7280',
-                      transition: 'color 0.3s ease',
-                    }}
-                  >
-                    {pillar.num}
-                  </span>
-                </div>
-
-                {/* Bottom Narrative Content */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '1.75rem',
-                    left: '1.75rem',
-                    right: '1.75rem',
-                    zIndex: 3,
-                  }}
-                >
-                  {/* Metric Pill */}
+                  {/* Top Badges */}
                   <div
                     style={{
-                      display: 'inline-block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6875rem',
-                      fontWeight: 700,
-                      color: '#ffffff',
-                      backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                      padding: '0.2rem 0.55rem',
-                      borderRadius: '2px',
-                      marginBottom: '0.75rem',
-                      letterSpacing: '0.04em',
+                      position: 'absolute',
+                      top: '1rem',
+                      left: '1rem',
+                      right: '1rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      zIndex: 3,
                     }}
                   >
-                    {pillar.metric}
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.625rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        padding: '0.3rem 0.6rem',
+                        borderRadius: '3px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        color: '#111827',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                      }}
+                    >
+                      {pillar.tag}
+                    </span>
+
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        padding: '0.3rem 0.55rem',
+                        borderRadius: '3px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        color: '#6b7280',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                      }}
+                    >
+                      {pillar.num}
+                    </span>
                   </div>
+                </div>
 
-                  {/* Title */}
-                  <h3
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '1.1875rem',
-                      fontWeight: 600,
-                      letterSpacing: '-0.01em',
-                      color: '#ffffff',
-                      margin: '0 0 0.5rem 0',
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {pillar.title}
-                  </h3>
+                {/* Card Content (Clean & Minimal) */}
+                <div
+                  style={{
+                    padding: '1.5rem 1.25rem',
+                    flexGrow: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div>
+                    {/* Metric Tag */}
+                    <div
+                      style={{
+                        display: 'inline-block',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: '#374151',
+                        backgroundColor: '#f3f4f6',
+                        padding: '0.2rem 0.55rem',
+                        borderRadius: '3px',
+                        marginBottom: '0.75rem',
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {pillar.metric}
+                    </div>
 
-                  {/* Micro-Copy Description (Concise & Impactful) */}
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.8125rem',
-                      lineHeight: 1.55,
-                      color: '#d1d5db',
-                      margin: 0,
-                    }}
-                  >
-                    {pillar.description}
-                  </p>
+                    {/* Title */}
+                    <h3
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '1.125rem',
+                        fontWeight: 600,
+                        letterSpacing: '-0.01em',
+                        color: '#111827',
+                        margin: '0 0 0.45rem 0',
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      {pillar.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '0.8125rem',
+                        lineHeight: 1.6,
+                        color: '#6b7280',
+                        margin: 0,
+                      }}
+                    >
+                      {pillar.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             );
@@ -309,9 +301,9 @@ export const WhyChooseUsSection: React.FC = () => {
         {/* Minimalist Engineering Consultation Strip */}
         <div
           style={{
-            marginTop: '3rem',
+            marginTop: '3.5rem',
             paddingTop: '2rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            borderTop: '1px solid #e5e7eb',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
@@ -319,21 +311,21 @@ export const WhyChooseUsSection: React.FC = () => {
             gap: '1.5rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div
               style={{
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
                 backgroundColor: '#10b981',
-                boxShadow: '0 0 8px #10b981',
+                boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.15)',
               }}
             />
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.875rem',
-                color: '#d1d5db',
+                color: '#4b5563',
               }}
             >
               Direct technical access to photometric engineers &amp; custom luminaire prototyping.
@@ -345,25 +337,25 @@ export const WhyChooseUsSection: React.FC = () => {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.5rem',
-              color: '#ffffff',
+              gap: '0.45rem',
+              color: '#111827',
               fontFamily: 'var(--font-sans)',
               fontSize: '0.8125rem',
               fontWeight: 600,
-              letterSpacing: '0.1em',
+              letterSpacing: '0.08em',
               textTransform: 'uppercase',
               textDecoration: 'none',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.35)',
+              borderBottom: '1px solid #111827',
               paddingBottom: '0.2rem',
-              transition: 'border-color 0.2s ease, color 0.2s ease',
+              transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#ffffff';
-              e.currentTarget.style.color = '#ffffff';
+              e.currentTarget.style.color = '#2563eb';
+              e.currentTarget.style.borderColor = '#2563eb';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
-              e.currentTarget.style.color = '#ffffff';
+              e.currentTarget.style.color = '#111827';
+              e.currentTarget.style.borderColor = '#111827';
             }}
           >
             <span>Request Specification Package</span>
