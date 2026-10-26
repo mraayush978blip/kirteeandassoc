@@ -64,13 +64,19 @@ const projects: ProjectItem[] = [
   },
 ];
 
-export const ProjectsSwipeSection: React.FC = () => {
+export interface ProjectsSwipeSectionProps {
+  initialProjects?: any[];
+}
+
+export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ initialProjects }) => {
   const { getImage } = useSiteImages();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [showProjects, setShowProjects] = useState<boolean>(false);
-  const [projectList, setProjectList] = useState<ProjectItem[]>(projects);
+  const [projectList, setProjectList] = useState<ProjectItem[]>(
+    initialProjects && initialProjects.length > 0 ? initialProjects : projects
+  );
 
   // Check showOnWebsite master toggle and load dynamic projects
   React.useEffect(() => {
@@ -285,7 +291,7 @@ export const ProjectsSwipeSection: React.FC = () => {
                   }}
                 >
                   <Image
-                    src={getImage(proj.slotId, proj.imageUrl, proj.title).url}
+                    src={proj.imageUrl || getImage(proj.slotId, proj.imageUrl, proj.title).url}
                     alt={getImage(proj.slotId, proj.imageUrl, proj.title).alt || proj.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"

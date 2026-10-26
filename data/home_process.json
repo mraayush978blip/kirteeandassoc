@@ -1,0 +1,38 @@
+{
+  "eyebrow": "BESPOKE COMMISSIONING & ENGINEERING",
+  "headline": "FROM CONCEPT TO MONUMENTAL REALIZATION.",
+  "steps": [
+    {
+      "slotId": "process-step-1",
+      "number": ".01",
+      "title": "Design Thinking",
+      "description": "From concept or sketch, all the way to the final installation, the process is collaborative to ensure your vision is fully realized.",
+      "image": "/images/bespoke/01-design-thinking.jpg",
+      "imageAlt": "Architectural lighting design concept"
+    },
+    {
+      "slotId": "process-step-2",
+      "number": ".02",
+      "title": "Prototyping",
+      "description": "Merging technology and emotion, we integrate light into architecture and nature, bringing a sophisticated poetic sensibility to our designs and creations.",
+      "image": "/images/bespoke/02-prototyping.jpg",
+      "imageAlt": "Precision linear optical prototype"
+    },
+    {
+      "slotId": "process-step-3",
+      "number": ".03",
+      "title": "Realization",
+      "description": "Form, function, and performance drive each creation, aided by the most advanced technologies and processes.",
+      "image": "/images/bespoke/03-realization.jpg",
+      "imageAlt": "Master artisanal luminaire realization"
+    },
+    {
+      "slotId": "process-step-4",
+      "number": ".04",
+      "title": "Installation",
+      "description": "As a full-service partner, Kirtee & Associates believes in providing support and specialized engineering assistance from inception to commissioning.",
+      "image": "/images/bespoke/04-installation.jpg",
+      "imageAlt": "Monolithic gallery architectural lighting installation"
+    }
+  ]
+}

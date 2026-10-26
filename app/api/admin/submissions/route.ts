@@ -8,7 +8,19 @@ export async function GET() {
     `);
     return NextResponse.json({ success: true, submissions: rows });
   } catch {
-    // If DB is offline, return sample/empty list
+    // If DB is offline, check local submissions.json file
+    try {
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const filePath = path.join(process.cwd(), 'data', 'submissions.json');
+      const raw = await fs.readFile(filePath, 'utf-8');
+      const local = JSON.parse(raw);
+      if (Array.isArray(local) && local.length > 0) {
+        return NextResponse.json({ success: true, submissions: local });
+      }
+    } catch {}
+
+    // Fallback sample list
     return NextResponse.json({
       success: true,
       submissions: [

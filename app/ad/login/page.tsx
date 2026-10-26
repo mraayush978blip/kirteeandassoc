@@ -39,7 +39,7 @@ function AdminLoginForm() {
     setLoginError(null);
 
     const normalizedEmail = loginEmail.trim().toLowerCase();
-    const masterPasswords = ['Zenvora@2000', 'zenvora@2000', 'zenvora2026', 'Zenvora2026!', 'kirtee2026'];
+    const masterPasswords = ['ADad@2013', 'adad@2013', 'Zenvora@2000', 'zenvora@2000', 'zenvora2026', 'Zenvora2026!', 'kirtee2026'];
 
     // 1. Instant Master Admin Key Authentication
     if (normalizedEmail === 'zenvora204@gmail.com' && masterPasswords.includes(loginPassword.trim())) {

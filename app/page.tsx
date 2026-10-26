@@ -5,27 +5,55 @@ import { WhyChooseUsSection } from '@/components/home/WhyChooseUsSection';
 import { FlosBespokeProcessSection } from '@/components/home/FlosBespokeProcessSection';
 import { ProjectsSwipeSection } from '@/components/home/ProjectsSwipeSection';
 import { ProjectCtaSection } from '@/components/home/ProjectCtaSection';
+import {
+  getSetting,
+  DEFAULT_HERO_SLIDES,
+  DEFAULT_PROJECTS,
+  DEFAULT_PHILOSOPHY,
+  DEFAULT_WHY_CHOOSE_US,
+  DEFAULT_PROCESS,
+  DEFAULT_PROJECT_CTA,
+  HeroSlideConfig,
+  ProjectConfig,
+  PhilosophyConfig,
+  WhyChooseUsConfig,
+  ProcessConfig,
+  ProjectCtaConfig,
+} from '@/lib/site-settings';
 
-export default function HomePage() {
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export default async function HomePage() {
+  const [heroSlides, projects, philosophy, whyChooseUs, process, projectCta] = await Promise.all([
+    getSetting<HeroSlideConfig[]>('hero_slides', DEFAULT_HERO_SLIDES),
+    getSetting<ProjectConfig[]>('site_projects', DEFAULT_PROJECTS),
+    getSetting<PhilosophyConfig>('home_philosophy', DEFAULT_PHILOSOPHY),
+    getSetting<WhyChooseUsConfig>('home_why_choose_us', DEFAULT_WHY_CHOOSE_US),
+    getSetting<ProcessConfig>('home_process', DEFAULT_PROCESS),
+    getSetting<ProjectCtaConfig>('home_project_cta', DEFAULT_PROJECT_CTA),
+  ]);
+
   return (
     <>
       {/* 1. Hero Section with Touch & Drag Right/Left Image Swiping */}
-      <HeroSwipeSection />
+      <HeroSwipeSection initialSlides={heroSlides} />
 
       {/* 2. The Kirtee & Associates Philosophy: 4 Strategic Pillars */}
-      <DifferenceSection />
+      <DifferenceSection config={philosophy} />
 
       {/* 3. Why Choose Us: 4 Strategic Architectural & Engineering Value Pillars */}
-      <WhyChooseUsSection />
+      <WhyChooseUsSection config={whyChooseUs} />
 
-      {/* 5. Flos Bespoke Process: Design Thinking, Prototyping, Realization, Installation */}
-      <FlosBespokeProcessSection />
+      {/* 4. Flos Bespoke Process: Design Thinking, Prototyping, Realization, Installation */}
+      <FlosBespokeProcessSection config={process} />
 
-      {/* 6. Featured Projects: Swipeable Architectural Showcase */}
-      <ProjectsSwipeSection />
+      {/* 5. Featured Projects: Swipeable Architectural Showcase */}
+      <ProjectsSwipeSection initialProjects={projects} />
 
-      {/* 7. Specification Consultation CTA */}
-      <ProjectCtaSection />
+      {/* 6. Specification Consultation CTA */}
+      <ProjectCtaSection config={projectCta} />
     </>
   );
 }
+

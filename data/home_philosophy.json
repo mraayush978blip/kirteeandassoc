@@ -1,0 +1,27 @@
+{
+  "eyebrow": "OUR ARCHITECTURAL PHILOSOPHY",
+  "pillars": [
+    {
+      "num": "01",
+      "title": "EXPERTISE",
+      "description": "Specification-led engineering for complex architectural and commercial requirements."
+    },
+    {
+      "num": "02",
+      "title": "GLOBAL REACH",
+      "description": "An established specification network spanning architects, designers and premier manufacturers."
+    },
+    {
+      "num": "03",
+      "title": "PRECISION",
+      "description": "Technical photometrics, low glare (UGR < 10), and certified engineering without compromising aesthetic purity."
+    },
+    {
+      "num": "04",
+      "title": "EXPERIENCE",
+      "description": "Extensive portfolio of bespoke luminaire solutions specified across prestigious architecture worldwide."
+    }
+  ],
+  "headline": "WE DON'T JUST LIGHT SPACES. WE DEFINE THEM.",
+  "narrative": "From architectural specifications to bespoke luminaire adaptations, Kirtee & Associates engineers lighting systems designed seamlessly around the architecture they inhabit."
+}

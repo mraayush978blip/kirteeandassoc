@@ -1,0 +1,54 @@
+[
+  {
+    "id": "proj-1",
+    "num": "01",
+    "slug": "private-residence-mumbai",
+    "year": "2025",
+    "order": 1,
+    "title": "PRIVATE RESIDENCE",
+    "category": "Residential",
+    "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+    "location": "Mumbai, India",
+    "isFeatured": true,
+    "description": "Precision recessed linear grazing and bespoke bronze pendant luminaires accentuating monolithic limestone walls."
+  },
+  {
+    "id": "proj-2",
+    "num": "02",
+    "slug": "boutique-hotel-dubai",
+    "year": "2024",
+    "order": 2,
+    "title": "BOUTIQUE HOTEL",
+    "category": "Hospitality",
+    "imageUrl": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+    "location": "Dubai, UAE",
+    "isFeatured": true,
+    "description": "Custom acoustic luminaire arrays delivering warm glare-free ambient illumination in double-height atrium."
+  },
+  {
+    "id": "proj-3",
+    "num": "03",
+    "slug": "architectural-interior-london",
+    "year": "2024",
+    "order": 3,
+    "title": "ARCHITECTURAL INTERIOR",
+    "category": "Commercial",
+    "imageUrl": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80",
+    "location": "London, UK",
+    "isFeatured": true,
+    "description": "Ultra-low glare UGR < 10 downlight arrays integrated invisibly within acoustic architectural timber slats."
+  },
+  {
+    "id": "proj-4",
+    "num": "04",
+    "slug": "cultural-pavilion-milan",
+    "year": "2025",
+    "order": 4,
+    "title": "CULTURAL PAVILION",
+    "category": "Cultural",
+    "imageUrl": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=80",
+    "location": "Milan, Italy",
+    "isFeatured": true,
+    "description": "Dynamic tunable white grazing systems engineered for gallery exhibition spaces."
+  }
+]

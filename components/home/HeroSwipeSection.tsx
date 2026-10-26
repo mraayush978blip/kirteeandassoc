@@ -54,9 +54,21 @@ const heroSlides: HeroSlide[] = [
   },
 ];
 
-export const HeroSwipeSection: React.FC = () => {
+export interface HeroSwipeSectionProps {
+  initialSlides?: HeroSlide[];
+}
+
+export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlides }) => {
   const { getImage } = useSiteImages();
-  const [slides, setSlides] = useState<HeroSlide[]>(heroSlides);
+  const [slides, setSlides] = useState<HeroSlide[]>(
+    initialSlides && initialSlides.length > 0 ? initialSlides : heroSlides
+  );
+
+  useEffect(() => {
+    if (initialSlides && initialSlides.length > 0) {
+      setSlides(initialSlides);
+    }
+  }, [initialSlides]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
@@ -186,7 +198,7 @@ export const HeroSwipeSection: React.FC = () => {
       <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
         {slides.map((slide, index) => {
           const isActive = index === currentSlide;
-          const resolved = getImage(slide.slotId, slide.imageUrl, slide.imageAlt);
+          const resolved = { url: slide.imageUrl || getImage(slide.slotId, slide.imageUrl, slide.imageAlt).url, alt: slide.imageAlt || getImage(slide.slotId, slide.imageUrl, slide.imageAlt).alt };
           return (
             <div
               key={slide.id}

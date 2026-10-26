@@ -55,14 +55,22 @@ const bespokeSteps: BespokeStep[] = [
   },
 ];
 
-export const FlosBespokeProcessSection: React.FC = () => {
+import { ProcessConfig, DEFAULT_PROCESS } from '@/lib/site-settings-types';
+
+interface FlosBespokeProcessSectionProps {
+  config?: ProcessConfig;
+}
+
+export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps> = ({ config }) => {
+  const data = config || DEFAULT_PROCESS;
+  const stepsList = data.steps || DEFAULT_PROCESS.steps;
   const { getImage } = useSiteImages();
   const [activeStep, setActiveStep] = useState(0);
 
   return (
     <section
       id="bespoke-process"
-      aria-label="Flos Bespoke Process"
+      aria-label="Bespoke Process"
       style={{
         backgroundColor: '#ffffff',
         color: '#2d333e',
@@ -75,7 +83,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
         <div className="bespoke-grid">
           {/* Left Column: Image corresponding to active step */}
           <div className="bespoke-image-container">
-            {bespokeSteps.map((step, idx) => {
+            {stepsList.map((step, idx) => {
               const isActive = idx === activeStep;
               const resolved = getImage(step.slotId, step.image, step.imageAlt);
               return (
@@ -128,7 +136,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
                 marginBottom: 'clamp(1.75rem, 3vw, 2.5rem)',
               }}
             >
-              FLOS BESPOKE PROCESS
+              {data.eyebrow || 'BESPOKE COMMISSIONING & ENGINEERING'}
             </span>
 
             {/* Accordion Steps List */}
@@ -141,7 +149,7 @@ export const FlosBespokeProcessSection: React.FC = () => {
                 gap: 'clamp(1.25rem, 2.5vw, 1.85rem)',
               }}
             >
-              {bespokeSteps.map((step, idx) => {
+              {stepsList.map((step, idx) => {
                 const isActive = idx === activeStep;
                 return (
                   <div

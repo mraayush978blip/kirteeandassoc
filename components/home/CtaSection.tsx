@@ -40,7 +40,7 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ data }) => {
             marginBottom: '1.25rem',
             maxWidth: '820px',
             marginLeft: 'auto',
-            marginRight: 'auto',
+            marginRight: 'auxto',
           }}
         >
           {data.heading}

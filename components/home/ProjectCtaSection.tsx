@@ -16,7 +16,14 @@ const ctaImages = [
   },
 ];
 
-export const ProjectCtaSection: React.FC = () => {
+import { ProjectCtaConfig, DEFAULT_PROJECT_CTA } from '@/lib/site-settings-types';
+
+interface ProjectCtaSectionProps {
+  config?: ProjectCtaConfig;
+}
+
+export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) => {
+  const data = config || DEFAULT_PROJECT_CTA;
   const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   const toggleImage = () => {
@@ -69,7 +76,7 @@ export const ProjectCtaSection: React.FC = () => {
                 marginBottom: '1.25rem',
               }}
             >
-              LET&apos;S WORK TOGETHER
+              {data.eyebrow || "LET'S WORK TOGETHER"}
             </span>
 
             <h2
@@ -83,7 +90,7 @@ export const ProjectCtaSection: React.FC = () => {
                 marginBottom: '1.5rem',
               }}
             >
-              HAVE A PROJECT IN MIND?
+              {data.headline || 'HAVE A PROJECT IN MIND?'}
             </h2>
 
             <p
@@ -95,11 +102,11 @@ export const ProjectCtaSection: React.FC = () => {
                 fontWeight: 300,
               }}
             >
-              Our specification team is here to help you bring your vision to life.
+              {data.description || 'Our specification team is here to help you bring your vision to life.'}
             </p>
 
             <Link
-              href="/contact"
+              href={data.buttonHref || '/contact'}
               style={{
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.8125rem',
@@ -123,7 +130,7 @@ export const ProjectCtaSection: React.FC = () => {
                 e.currentTarget.style.gap = '0.75rem';
               }}
             >
-              <span>DISCUSS YOUR SPECIFICATION</span>
+              <span>{data.buttonText || 'DISCUSS YOUR SPECIFICATION'}</span>
               <ArrowRight size={15} />
             </Link>
           </div>

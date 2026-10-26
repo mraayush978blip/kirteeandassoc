@@ -23,11 +23,38 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Inquiry message must be at least 10 characters.' }, { status: 400 });
     }
 
-    if (!consent) {
+    if (consent === false) {
       return NextResponse.json({ success: false, message: 'Specification consent is mandatory.' }, { status: 400 });
     }
 
-    // Persist to PostgreSQL submissions table if available
+    const submissionRecord = {
+      id: `sub-${Date.now()}`,
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone?.trim() || null,
+      company: company?.trim() || null,
+      topic: topic || null,
+      product: product || null,
+      message: message.trim(),
+      status: 'new',
+      created_at: new Date().toISOString(),
+    };
+
+    // 1. Try local JSON file fallback first
+    try {
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const filePath = path.join(process.cwd(), 'data', 'submissions.json');
+      let current: any[] = [];
+      try {
+        const raw = await fs.readFile(filePath, 'utf-8');
+        current = JSON.parse(raw);
+      } catch {}
+      current.unshift(submissionRecord);
+      await fs.writeFile(filePath, JSON.stringify(current.slice(0, 100), null, 2), 'utf-8');
+    } catch {}
+
+    // 2. Persist to PostgreSQL submissions table if available
     try {
       const { query } = await import('@/lib/db');
       await query(

@@ -40,6 +40,61 @@ export interface ProjectSettings {
   showOnWebsite: boolean;
 }
 
+export interface PhilosophyPillar {
+  num: string;
+  title: string;
+  description: string;
+}
+
+export interface PhilosophyConfig {
+  eyebrow: string;
+  headline: string;
+  narrative: string;
+  pillars: PhilosophyPillar[];
+}
+
+export interface ValuePillar {
+  id: string;
+  num: string;
+  tag: string;
+  title: string;
+  metric: string;
+  description: string;
+  image: string;
+}
+
+export interface WhyChooseUsConfig {
+  eyebrow: string;
+  headline: string;
+  description: string;
+  pillars: ValuePillar[];
+}
+
+export interface BespokeStepConfig {
+  slotId: string;
+  number: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+}
+
+export interface ProcessConfig {
+  eyebrow: string;
+  headline: string;
+  steps: BespokeStepConfig[];
+}
+
+export interface ProjectCtaConfig {
+  eyebrow: string;
+  headline: string;
+  description: string;
+  buttonText: string;
+  buttonHref: string;
+  imageUrl: string;
+  imageAlt: string;
+}
+
 export const DEFAULT_HERO_SLIDES: HeroSlideConfig[] = [
   {
     id: 'hero-1',
@@ -147,4 +202,131 @@ export const DEFAULT_CONTACT: ContactConfig = {
 
 export const DEFAULT_PROJECT_SETTINGS: ProjectSettings = {
   showOnWebsite: false, // Default to false as requested by user until photography is uploaded
+};
+
+export const DEFAULT_PHILOSOPHY: PhilosophyConfig = {
+  eyebrow: 'OUR ARCHITECTURAL PHILOSOPHY',
+  headline: "WE DON'T JUST LIGHT SPACES. WE DEFINE THEM.",
+  narrative:
+    'From architectural specifications to bespoke luminaire adaptations, Kirtee & Associates engineers lighting systems designed seamlessly around the architecture they inhabit.',
+  pillars: [
+    {
+      num: '01',
+      title: 'EXPERTISE',
+      description: 'Specification-led engineering for complex architectural and commercial requirements.',
+    },
+    {
+      num: '02',
+      title: 'GLOBAL REACH',
+      description: 'An established specification network spanning architects, designers and premier manufacturers.',
+    },
+    {
+      num: '03',
+      title: 'PRECISION',
+      description: 'Technical photometrics, low glare (UGR < 10), and certified engineering without compromising aesthetic purity.',
+    },
+    {
+      num: '04',
+      title: 'EXPERIENCE',
+      description: 'Extensive portfolio of bespoke luminaire solutions specified across prestigious architecture worldwide.',
+    },
+  ],
+};
+
+export const DEFAULT_WHY_CHOOSE_US: WhyChooseUsConfig = {
+  eyebrow: 'WHY CHOOSE US',
+  headline: 'ARCHITECTURAL RIGOR. UNCOMPROMISING FIDELITY.',
+  description:
+    'Every luminaire in our dry and wet architectural collections represents decades of precision optical physics, noble metallurgy, and exacting Swiss & Italian engineering standards.',
+  pillars: [
+    {
+      id: 'p1',
+      num: '01',
+      tag: 'BESPOKE TAILORING',
+      title: 'Custom Spatial Geometry',
+      metric: '100% Tailored',
+      description: 'Custom lengths, mounting junctions, and RAL finishes engineered to your architectural drawings.',
+      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85',
+    },
+    {
+      id: 'p2',
+      num: '02',
+      tag: 'OPTICAL PRECISION',
+      title: 'Zero-Glare Purity',
+      metric: 'UGR < 10',
+      description: 'Micro-engineered fractal apertures delivering absolute visual comfort with CRI 90+ spectral fidelity.',
+      image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85',
+    },
+    {
+      id: 'p3',
+      num: '03',
+      tag: 'NOBLE METALLURGY',
+      title: 'Architectural Alloys',
+      metric: '6063-T6 & Brass',
+      description: 'CNC-milled structural aluminium and hand-turned solid brass built to microscopic mechanical tolerances.',
+      image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85',
+    },
+    {
+      id: 'p4',
+      num: '04',
+      tag: 'CERTIFIED ENDURANCE',
+      title: 'Submersible Rigor',
+      metric: 'IP68 & 50,000h',
+      description: 'Hermetically sealed for wet architectural environments, backed by LM-79 and LM-80 laboratory certification.',
+      image: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=85',
+    },
+  ],
+};
+
+export const DEFAULT_PROCESS: ProcessConfig = {
+  eyebrow: 'BESPOKE COMMISSIONING & ENGINEERING',
+  headline: 'FROM CONCEPT TO MONUMENTAL REALIZATION.',
+  steps: [
+    {
+      slotId: 'process-step-1',
+      number: '.01',
+      title: 'Design Thinking',
+      description:
+        'From concept or sketch, all the way to the final installation, the process is collaborative to ensure your vision is fully realized.',
+      image: '/images/bespoke/01-design-thinking.jpg',
+      imageAlt: 'Architectural lighting design concept',
+    },
+    {
+      slotId: 'process-step-2',
+      number: '.02',
+      title: 'Prototyping',
+      description:
+        'Merging technology and emotion, we integrate light into architecture and nature, bringing a sophisticated poetic sensibility to our designs and creations.',
+      image: '/images/bespoke/02-prototyping.jpg',
+      imageAlt: 'Precision linear optical prototype',
+    },
+    {
+      slotId: 'process-step-3',
+      number: '.03',
+      title: 'Realization',
+      description:
+        'Form, function, and performance drive each creation, aided by the most advanced technologies and processes.',
+      image: '/images/bespoke/03-realization.jpg',
+      imageAlt: 'Master artisanal luminaire realization',
+    },
+    {
+      slotId: 'process-step-4',
+      number: '.04',
+      title: 'Installation',
+      description:
+        'As a full-service partner, Kirtee & Associates believes in providing support and specialized engineering assistance from inception to commissioning.',
+      image: '/images/bespoke/04-installation.jpg',
+      imageAlt: 'Monolithic gallery architectural lighting installation',
+    },
+  ],
+};
+
+export const DEFAULT_PROJECT_CTA: ProjectCtaConfig = {
+  eyebrow: "LET'S WORK TOGETHER",
+  headline: 'HAVE A PROJECT IN MIND?',
+  description: 'Our specification team is here to help you bring your vision to life.',
+  buttonText: 'Schedule Consultation',
+  buttonHref: '/contact',
+  imageUrl: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1400&q=80',
+  imageAlt: 'Architectural space with marble steps and indirect lighting',
 };

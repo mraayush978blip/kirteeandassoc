@@ -1,28 +1,13 @@
 import React from 'react';
+import { PhilosophyConfig, DEFAULT_PHILOSOPHY } from '@/lib/site-settings-types';
 
-export const DifferenceSection: React.FC = () => {
-  const pillars = [
-    {
-      num: '01',
-      title: 'EXPERTISE',
-      description: 'Specification-led engineering for complex architectural and commercial requirements.',
-    },
-    {
-      num: '02',
-      title: 'GLOBAL REACH',
-      description: 'An established specification network spanning architects, designers and premier manufacturers.',
-    },
-    {
-      num: '03',
-      title: 'PRECISION',
-      description: 'Technical photometrics, low glare (UGR < 10), and certified engineering without compromising aesthetic purity.',
-    },
-    {
-      num: '04',
-      title: 'EXPERIENCE',
-      description: 'Extensive portfolio of bespoke luminaire solutions specified across prestigious architecture worldwide.',
-    },
-  ];
+interface DifferenceSectionProps {
+  config?: PhilosophyConfig;
+}
+
+export const DifferenceSection: React.FC<DifferenceSectionProps> = ({ config }) => {
+  const data = config || DEFAULT_PHILOSOPHY;
+  const pillars = data.pillars || DEFAULT_PHILOSOPHY.pillars;
 
   return (
     <section
@@ -57,7 +42,7 @@ export const DifferenceSection: React.FC = () => {
                 marginBottom: '1.25rem',
               }}
             >
-              OUR ARCHITECTURAL PHILOSOPHY
+              {data.eyebrow || 'OUR ARCHITECTURAL PHILOSOPHY'}
             </span>
             <h2
               style={{
@@ -69,7 +54,7 @@ export const DifferenceSection: React.FC = () => {
                 color: '#2d333e',
               }}
             >
-              WE DON&apos;T JUST LIGHT SPACES. WE DEFINE THEM.
+              {data.headline || "WE DON'T JUST LIGHT SPACES. WE DEFINE THEM."}
             </h2>
           </div>
 
@@ -89,8 +74,8 @@ export const DifferenceSection: React.FC = () => {
                 maxWidth: '460px',
               }}
             >
-              From architectural specifications to bespoke luminaire adaptations, Kirtee &amp; Associates engineers
-              lighting systems designed seamlessly around the architecture they inhabit.
+              {data.narrative ||
+                'From architectural specifications to bespoke luminaire adaptations, Kirtee & Associates engineers lighting systems designed seamlessly around the architecture they inhabit.'}
             </p>
           </div>
         </div>

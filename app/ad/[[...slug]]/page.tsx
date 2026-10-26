@@ -55,10 +55,18 @@ import {
   ProjectConfig,
   ContactConfig,
   ProjectSettings,
+  PhilosophyConfig,
+  WhyChooseUsConfig,
+  ProcessConfig,
+  ProjectCtaConfig,
   DEFAULT_HERO_SLIDES,
   DEFAULT_PROJECTS,
   DEFAULT_CONTACT,
   DEFAULT_PROJECT_SETTINGS,
+  DEFAULT_PHILOSOPHY,
+  DEFAULT_WHY_CHOOSE_US,
+  DEFAULT_PROCESS,
+  DEFAULT_PROJECT_CTA,
 } from '@/lib/site-settings-types';
 import { ProductGridBuilder, GridPhotoItem } from '@/components/admin/ProductGridBuilder';
 import { ImageCropperModal } from '@/components/admin/ImageCropperModal';
@@ -132,6 +140,14 @@ function AdminDashboardContent() {
     imageAlt: 'Architectural luminaire',
     order: 1,
   });
+
+  // Dynamic Homepage Sections State
+  const [homeSubTab, setHomeSubTab] = useState<'hero' | 'philosophy' | 'why_choose_us' | 'process' | 'cta'>('hero');
+  const [philosophyConfig, setPhilosophyConfig] = useState<PhilosophyConfig>(DEFAULT_PHILOSOPHY);
+  const [whyChooseUsConfig, setWhyChooseUsConfig] = useState<WhyChooseUsConfig>(DEFAULT_WHY_CHOOSE_US);
+  const [processConfig, setProcessConfig] = useState<ProcessConfig>(DEFAULT_PROCESS);
+  const [projectCtaConfig, setProjectCtaConfig] = useState<ProjectCtaConfig>(DEFAULT_PROJECT_CTA);
+  const [isSavingSection, setIsSavingSection] = useState(false);
 
   // 3. Products State
   const [products, setProducts] = useState<Product[]>([]);
@@ -322,7 +338,7 @@ function AdminDashboardContent() {
   // -------------------------------------------------------------
   const fetchAllData = async () => {
     fetchDbStatus();
-    fetchHeroSlides();
+    fetchHomeSections();
     fetchProducts();
     fetchProjects();
     fetchContact();
@@ -349,14 +365,20 @@ function AdminDashboardContent() {
     }
   };
 
-  // Hero Slides
-  const fetchHeroSlides = async () => {
+  // Home Sections Fetch
+  const fetchHomeSections = async () => {
     setIsLoadingHero(true);
     try {
-      const res = await fetch('/api/admin/content?key=hero_slides');
+      const res = await fetch('/api/admin/content?key=all');
       const data = await res.json();
-      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        setHeroSlides(data.data);
+      if (data.success && data.data) {
+        if (Array.isArray(data.data.heroSlides) && data.data.heroSlides.length > 0) {
+          setHeroSlides(data.data.heroSlides);
+        }
+        if (data.data.philosophy) setPhilosophyConfig(data.data.philosophy);
+        if (data.data.whyChooseUs) setWhyChooseUsConfig(data.data.whyChooseUs);
+        if (data.data.process) setProcessConfig(data.data.process);
+        if (data.data.projectCta) setProjectCtaConfig(data.data.projectCta);
       }
     } catch {
       // Fallback to defaults
@@ -365,19 +387,46 @@ function AdminDashboardContent() {
     }
   };
 
+  const saveHomeSection = async (key: string, value: unknown, label: string) => {
+    setIsSavingSection(true);
+    try {
+      const res = await fetch('/api/admin/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, value }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`${label} updated successfully! Live on homepage.`);
+      } else {
+        showToast(data.message || `Failed to update ${label}`, 'error');
+      }
+    } catch {
+      showToast(`Could not sync to cloud, saved locally.`, 'error');
+    } finally {
+      setIsSavingSection(false);
+    }
+  };
+
   const saveHeroSlides = async (updatedSlides: HeroSlideConfig[]) => {
     setHeroSlides(updatedSlides);
     try {
-      await fetch('/api/admin/content', {
+      const res = await fetch('/api/admin/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'hero_slides', value: updatedSlides }),
       });
-      showToast('Hero slides saved successfully.');
+      const data = await res.json();
+      if (data.success) {
+        showToast('Hero slides saved successfully! Home page updated.');
+      } else {
+        showToast(data.message || 'Error saving hero slides', 'error');
+      }
     } catch {
       showToast('Could not sync to cloud, saved locally.', 'error');
     }
   };
+
 
   // Products
   const fetchProducts = async () => {
@@ -776,21 +825,29 @@ function AdminDashboardContent() {
   const addCarouselImage = (url: string, altText?: string) => {
     if (!editingProduct) return;
     const current = editingProduct.heroCarouselImages ? [...editingProduct.heroCarouselImages] : [];
-    const isFirst = current.length === 0;
+    
+    // Filter out generic unsplash placeholders when adding custom photos
+    const cleaned = current.filter(
+      (img) => !img.url.includes('images.unsplash.com/photo-1513506003901-1e6a229e2d15')
+    );
+
     const newImg: ProductImage = {
       id: `cimg-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       url,
       alt: altText || `${editingProduct.name || 'Luminaire'} showcase view`,
-      isPrimary: isFirst,
+      isPrimary: true, // Always designate newly uploaded/added photo as primary!
     };
-    const updated = [...current, newImg];
-    const updatedHero = isFirst || !editingProduct.heroImage?.url ? newImg : editingProduct.heroImage;
+
+    // Un-primary previous images and put new image in the hero spot
+    const unpinned = cleaned.map((img) => ({ ...img, isPrimary: false }));
+    const updated = [newImg, ...unpinned];
+
     setEditingProduct({
       ...editingProduct,
-      heroImage: updatedHero,
+      heroImage: newImg, // Immediately updates the catalog listing card photo!
       heroCarouselImages: updated,
     });
-    showToast(isFirst ? 'Showcase image added & pinned to catalog card!' : 'Showcase slider image added!');
+    showToast('Showcase image added & set as primary catalog card image!');
   };
 
   const pinCarouselImage = (index: number) => {
@@ -1337,18 +1394,60 @@ function AdminDashboardContent() {
         {/* ======================================================== */}
         {activeTab === 'home' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+            {/* Header */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', color: '#6b7280', letterSpacing: '0.14em' }}>
+                LIVE HOMEPAGE ENGINE
+              </span>
+              <h1 style={{ fontFamily: 'var(--font-sans)', fontSize: '1.75rem', fontWeight: 600, color: '#111827', margin: '0.25rem 0 0.5rem 0' }}>
+                Homepage Content &amp; Sections
+              </h1>
+              <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
+                Manage all content dynamically. Nothing is hardcoded — updates instantly sync to Database and local fallback.
+              </p>
+            </div>
+
+            {/* Sub-tabs Navigation */}
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.75rem', overflowX: 'auto' }}>
+              {[
+                { id: 'hero', label: '1. Hero Banners' },
+                { id: 'philosophy', label: '2. Philosophy & Narrative' },
+                { id: 'why_choose_us', label: '3. Why Choose Us' },
+                { id: 'process', label: '4. Bespoke Process' },
+                { id: 'cta', label: '5. Project CTA' },
+              ].map((sub) => (
+                <button
+                  key={sub.id}
+                  type="button"
+                  onClick={() => setHomeSubTab(sub.id as any)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    border: 'none',
+                    backgroundColor: homeSubTab === sub.id ? '#111827' : '#f3f4f6',
+                    color: homeSubTab === sub.id ? '#ffffff' : '#4b5563',
+                    fontSize: '0.8125rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {sub.label}
+                </button>
+              ))}
+            </div>
+
+            {/* SUB-TAB 1: HERO SLIDES */}
+            {homeSubTab === 'hero' && (
               <div>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', color: '#6b7280', letterSpacing: '0.14em' }}>
-                  HOMEPAGE CONTENT EDITOR
-                </span>
-                <h1 style={{ fontFamily: 'var(--font-sans)', fontSize: '1.75rem', fontWeight: 600, color: '#111827', margin: '0.25rem 0 0.5rem 0' }}>
-                  Swipeable Hero Banners
-                </h1>
-                <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
-                  Customize background photos, text overlays, sequence, and links. Auto-converts to WebP with resilient offline fallback.
-                </p>
-              </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#111827', margin: 0 }}>Swipeable Hero Banners</h2>
+                    <p style={{ fontSize: '0.8125rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                      Drag-and-swipe touch slides on the homepage.
+                    </p>
+                  </div>
 
               <button
                 type="button"
@@ -1442,8 +1541,9 @@ function AdminDashboardContent() {
                               imageSrc: objectUrl,
                               aspectPreset: '16:9',
                               onSuccess: (croppedUrl) => {
-                                const updated = [...heroSlides];
-                                updated[index].imageUrl = croppedUrl;
+                                const updated = heroSlides.map((s, i) =>
+                                  i === index ? { ...s, imageUrl: croppedUrl } : s
+                                );
                                 saveHeroSlides(updated);
                               },
                             });
@@ -1673,6 +1773,432 @@ function AdminDashboardContent() {
                 </div>
               ))}
             </div>
+              </div>
+            )}
+
+            {/* SUB-TAB 2: PHILOSOPHY & NARRATIVE */}
+            {homeSubTab === 'philosophy' && (
+              <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#111827', margin: 0 }}>Section 2: Architectural Philosophy &amp; 4 Pillars</h2>
+                    <p style={{ fontSize: '0.8125rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                      Edit the strategic narrative and the four architectural capability cards.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isSavingSection}
+                    onClick={() => saveHomeSection('home_philosophy', philosophyConfig, 'Philosophy Section')}
+                    style={{ backgroundColor: '#111827', color: '#ffffff', padding: '0.6rem 1.25rem', borderRadius: '4px', border: 'none', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    {isSavingSection ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Section Eyebrow</label>
+                    <input
+                      type="text"
+                      value={philosophyConfig.eyebrow}
+                      onChange={(e) => setPhilosophyConfig({ ...philosophyConfig, eyebrow: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Main Headline</label>
+                    <input
+                      type="text"
+                      value={philosophyConfig.headline}
+                      onChange={(e) => setPhilosophyConfig({ ...philosophyConfig, headline: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Narrative Paragraph</label>
+                  <textarea
+                    rows={3}
+                    value={philosophyConfig.narrative}
+                    onChange={(e) => setPhilosophyConfig({ ...philosophyConfig, narrative: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                  />
+                </div>
+
+                <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>The 4 Strategic Pillars</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                  {philosophyConfig.pillars.map((pillar, pIdx) => (
+                    <div key={pIdx} style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <div style={{ width: '60px' }}>
+                          <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Number</label>
+                          <input
+                            type="text"
+                            value={pillar.num}
+                            onChange={(e) => {
+                              const updated = [...philosophyConfig.pillars];
+                              updated[pIdx].num = e.target.value;
+                              setPhilosophyConfig({ ...philosophyConfig, pillars: updated });
+                            }}
+                            style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                          />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Title</label>
+                          <input
+                            type="text"
+                            value={pillar.title}
+                            onChange={(e) => {
+                              const updated = [...philosophyConfig.pillars];
+                              updated[pIdx].title = e.target.value;
+                              setPhilosophyConfig({ ...philosophyConfig, pillars: updated });
+                            }}
+                            style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Description</label>
+                        <textarea
+                          rows={3}
+                          value={pillar.description}
+                          onChange={(e) => {
+                            const updated = [...philosophyConfig.pillars];
+                            updated[pIdx].description = e.target.value;
+                            setPhilosophyConfig({ ...philosophyConfig, pillars: updated });
+                          }}
+                          style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SUB-TAB 3: WHY CHOOSE US */}
+            {homeSubTab === 'why_choose_us' && (
+              <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#111827', margin: 0 }}>Section 3: Why Choose Us (Value Pillars)</h2>
+                    <p style={{ fontSize: '0.8125rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                      Edit the header, narrative, metrics, and background photography of each value proposition.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isSavingSection}
+                    onClick={() => saveHomeSection('home_why_choose_us', whyChooseUsConfig, 'Why Choose Us Section')}
+                    style={{ backgroundColor: '#111827', color: '#ffffff', padding: '0.6rem 1.25rem', borderRadius: '4px', border: 'none', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    {isSavingSection ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Section Eyebrow</label>
+                    <input
+                      type="text"
+                      value={whyChooseUsConfig.eyebrow}
+                      onChange={(e) => setWhyChooseUsConfig({ ...whyChooseUsConfig, eyebrow: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Main Headline</label>
+                    <input
+                      type="text"
+                      value={whyChooseUsConfig.headline}
+                      onChange={(e) => setWhyChooseUsConfig({ ...whyChooseUsConfig, headline: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Description Paragraph</label>
+                  <textarea
+                    rows={2}
+                    value={whyChooseUsConfig.description}
+                    onChange={(e) => setWhyChooseUsConfig({ ...whyChooseUsConfig, description: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                  />
+                </div>
+
+                <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>Value Pillars (4 Cards)</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+                  {whyChooseUsConfig.pillars.map((pillar, pIdx) => (
+                    <div key={pillar.id || pIdx} style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <div>
+                          <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Tag</label>
+                          <input
+                            type="text"
+                            value={pillar.tag}
+                            onChange={(e) => {
+                              const updated = [...whyChooseUsConfig.pillars];
+                              updated[pIdx].tag = e.target.value;
+                              setWhyChooseUsConfig({ ...whyChooseUsConfig, pillars: updated });
+                            }}
+                            style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Metric (e.g. UGR &lt; 10)</label>
+                          <input
+                            type="text"
+                            value={pillar.metric}
+                            onChange={(e) => {
+                              const updated = [...whyChooseUsConfig.pillars];
+                              updated[pIdx].metric = e.target.value;
+                              setWhyChooseUsConfig({ ...whyChooseUsConfig, pillars: updated });
+                            }}
+                            style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ marginBottom: '0.5rem' }}>
+                        <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Card Title</label>
+                        <input
+                          type="text"
+                          value={pillar.title}
+                          onChange={(e) => {
+                            const updated = [...whyChooseUsConfig.pillars];
+                            updated[pIdx].title = e.target.value;
+                            setWhyChooseUsConfig({ ...whyChooseUsConfig, pillars: updated });
+                          }}
+                          style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: '0.5rem' }}>
+                        <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Description</label>
+                        <textarea
+                          rows={2}
+                          value={pillar.description}
+                          onChange={(e) => {
+                            const updated = [...whyChooseUsConfig.pillars];
+                            updated[pIdx].description = e.target.value;
+                            setWhyChooseUsConfig({ ...whyChooseUsConfig, pillars: updated });
+                          }}
+                          style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Image URL</label>
+                        <input
+                          type="text"
+                          value={pillar.image}
+                          onChange={(e) => {
+                            const updated = [...whyChooseUsConfig.pillars];
+                            updated[pIdx].image = e.target.value;
+                            setWhyChooseUsConfig({ ...whyChooseUsConfig, pillars: updated });
+                          }}
+                          style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SUB-TAB 4: BESPOKE PROCESS */}
+            {homeSubTab === 'process' && (
+              <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#111827', margin: 0 }}>Section 4: Bespoke Process Steps</h2>
+                    <p style={{ fontSize: '0.8125rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                      Edit the 4 engineering and commissioning stages shown on the interactive accordion.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isSavingSection}
+                    onClick={() => saveHomeSection('home_process', processConfig, 'Process Section')}
+                    style={{ backgroundColor: '#111827', color: '#ffffff', padding: '0.6rem 1.25rem', borderRadius: '4px', border: 'none', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    {isSavingSection ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Section Eyebrow</label>
+                    <input
+                      type="text"
+                      value={processConfig.eyebrow}
+                      onChange={(e) => setProcessConfig({ ...processConfig, eyebrow: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Main Headline</label>
+                    <input
+                      type="text"
+                      value={processConfig.headline}
+                      onChange={(e) => setProcessConfig({ ...processConfig, headline: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                </div>
+
+                <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111827', marginBottom: '1rem' }}>The 4 Process Stages</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+                  {processConfig.steps.map((step, sIdx) => (
+                    <div key={sIdx} style={{ backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <div>
+                          <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Number</label>
+                          <input
+                            type="text"
+                            value={step.number}
+                            onChange={(e) => {
+                              const updated = [...processConfig.steps];
+                              updated[sIdx].number = e.target.value;
+                              setProcessConfig({ ...processConfig, steps: updated });
+                            }}
+                            style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Title</label>
+                          <input
+                            type="text"
+                            value={step.title}
+                            onChange={(e) => {
+                              const updated = [...processConfig.steps];
+                              updated[sIdx].title = e.target.value;
+                              setProcessConfig({ ...processConfig, steps: updated });
+                            }}
+                            style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ marginBottom: '0.5rem' }}>
+                        <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Description</label>
+                        <textarea
+                          rows={3}
+                          value={step.description}
+                          onChange={(e) => {
+                            const updated = [...processConfig.steps];
+                            updated[sIdx].description = e.target.value;
+                            setProcessConfig({ ...processConfig, steps: updated });
+                          }}
+                          style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: '0.6875rem', color: '#6b7280' }}>Image URL / Path</label>
+                        <input
+                          type="text"
+                          value={step.image}
+                          onChange={(e) => {
+                            const updated = [...processConfig.steps];
+                            updated[sIdx].image = e.target.value;
+                            setProcessConfig({ ...processConfig, steps: updated });
+                          }}
+                          style={{ width: '100%', padding: '0.4rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SUB-TAB 5: PROJECT CONSULTATION CTA */}
+            {homeSubTab === 'cta' && (
+              <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#111827', margin: 0 }}>Section 5: &quot;Have a Project in Mind?&quot; CTA</h2>
+                    <p style={{ fontSize: '0.8125rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+                      Edit the headline, call to action, buttons, and featured right-edge image.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isSavingSection}
+                    onClick={() => saveHomeSection('home_project_cta', projectCtaConfig, 'Project CTA Section')}
+                    style={{ backgroundColor: '#111827', color: '#ffffff', padding: '0.6rem 1.25rem', borderRadius: '4px', border: 'none', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    {isSavingSection ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Eyebrow</label>
+                    <input
+                      type="text"
+                      value={projectCtaConfig.eyebrow}
+                      onChange={(e) => setProjectCtaConfig({ ...projectCtaConfig, eyebrow: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Headline</label>
+                    <input
+                      type="text"
+                      value={projectCtaConfig.headline}
+                      onChange={(e) => setProjectCtaConfig({ ...projectCtaConfig, headline: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Description Paragraph</label>
+                  <textarea
+                    rows={2}
+                    value={projectCtaConfig.description}
+                    onChange={(e) => setProjectCtaConfig({ ...projectCtaConfig, description: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Button Label</label>
+                    <input
+                      type="text"
+                      value={projectCtaConfig.buttonText}
+                      onChange={(e) => setProjectCtaConfig({ ...projectCtaConfig, buttonText: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Button Link</label>
+                    <input
+                      type="text"
+                      value={projectCtaConfig.buttonHref}
+                      onChange={(e) => setProjectCtaConfig({ ...projectCtaConfig, buttonHref: e.target.value })}
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Right-Edge Image URL</label>
+                  <input
+                    type="text"
+                    value={projectCtaConfig.imageUrl}
+                    onChange={(e) => setProjectCtaConfig({ ...projectCtaConfig, imageUrl: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -3968,7 +4494,31 @@ function AdminDashboardContent() {
           imageUrl={cropperModal.imageSrc}
           aspectRatioPreset={cropperModal.aspectPreset || '16:9'}
           onClose={() => setCropperModal({ isOpen: false })}
-          onCropComplete={(res) => {
+          onCropComplete={async (res) => {
+            try {
+              // Upload blob to server image compressor for a clean, persistent /media/*.webp URL
+              const formData = new FormData();
+              const uploadFile = new File([res.blob], res.filename || 'luminaire-asset.webp', { type: 'image/webp' });
+              formData.append('files', uploadFile);
+              formData.append('quality', '85');
+              formData.append('maxWidth', '2048');
+
+              const upRes = await fetch('/api/admin/compress', {
+                method: 'POST',
+                body: formData,
+              });
+              const upData = await upRes.json();
+              if (upData.success && upData.files && upData.files[0]?.url) {
+                if (cropperModal.onSuccess) cropperModal.onSuccess(upData.files[0].url);
+                showToast('Image uploaded & optimized as high-performance WebP!');
+                setCropperModal({ isOpen: false });
+                return;
+              }
+            } catch (upErr) {
+              console.warn('[Image Upload Fallback to DataURL]:', upErr);
+            }
+
+            // Fallback to dataUrl if upload endpoint fails
             if (cropperModal.onSuccess) cropperModal.onSuccess(res.dataUrl);
             setCropperModal({ isOpen: false });
           }}

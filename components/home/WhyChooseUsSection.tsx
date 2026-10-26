@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+import { useSiteImages } from '@/lib/useSiteImages';
 
 interface ValuePillar {
   id: string;
@@ -54,7 +55,16 @@ const pillars: ValuePillar[] = [
   },
 ];
 
-export const WhyChooseUsSection: React.FC = () => {
+import { WhyChooseUsConfig, DEFAULT_WHY_CHOOSE_US } from '@/lib/site-settings-types';
+
+interface WhyChooseUsSectionProps {
+  config?: WhyChooseUsConfig;
+}
+
+export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }) => {
+  const data = config || DEFAULT_WHY_CHOOSE_US;
+  const pillarsList = data.pillars || DEFAULT_WHY_CHOOSE_US.pillars;
+  const { getImage } = useSiteImages();
   const [hoveredPillar, setHoveredPillar] = useState<string | null>(null);
 
   return (
@@ -95,7 +105,7 @@ export const WhyChooseUsSection: React.FC = () => {
                 marginBottom: '0.85rem',
               }}
             >
-              WHY SPECIFY ZENVORA
+              {data.eyebrow || 'WHY SPECIFY ZENVORA'}
             </span>
 
             <h2
@@ -109,7 +119,7 @@ export const WhyChooseUsSection: React.FC = () => {
                 margin: 0,
               }}
             >
-              ENGINEERED FOR ARCHITECTS. CRAFTED FOR VISIONARIES.
+              {data.headline || 'ENGINEERED FOR ARCHITECTS. CRAFTED FOR VISIONARIES.'}
             </h2>
           </div>
 
@@ -123,8 +133,8 @@ export const WhyChooseUsSection: React.FC = () => {
                 margin: 0,
               }}
             >
-              Precision photometrics, noble metallurgy, and dimensional agility designed to integrate seamlessly into
-              the architectural fabric.
+              {data.description ||
+                'Precision photometrics, noble metallurgy, and dimensional agility designed to integrate seamlessly into the architectural fabric.'}
             </p>
           </div>
         </div>
@@ -137,7 +147,7 @@ export const WhyChooseUsSection: React.FC = () => {
             gap: '1.25rem',
           }}
         >
-          {pillars.map((pillar) => {
+          {pillarsList.map((pillar, index) => {
             const isHovered = hoveredPillar === pillar.id;
 
             return (
@@ -173,7 +183,7 @@ export const WhyChooseUsSection: React.FC = () => {
                   }}
                 >
                   <Image
-                    src={pillar.image}
+                    src={getImage(`why-choose-${index + 1}`, pillar.image).url}
                     alt={pillar.title}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
