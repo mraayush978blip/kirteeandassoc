@@ -31,21 +31,21 @@
     "order": 1,
     "heroImage": {
       "id": "img-calipso",
-      "url": "/media/test_upload-1793026736351.webp",
-      "alt": "Aayush custom luminaire",
+      "url": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80",
+      "alt": "Calipso luminaire front detail",
       "isPrimary": true
     },
     "heroCarouselImages": [
       {
-        "id": "img-calipso-custom",
-        "alt": "Aayush custom luminaire",
-        "url": "/media/test_upload-1793026736351.webp",
-        "isPrimary": true
-      },
-      {
         "id": "img-calipso-1",
         "alt": "Calipso luminaire front detail",
         "url": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80",
+        "isPrimary": true
+      },
+      {
+        "id": "img-calipso-custom",
+        "alt": "Aayush custom luminaire",
+        "url": "/media/test_upload-1793026736351.webp",
         "isPrimary": false
       },
       {
@@ -58,7 +58,7 @@
         "id": "img-calipso-3",
         "alt": "Calipso warm ambient illumination in contemporary living space",
         "url": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1600&q=80",
-        "isPrimary": true
+        "isPrimary": false
       }
     ],
     "gallery": [
@@ -157,10 +157,10 @@
     "seo": {
       "metaTitle": "aayush | Kirtee & Associates",
       "metaDescription": "Organic honeycomb architectural luminaire generated from fractal moon algorithms, offering diffuse comfort and emotional lighting geometry.",
-      "ogImage": "/media/test_upload-1793026736351.webp"
+      "ogImage": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80"
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
-    "updatedAt": "2026-10-26T15:05:59.685Z"
+    "updatedAt": "2026-10-26T17:12:10.895Z"
   },
   {
     "id": "prod-a24",

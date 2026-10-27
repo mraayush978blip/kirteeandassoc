@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getProductsFromDb, saveProductToDb, deleteProductFromDb } from '@/lib/db';
 
 export async function GET() {
@@ -25,6 +26,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Instantly invalidate server cache so the frontend displays the new product immediately
+    try {
+      revalidatePath('/', 'layout');
+      revalidatePath('/dry-goods');
+      revalidatePath('/wet-goods');
+      revalidatePath('/products');
+      if (body.slug) {
+        revalidatePath(`/products/${body.slug}`);
+      }
+    } catch (e) {
+      console.warn('[Cache Revalidation Warning]:', e);
+    }
+
     return NextResponse.json({ success: true, id: result.id });
   } catch (error: unknown) {
     return NextResponse.json(
@@ -44,6 +58,17 @@ export async function DELETE(req: NextRequest) {
     }
 
     const result = await deleteProductFromDb(id);
+
+    // Instantly invalidate server cache
+    try {
+      revalidatePath('/', 'layout');
+      revalidatePath('/dry-goods');
+      revalidatePath('/wet-goods');
+      revalidatePath('/products');
+    } catch (e) {
+      console.warn('[Cache Revalidation Warning]:', e);
+    }
+
     return NextResponse.json(result);
   } catch (error: unknown) {
     return NextResponse.json(

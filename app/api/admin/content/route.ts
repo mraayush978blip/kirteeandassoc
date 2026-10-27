@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import {
   getSetting,
   saveSetting,
@@ -113,6 +114,18 @@ export async function POST(req: NextRequest) {
     }
 
     await saveSetting(key, value);
+
+    // Instantly invalidate server cache so that homepage & public routes reflect changes immediately
+    try {
+      revalidatePath('/', 'layout');
+      revalidatePath('/');
+      revalidatePath('/contact');
+      revalidatePath('/dry-goods');
+      revalidatePath('/wet-goods');
+    } catch (e) {
+      console.warn('[Cache Revalidation Warning]:', e);
+    }
+
     return NextResponse.json({ success: true, key });
   } catch (error: unknown) {
     return NextResponse.json(

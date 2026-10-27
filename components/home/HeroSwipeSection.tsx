@@ -77,7 +77,7 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
 
   // Fetch dynamic hero slides from site settings / DB with resilient static fallback
   useEffect(() => {
-    fetch('/api/content?key=hero_slides')
+    fetch('/api/content?key=hero_slides', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {

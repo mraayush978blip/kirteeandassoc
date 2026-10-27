@@ -80,7 +80,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
 
   // Check showOnWebsite master toggle and load dynamic projects
   React.useEffect(() => {
-    fetch('/api/content?key=projects')
+    fetch('/api/content?key=projects', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data) {
