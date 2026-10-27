@@ -13,18 +13,16 @@ export const Header: React.FC = () => {
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dropdownContainerRef = useRef<HTMLDivElement>(null);
 
-  // Eliminate duplicate header on admin routes
-  if (pathname?.startsWith('/admin') || pathname?.startsWith('/ad')) {
-    return null;
-  }
+  const isAdminRoute = pathname?.startsWith('/admin') || pathname?.startsWith('/ad');
 
   useEffect(() => {
+    if (isAdminRoute) return;
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isAdminRoute]);
 
   // Close menus on route change
   useEffect(() => {
@@ -34,6 +32,7 @@ export const Header: React.FC = () => {
 
   // Click outside to close dropdown
   useEffect(() => {
+    if (isAdminRoute) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (
         dropdownContainerRef.current &&
@@ -44,7 +43,7 @@ export const Header: React.FC = () => {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isAdminRoute]);
 
   const handleMouseEnterProducts = () => {
     if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
@@ -56,6 +55,11 @@ export const Header: React.FC = () => {
       setIsProductsDropdownOpen(false);
     }, 150);
   };
+
+  // Eliminate duplicate header on admin routes (called after all hooks to satisfy React Rules of Hooks)
+  if (isAdminRoute) {
+    return null;
+  }
 
   const isProductsActive =
     pathname.startsWith('/products') || pathname === '/dry-goods' || pathname === '/wet-goods';
