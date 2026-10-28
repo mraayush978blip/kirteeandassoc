@@ -14,6 +14,9 @@ html {
   text-rendering: optimizeLegibility;
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 body {
@@ -25,8 +28,20 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+}
+
+/* Global text wrapping & media containment to prevent side-scroll */
+h1, h2, h3, h4, h5, h6, p, span, a, div {
+  overflow-wrap: break-word;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
 }
 
 /* Accessibility Focus Ring */
@@ -113,8 +128,9 @@ a {
   max-width: var(--container-max-width, 1720px);
   margin-left: auto;
   margin-right: auto;
-  padding-left: clamp(1.5rem, 3.5vw, 4.5rem);
-  padding-right: clamp(1.5rem, 3.5vw, 4.5rem);
+  padding-left: clamp(1rem, 3.5vw, 4.5rem);
+  padding-right: clamp(1rem, 3.5vw, 4.5rem);
+  overflow-x: clip;
 }
 
 .container-editorial {
@@ -735,6 +751,15 @@ a {
 @media (min-width: 901px) {
   .related-col {
     grid-column: span 4 !important;
+  }
+}
+
+/* Prevent iOS & Android browser auto-zoom on input focus */
+@media screen and (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
   }
 }
 

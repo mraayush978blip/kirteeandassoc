@@ -17,6 +17,7 @@ export const DifferenceSection: React.FC<DifferenceSectionProps> = ({ config }) 
         color: '#2d333e',
         paddingTop: 'clamp(5rem, 8vw, 8rem)',
         paddingBottom: 'clamp(5rem, 8vw, 8rem)',
+        overflow: 'hidden',
       }}
     >
       <div className="container">
