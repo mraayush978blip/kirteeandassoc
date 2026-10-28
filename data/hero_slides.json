@@ -34,5 +34,17 @@
     "imageAlt": "Articulated architectural bronze projectors illuminating water and facade",
     "imageUrl": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=2000&q=85",
     "subtitle": "Marine-grade in-ground facade projectors crafted for extreme subterranean resilience."
+  },
+  {
+    "id": "hero-1793098769658",
+    "order": 4,
+    "title": "FORM,\nILLUMINATED.",
+    "slotId": "hero-slide-1793098769658",
+    "ctaHref": "/contact",
+    "ctaText": "EXPLORE LUMINAIRES",
+    "eyebrow": "ARCHITECTURAL INNOVATION",
+    "imageAlt": "Hero slide",
+    "imageUrl": "/media/photo-1793098788327.webp",
+    "subtitle": "Engineered for exceptional spatial dialogue."
   }
 ]

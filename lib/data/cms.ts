@@ -73,7 +73,7 @@ export const initialContactPageData: ContactPageData = {
     officeAddress: [
       'Kirtee & Associates Architectural Studio',
       'Luminaire Design & Photometric Evaluation Lab',
-      'Physical Studio Space [Location TBD]',
+      'Prabhadevi, Mumbai 400013, India',
     ],
     businessHours: 'Monday – Friday: 09:30 – 18:30 IST',
   },

@@ -2832,29 +2832,175 @@ function AdminDashboardContent() {
                       style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
                     />
                   </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Contact Person Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Divvya"
+                      value={contactConfig.contactPerson || ''}
+                      onChange={(e) => setContactConfig({ ...contactConfig, contactPerson: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Studio / Company Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Kirtee & Associates Studio"
+                      value={contactConfig.companyName || ''}
+                      onChange={(e) => setContactConfig({ ...contactConfig, companyName: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
                 </div>
 
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
-                    Studio Address
-                  </label>
-                  <input
-                    type="text"
-                    value={contactConfig.studioAddress}
-                    onChange={(e) => setContactConfig({ ...contactConfig, studioAddress: e.target.value })}
-                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Address Line 1 (Street / Building)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Level 14, Tower 3, One International Centre"
+                      value={contactConfig.addressLine1 || ''}
+                      onChange={(e) => setContactConfig({ ...contactConfig, addressLine1: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Address Line 2 (Area, City, Pincode, Country)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Senapati Bapat Marg, Prabhadevi, Mumbai 400013, India"
+                      value={contactConfig.addressLine2 || ''}
+                      onChange={(e) => setContactConfig({ ...contactConfig, addressLine2: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Full Studio Address (Fallback)
+                    </label>
+                    <input
+                      type="text"
+                      value={contactConfig.studioAddress}
+                      onChange={(e) => setContactConfig({ ...contactConfig, studioAddress: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Business Hours
+                    </label>
+                    <input
+                      type="text"
+                      value={contactConfig.businessHours}
+                      onChange={(e) => setContactConfig({ ...contactConfig, businessHours: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      LinkedIn Profile / Company URL
+                    </label>
+                    <input
+                      type="url"
+                      placeholder="https://linkedin.com/company/kirteeandassoc"
+                      value={contactConfig.linkedinUrl || ''}
+                      onChange={(e) => setContactConfig({ ...contactConfig, linkedinUrl: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Instagram Profile URL
+                    </label>
+                    <input
+                      type="url"
+                      placeholder="https://instagram.com/kirteeandassoc"
+                      value={contactConfig.instagramUrl || ''}
+                      onChange={(e) => setContactConfig({ ...contactConfig, instagramUrl: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Us Page Content Card */}
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderRadius: '8px',
+                  border: '1px solid #e5e7eb',
+                  padding: '1.75rem',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#f3f4f6', color: '#111827', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Edit2 size={17} />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#111827' }}>Contact Page Headings &amp; Intro</h3>
+                    <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>Customize the texts displayed directly on the /contact public page</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Main Page Heading
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Contact us"
+                      value={contactConfig.heading || ''}
+                      onChange={(e) => setContactConfig({ ...contactConfig, heading: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
+                      Team Notice / Subtitle
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Our architectural lighting team will be delighted to assist you."
+                      value={contactConfig.teamNotice || ''}
+                      onChange={(e) => setContactConfig({ ...contactConfig, teamNotice: e.target.value })}
+                      style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
-                    Business Hours
+                    Page Lead Description
                   </label>
-                  <input
-                    type="text"
-                    value={contactConfig.businessHours}
-                    onChange={(e) => setContactConfig({ ...contactConfig, businessHours: e.target.value })}
-                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                  <textarea
+                    rows={2}
+                    placeholder="If you would like more information about our products or services, or wish to make a technical or commercial enquiry, please contact us using the form below."
+                    value={contactConfig.description || ''}
+                    onChange={(e) => setContactConfig({ ...contactConfig, description: e.target.value })}
+                    style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem', resize: 'vertical' }}
                   />
                 </div>
               </div>

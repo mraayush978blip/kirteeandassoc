@@ -26,6 +26,13 @@ export interface ProjectConfig {
 }
 
 export interface ContactConfig {
+  heading?: string;
+  teamNotice?: string;
+  description?: string;
+  contactPerson?: string;
+  companyName?: string;
+  addressLine1?: string;
+  addressLine2?: string;
   whatsappNumber: string;
   whatsappMessage: string;
   inquiryEmail: string;
@@ -190,14 +197,22 @@ export const DEFAULT_PROJECTS: ProjectConfig[] = [
 ];
 
 export const DEFAULT_CONTACT: ContactConfig = {
-  whatsappNumber: '+919820000000',
-  whatsappMessage: 'Hello Zenvora Architectural Lighting team, I would like to consult on architectural luminaires for an upcoming project.',
-  inquiryEmail: 'inquiries@zenvora.com',
-  phoneNumber: '+91 22 2490 0000',
+  heading: 'Contact us',
+  teamNotice: 'Our architectural lighting team will be delighted to assist you.',
+  description:
+    'If you would like more information about our products or services, or wish to make a technical or commercial enquiry, please contact us using the form below.',
+  contactPerson: 'Divvya',
+  companyName: 'Kirtee & Associates Studio',
+  addressLine1: 'Level 14, Tower 3, One International Centre',
+  addressLine2: 'Senapati Bapat Marg, Prabhadevi, Mumbai 400013, India',
+  whatsappNumber: '+91 70969 62640',
+  whatsappMessage: 'Hello Kirtee & Associates, I would like to consult on architectural luminaires for an upcoming project.',
+  inquiryEmail: 'inquiries@kirteeandassoc.com',
+  phoneNumber: '+91 70969 62640',
   studioAddress: 'Level 14, Tower 3, One International Centre, Senapati Bapat Marg, Prabhadevi, Mumbai 400013, India',
   businessHours: 'Monday – Friday: 09:30 to 18:30 IST',
-  instagramUrl: 'https://instagram.com/zenvora.lighting',
-  linkedinUrl: 'https://linkedin.com/company/zenvora-architectural',
+  instagramUrl: 'https://instagram.com/kirteeandassoc',
+  linkedinUrl: 'https://linkedin.com/company/kirteeandassoc',
 };
 
 export const DEFAULT_PROJECT_SETTINGS: ProjectSettings = {

@@ -45,6 +45,27 @@ export const Header: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isAdminRoute]);
 
+  const [contact, setContact] = useState({
+    phoneNumber: '+91 70969 62640',
+    contactPerson: 'Divvya',
+    inquiryEmail: 'inquiries@kirteeandassoc.com',
+  });
+
+  useEffect(() => {
+    if (isAdminRoute) return;
+    fetch('/api/content?key=contact', { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          setContact((prev) => ({
+            ...prev,
+            ...data.data,
+          }));
+        }
+      })
+      .catch(() => {});
+  }, [isAdminRoute]);
+
   const handleMouseEnterProducts = () => {
     if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
     setIsProductsDropdownOpen(true);
@@ -580,7 +601,7 @@ export const Header: React.FC = () => {
               }}
             >
               <a
-                href="tel:7096962640"
+                href={`tel:${(contact.phoneNumber || '7096962640').replace(/[^0-9+]/g, '')}`}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -590,18 +611,18 @@ export const Header: React.FC = () => {
                 }}
               >
                 <Phone size={13} style={{ color: 'var(--color-accent)' }} />
-                <span>Primary Contact: Divvya (+91 70969 62640)</span>
+                <span>Primary Contact: {contact.contactPerson ? `${contact.contactPerson} (` : ''}{contact.phoneNumber || '+91 70969 62640'}{contact.contactPerson ? ')' : ''}</span>
               </a>
 
               <a
-                href="mailto:inquiries@kirteeandassoc.com"
+                href={`mailto:${contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}`}
                 style={{
                   color: 'rgba(255, 255, 255, 0.55)',
                   textDecoration: 'none',
                   paddingLeft: '1.3rem',
                 }}
               >
-                inquiries@kirteeandassoc.com
+                {contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}
               </a>
             </div>
           </div>

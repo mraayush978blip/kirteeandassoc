@@ -10,8 +10,35 @@ export const Footer: React.FC = () => {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
+  const [contact, setContact] = React.useState({
+    phoneNumber: '+91 70969 62640',
+    contactPerson: 'Divvya',
+    inquiryEmail: 'inquiries@kirteeandassoc.com',
+    studioAddress: 'Kirtee & Associates Architectural Studio',
+    companyName: 'Kirtee & Associates Architectural Studio',
+    linkedinUrl: 'https://linkedin.com/company/kirteeandassoc',
+    instagramUrl: 'https://instagram.com/kirteeandassoc',
+  });
+
+  const isAdminRoute = pathname?.startsWith('/admin') || pathname?.startsWith('/ad');
+
+  React.useEffect(() => {
+    if (isAdminRoute) return;
+    fetch('/api/content?key=contact', { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          setContact((prev) => ({
+            ...prev,
+            ...data.data,
+          }));
+        }
+      })
+      .catch(() => {});
+  }, [isAdminRoute]);
+
   // Hide public footer on admin panel
-  if (pathname?.startsWith('/admin') || pathname?.startsWith('/ad')) {
+  if (isAdminRoute) {
     return null;
   }
 
@@ -204,7 +231,7 @@ export const Footer: React.FC = () => {
                 SPECIFICATION CONTACT
               </span>
               <a
-                href="tel:7096962640"
+                href={`tel:${(contact.phoneNumber || '7096962640').replace(/[^0-9+]/g, '')}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -218,10 +245,10 @@ export const Footer: React.FC = () => {
                 onMouseLeave={(e) => (e.currentTarget.style.color = '#ffffff')}
               >
                 <Phone size={14} style={{ color: 'var(--color-accent)' }} />
-                <span>Divvya — +91 70969 62640</span>
+                <span>{contact.contactPerson ? `${contact.contactPerson} — ` : ''}{contact.phoneNumber || '+91 70969 62640'}</span>
               </a>
               <a
-                href="mailto:inquiries@kirteeandassoc.com"
+                href={`mailto:${contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -235,7 +262,7 @@ export const Footer: React.FC = () => {
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)')}
               >
                 <Mail size={14} />
-                <span>inquiries@kirteeandassoc.com</span>
+                <span>{contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}</span>
               </a>
               <div
                 style={{
@@ -249,13 +276,13 @@ export const Footer: React.FC = () => {
                 }}
               >
                 <MapPin size={14} style={{ flexShrink: 0, marginTop: '2px' }} />
-                <span>Kirtee &amp; Associates Architectural Studio</span>
+                <span>{contact.studioAddress || contact.companyName || 'Kirtee & Associates Architectural Studio'}</span>
               </div>
 
               {/* Social Icons */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.75rem' }}>
                 <a
-                  href="https://linkedin.com/company/kirteeandassoc"
+                  href={contact.linkedinUrl || 'https://linkedin.com/company/kirteeandassoc'}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
@@ -266,7 +293,7 @@ export const Footer: React.FC = () => {
                   <LinkedinIcon size={16} />
                 </a>
                 <a
-                  href="https://instagram.com/kirteeandassoc"
+                  href={contact.instagramUrl || 'https://instagram.com/kirteeandassoc'}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"

@@ -436,5 +436,104 @@
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
     "updatedAt": "2026-10-24T06:47:45.864Z"
+  },
+  {
+    "id": "prod-Aliquam curia defleo vicinus trepide deputo claustrum.",
+    "slug": "hiii",
+    "sku": "ZN-9994",
+    "name": "Amicitia averto spero cicuta esse molestiae.",
+    "codeLabel": "AMICITIA AVERTO SPERO CICUTA ESSE MOLESTIAE.",
+    "designer": "ZENVORA Studio",
+    "catalogType": "wet",
+    "tagline": "Vitiosus peccatus cultellus crux cupio sub sufficio caelum.",
+    "shortDescription": "",
+    "fullDescription": "Totidem arx voluptatem viscus accommodo architecto viridis.",
+    "editorialStory": "Totidem arx voluptatem viscus accommodo architecto viridis.",
+    "category": {
+      "id": "cat-wet",
+      "slug": "wet-goods",
+      "name": "Wet Goods",
+      "description": "Submerged, in-ground, and exterior weatherproof luminaires engineered in 316L stainless steel.",
+      "order": 1
+    },
+    "subcategory": "",
+    "tags": [],
+    "status": "published",
+    "isFeatured": true,
+    "order": 5,
+    "heroImage": {
+      "id": "img-hiii",
+      "url": "/media/photo-1793099013061.webp",
+      "alt": "mahaurja1",
+      "isPrimary": true
+    },
+    "heroCarouselImages": [
+      {
+        "id": "cimg-1793099014601-299",
+        "alt": "mahaurja1",
+        "url": "/media/photo-1793099013061.webp",
+        "isPrimary": true
+      }
+    ],
+    "gallery": [
+      {
+        "id": "slot-1",
+        "alt": "Amicitia averto spero cicuta esse molestiae. architectural detail 1",
+        "url": "/media/mahaurja-1793099031819.webp",
+        "caption": ""
+      },
+      {
+        "id": "slot-2",
+        "alt": "Amicitia averto spero cicuta esse molestiae. architectural detail 2",
+        "url": "/media/mapmaha-1793099048593.webp",
+        "caption": ""
+      }
+    ],
+    "specifications": [
+      {
+        "id": "s1",
+        "unit": "Annus apto vomito arbor at.",
+        "group": "Optical",
+        "label": "Aegrus blandior utpote aspicio viduo.",
+        "value": "Candidus trado cui deserunt cohaero suasoria varius catena testimonium casso."
+      },
+      {
+        "id": "s2",
+        "unit": "Tricesimus auctus amplitudo cursim delinquo astrum advenio.",
+        "group": "Optical",
+        "label": "Alveus vero circumvenio angustus.",
+        "value": "Vis apud clibanus deorsum."
+      },
+      {
+        "id": "s3",
+        "unit": "Quas delinquo aureus.",
+        "group": "Optical",
+        "label": "Clibanus ciminatio ver.",
+        "value": "Tantillus conforto atrox ter sonitus."
+      },
+      {
+        "id": "s4",
+        "unit": "Una studio torqueo minus viriliter antea non synagoga video vetus.",
+        "group": "Electrical",
+        "label": "Clarus totam unus caveo summa.",
+        "value": "Demulceo vobis sequi canonicus doloremque aspicio trado aggredior aqua."
+      }
+    ],
+    "downloads": [
+      {
+        "id": "dl-1",
+        "title": "Technical Datasheet & Photometrics (Google Drive)",
+        "fileUrl": "https://drive.google.com/file/d/1hQrpI2yeTk3f0dfzbjOAQFzZkFO0gCDs/view?usp=drive_link",
+        "fileType": "PDF"
+      }
+    ],
+    "socialLinks": {},
+    "seo": {
+      "metaTitle": "Amicitia averto spero cicuta esse molestiae. | Kirtee & Associates",
+      "metaDescription": "Amicitia averto spero cicuta esse molestiae.",
+      "ogImage": "/media/photo-1793099013061.webp"
+    },
+    "createdAt": "2026-10-27T11:05:39.275Z",
+    "updatedAt": "2026-10-27T11:10:12.421Z"
   }
 ]

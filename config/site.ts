@@ -12,7 +12,7 @@ export const siteConfig = {
   address: [
     'Kirtee & Associates Architectural Studio',
     'Luminaire Design & Photometric Evaluation Lab',
-    'Polígono Industrial & Demonstration Studio Space',
+    'Prabhadevi, Mumbai 400013, India',
   ],
   hours: 'Monday – Friday, 09:30 – 18:30 IST',
   social: {
