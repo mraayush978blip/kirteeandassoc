@@ -21,6 +21,15 @@ import {
   ProjectCtaConfig,
 } from '@/lib/site-settings';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate',
+  'Pragma': 'no-cache',
+  'Expires': '0',
+};
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -28,43 +37,43 @@ export async function GET(req: NextRequest) {
 
     if (key === 'hero_slides') {
       const slides = await getSetting<HeroSlideConfig[]>('hero_slides', DEFAULT_HERO_SLIDES);
-      return NextResponse.json({ success: true, data: slides });
+      return NextResponse.json({ success: true, data: slides }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'projects') {
       const projects = await getSetting<ProjectConfig[]>('site_projects', DEFAULT_PROJECTS);
       const settings = await getSetting<ProjectSettings>('project_settings', DEFAULT_PROJECT_SETTINGS);
-      return NextResponse.json({ success: true, data: { projects, settings } });
+      return NextResponse.json({ success: true, data: { projects, settings } }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'contact') {
       const contact = await getSetting<ContactConfig>('site_contact', DEFAULT_CONTACT);
-      return NextResponse.json({ success: true, data: contact });
+      return NextResponse.json({ success: true, data: contact }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'project_settings') {
       const settings = await getSetting<ProjectSettings>('project_settings', DEFAULT_PROJECT_SETTINGS);
-      return NextResponse.json({ success: true, data: settings });
+      return NextResponse.json({ success: true, data: settings }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'philosophy' || key === 'home_philosophy') {
       const philosophy = await getSetting<PhilosophyConfig>('home_philosophy', DEFAULT_PHILOSOPHY);
-      return NextResponse.json({ success: true, data: philosophy });
+      return NextResponse.json({ success: true, data: philosophy }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'why_choose_us' || key === 'home_why_choose_us') {
       const whyChooseUs = await getSetting<WhyChooseUsConfig>('home_why_choose_us', DEFAULT_WHY_CHOOSE_US);
-      return NextResponse.json({ success: true, data: whyChooseUs });
+      return NextResponse.json({ success: true, data: whyChooseUs }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'process' || key === 'home_process') {
       const process = await getSetting<ProcessConfig>('home_process', DEFAULT_PROCESS);
-      return NextResponse.json({ success: true, data: process });
+      return NextResponse.json({ success: true, data: process }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'project_cta' || key === 'home_project_cta') {
       const projectCta = await getSetting<ProjectCtaConfig>('home_project_cta', DEFAULT_PROJECT_CTA);
-      return NextResponse.json({ success: true, data: projectCta });
+      return NextResponse.json({ success: true, data: projectCta }, { headers: NO_CACHE_HEADERS });
     }
 
     // Default 'all'
@@ -80,23 +89,26 @@ export async function GET(req: NextRequest) {
         getSetting<ProjectCtaConfig>('home_project_cta', DEFAULT_PROJECT_CTA),
       ]);
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        heroSlides,
-        projects,
-        projectSettings,
-        contact,
-        philosophy,
-        whyChooseUs,
-        process,
-        projectCta,
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          heroSlides,
+          projects,
+          projectSettings,
+          contact,
+          philosophy,
+          whyChooseUs,
+          process,
+          projectCta,
+        },
       },
-    });
+      { headers: NO_CACHE_HEADERS }
+    );
   } catch (error: unknown) {
     return NextResponse.json(
       { success: false, message: error instanceof Error ? error.message : 'Server error' },
-      { status: 500 }
+      { status: 500, headers: NO_CACHE_HEADERS }
     );
   }
 }

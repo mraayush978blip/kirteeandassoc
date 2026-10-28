@@ -245,7 +245,7 @@ function AdminDashboardContent() {
   // -------------------------------------------------------------
   // LocalStorage Form Auto-Save / Draft Persistence
   // -------------------------------------------------------------
-  // Load saved product draft from localStorage on mount
+  // Load saved product draft banner from localStorage on mount (without auto-overwriting state)
   useEffect(() => {
     try {
       const draft = localStorage.getItem('zenvora_product_draft');
@@ -253,11 +253,6 @@ function AdminDashboardContent() {
         const parsed = JSON.parse(draft);
         if (parsed && parsed.product) {
           setProductDraft(parsed);
-          // Auto-reopen if user was actively editing before reload/back
-          if (parsed.wasOpen) {
-            setEditingProduct(parsed.product);
-            setIsProductModalOpen(true);
-          }
         }
       }
     } catch {}
@@ -355,7 +350,7 @@ function AdminDashboardContent() {
   const fetchDbStatus = async () => {
     setIsCheckingDb(true);
     try {
-      const res = await fetch('/api/admin/db-status');
+      const res = await fetch(`/api/admin/db-status?_t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
       setDbStatus(data);
     } catch {
@@ -369,7 +364,7 @@ function AdminDashboardContent() {
   const fetchHomeSections = async () => {
     setIsLoadingHero(true);
     try {
-      const res = await fetch('/api/admin/content?key=all');
+      const res = await fetch(`/api/admin/content?key=all&_t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success && data.data) {
         if (Array.isArray(data.data.heroSlides) && data.data.heroSlides.length > 0) {
@@ -398,6 +393,7 @@ function AdminDashboardContent() {
       const data = await res.json();
       if (data.success) {
         showToast(`${label} updated successfully! Live on homepage.`);
+        fetchHomeSections();
       } else {
         showToast(data.message || `Failed to update ${label}`, 'error');
       }
@@ -419,6 +415,7 @@ function AdminDashboardContent() {
       const data = await res.json();
       if (data.success) {
         showToast('Hero slides saved successfully! Home page updated.');
+        fetchHomeSections();
       } else {
         showToast(data.message || 'Error saving hero slides', 'error');
       }
@@ -432,7 +429,7 @@ function AdminDashboardContent() {
   const fetchProducts = async () => {
     setIsLoadingProducts(true);
     try {
-      const res = await fetch('/api/admin/products');
+      const res = await fetch(`/api/admin/products?_t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success && Array.isArray(data.products)) {
         setProducts(data.products);
@@ -447,7 +444,7 @@ function AdminDashboardContent() {
   const fetchProjects = async () => {
     setIsLoadingProjects(true);
     try {
-      const res = await fetch('/api/admin/content?key=projects');
+      const res = await fetch(`/api/admin/content?key=projects&_t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success && data.data) {
         if (data.data.projects) setProjectsList(data.data.projects);
@@ -469,6 +466,7 @@ function AdminDashboardContent() {
         body: JSON.stringify({ key: 'project_settings', value: nextSettings }),
       });
       showToast(show ? 'Projects section is now LIVE on website.' : 'Projects section is now HIDDEN on website.');
+      fetchProjects();
     } catch {
       showToast('Error updating project settings.', 'error');
     }
@@ -483,6 +481,7 @@ function AdminDashboardContent() {
         body: JSON.stringify({ key: 'site_projects', value: updatedProjects }),
       });
       showToast('Projects saved successfully.');
+      fetchProjects();
     } catch {
       showToast('Error syncing projects.', 'error');
     }
@@ -492,14 +491,14 @@ function AdminDashboardContent() {
   const fetchContact = async () => {
     setIsLoadingContact(true);
     try {
-      const res = await fetch('/api/admin/content?key=contact');
+      const res = await fetch(`/api/admin/content?key=contact&_t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success && data.data) {
         setContactConfig(data.data);
       }
 
       // Also fetch contact form submissions
-      const subRes = await fetch('/api/admin/submissions');
+      const subRes = await fetch(`/api/admin/submissions?_t=${Date.now()}`, { cache: 'no-store' });
       const subData = await subRes.json();
       if (subData.success && Array.isArray(subData.submissions)) {
         setSubmissions(subData.submissions);
@@ -520,6 +519,7 @@ function AdminDashboardContent() {
         body: JSON.stringify({ key: 'site_contact', value: contactConfig }),
       });
       showToast('WhatsApp & Contact details updated across entire site.');
+      fetchContact();
     } catch {
       showToast('Error saving contact details.', 'error');
     } finally {

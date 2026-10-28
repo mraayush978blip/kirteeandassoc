@@ -1,43 +1,43 @@
 {
   "eyebrow": "WHY SPECIFY ZENVORA",
-  "headline": "ARCHITECTURAL RIGOR. UNCOMPROMISING FIDELITY.",
-  "description": "Every luminaire in our dry and wet architectural collections represents decades of precision optical physics, noble metallurgy, and exacting Swiss & Italian engineering standards.",
   "pillars": [
     {
       "id": "p1",
       "num": "01",
       "tag": "BESPOKE TAILORING",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85",
       "title": "Custom Spatial Geometry",
       "metric": "100% Tailored",
-      "description": "Custom lengths, mounting junctions, and RAL finishes engineered to your architectural drawings.",
-      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"
+      "description": "Custom lengths, mounting junctions, and RAL finishes engineered to your architectural drawings."
     },
     {
       "id": "p2",
       "num": "02",
       "tag": "OPTICAL PRECISION",
+      "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85",
       "title": "Zero-Glare Purity",
       "metric": "UGR < 10",
-      "description": "Micro-engineered fractal apertures delivering absolute visual comfort with CRI 90+ spectral fidelity.",
-      "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=85"
+      "description": "Micro-engineered fractal apertures delivering absolute visual comfort with CRI 90+ spectral fidelity."
     },
     {
       "id": "p3",
       "num": "03",
       "tag": "NOBLE METALLURGY",
+      "image": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85",
       "title": "Architectural Alloys",
       "metric": "6063-T6 & Brass",
-      "description": "CNC-milled structural aluminium and hand-turned solid brass built to microscopic mechanical tolerances.",
-      "image": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=85"
+      "description": "CNC-milled structural aluminium and hand-turned solid brass built to microscopic mechanical tolerances."
     },
     {
       "id": "p4",
       "num": "04",
       "tag": "CERTIFIED ENDURANCE",
+      "image": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=85",
       "title": "Submersible Rigor",
       "metric": "IP68 & 50,000h",
-      "description": "Hermetically sealed for wet architectural environments, backed by LM-79 and LM-80 laboratory certification.",
-      "image": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=85"
+      "description": "Hermetically sealed for wet architectural environments, backed by LM-79 and LM-80 laboratory certification."
     }
-  ]
+  ],
+  "headline": "ARCHITECTURAL RIGOR. UNCOMPROMISING FIDELITY.",
+  "description": "Every luminaire in our dry and wet architectural collections represents decades of precision optical physics, noble metallurgy, and exacting Swiss & Italian engineering standards."
 }
