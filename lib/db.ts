@@ -4,12 +4,16 @@ import path from 'path';
 import { Product, ProductCategory } from '@/types/product';
 import { products as fallbackProducts, categories as fallbackCategories } from '@/lib/data/products';
 
+// Default Supabase pooled connection string (ensures Vercel & remote deployments persist directly to Supabase)
+const DEFAULT_SUPABASE_DB_URL =
+  'postgresql://postgres.wxxhabblkxszfsogbbju:Zenvora@2000@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require';
+
 // Connection String Resolution
 const connectionString =
   process.env.DATABASE_URL ||
   process.env.DATABASE_URI ||
   process.env.POSTGRES_URL ||
-  '';
+  DEFAULT_SUPABASE_DB_URL;
 
 let pool: Pool | null = null;
 

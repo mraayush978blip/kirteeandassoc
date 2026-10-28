@@ -393,7 +393,6 @@ function AdminDashboardContent() {
       const data = await res.json();
       if (data.success) {
         showToast(`${label} updated successfully! Live on homepage.`);
-        fetchHomeSections();
       } else {
         showToast(data.message || `Failed to update ${label}`, 'error');
       }
@@ -415,7 +414,6 @@ function AdminDashboardContent() {
       const data = await res.json();
       if (data.success) {
         showToast('Hero slides saved successfully! Home page updated.');
-        fetchHomeSections();
       } else {
         showToast(data.message || 'Error saving hero slides', 'error');
       }
@@ -466,7 +464,6 @@ function AdminDashboardContent() {
         body: JSON.stringify({ key: 'project_settings', value: nextSettings }),
       });
       showToast(show ? 'Projects section is now LIVE on website.' : 'Projects section is now HIDDEN on website.');
-      fetchProjects();
     } catch {
       showToast('Error updating project settings.', 'error');
     }
@@ -481,7 +478,6 @@ function AdminDashboardContent() {
         body: JSON.stringify({ key: 'site_projects', value: updatedProjects }),
       });
       showToast('Projects saved successfully.');
-      fetchProjects();
     } catch {
       showToast('Error syncing projects.', 'error');
     }
@@ -519,7 +515,6 @@ function AdminDashboardContent() {
         body: JSON.stringify({ key: 'site_contact', value: contactConfig }),
       });
       showToast('WhatsApp & Contact details updated across entire site.');
-      fetchContact();
     } catch {
       showToast('Error saving contact details.', 'error');
     } finally {
@@ -1560,8 +1555,9 @@ function AdminDashboardContent() {
                             imageSrc: slide.imageUrl,
                             aspectPreset: '16:9',
                             onSuccess: (croppedUrl) => {
-                              const updated = [...heroSlides];
-                              updated[index].imageUrl = croppedUrl;
+                              const updated = heroSlides.map((s, i) =>
+                                i === index ? { ...s, imageUrl: croppedUrl } : s
+                              );
                               saveHeroSlides(updated);
                             },
                           });
@@ -1675,8 +1671,9 @@ function AdminDashboardContent() {
                             type="text"
                             value={slide.eyebrow}
                             onChange={(e) => {
-                              const updated = [...heroSlides];
-                              updated[index].eyebrow = e.target.value;
+                              const updated = heroSlides.map((s, i) =>
+                                i === index ? { ...s, eyebrow: e.target.value } : s
+                              );
                               setHeroSlides(updated);
                             }}
                             style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
@@ -1691,8 +1688,9 @@ function AdminDashboardContent() {
                             type="text"
                             value={slide.title}
                             onChange={(e) => {
-                              const updated = [...heroSlides];
-                              updated[index].title = e.target.value;
+                              const updated = heroSlides.map((s, i) =>
+                                i === index ? { ...s, title: e.target.value } : s
+                              );
                               setHeroSlides(updated);
                             }}
                             style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', fontFamily: 'var(--font-serif)' }}
@@ -1708,8 +1706,9 @@ function AdminDashboardContent() {
                           type="text"
                           value={slide.subtitle}
                           onChange={(e) => {
-                            const updated = [...heroSlides];
-                            updated[index].subtitle = e.target.value;
+                            const updated = heroSlides.map((s, i) =>
+                              i === index ? { ...s, subtitle: e.target.value } : s
+                            );
                             setHeroSlides(updated);
                           }}
                           style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
@@ -1725,8 +1724,9 @@ function AdminDashboardContent() {
                             type="text"
                             value={slide.ctaText}
                             onChange={(e) => {
-                              const updated = [...heroSlides];
-                              updated[index].ctaText = e.target.value;
+                              const updated = heroSlides.map((s, i) =>
+                                i === index ? { ...s, ctaText: e.target.value } : s
+                              );
                               setHeroSlides(updated);
                             }}
                             style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
@@ -1741,8 +1741,9 @@ function AdminDashboardContent() {
                             type="text"
                             value={slide.ctaHref}
                             onChange={(e) => {
-                              const updated = [...heroSlides];
-                              updated[index].ctaHref = e.target.value;
+                              const updated = heroSlides.map((s, i) =>
+                                i === index ? { ...s, ctaHref: e.target.value } : s
+                              );
                               setHeroSlides(updated);
                             }}
                             style={{ width: '100%', padding: '0.45rem 0.65rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
