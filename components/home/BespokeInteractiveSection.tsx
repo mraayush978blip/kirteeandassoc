@@ -51,7 +51,7 @@ export const BespokeInteractiveSection: React.FC = () => {
           }}
         >
           {/* Left Column: Narrative & Process Steps */}
-          <div style={{ gridColumn: 'span 12' }} className="lg:col-span-6">
+          <div className="col-span-12 lg:col-span-6">
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -177,7 +177,7 @@ export const BespokeInteractiveSection: React.FC = () => {
           </div>
 
           {/* Right Column: Interactive Annotated Luminaire */}
-          <div style={{ gridColumn: 'span 12' }} className="lg:col-span-6">
+          <div className="col-span-12 lg:col-span-6">
             <div
               style={{
                 position: 'relative',

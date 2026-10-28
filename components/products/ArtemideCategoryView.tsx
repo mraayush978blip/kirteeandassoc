@@ -202,15 +202,12 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
               colSpan = 12; // Large panoramic hero card
             }
 
-            const itemHeight = colSpan === 12 ? '500px' : '440px';
+            const isPanoramic = colSpan === 12;
 
             return (
               <div
                 key={product.id}
-                style={{
-                  gridColumn: `span ${colSpan}`,
-                }}
-                className="mosaic-col"
+                className={`col-span-12 ${isPanoramic ? 'md:col-span-12' : 'md:col-span-6'}`}
               >
                 <Link
                   href={`/products/${product.slug}`}
@@ -218,14 +215,16 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
                     display: 'block',
                     position: 'relative',
                     width: '100%',
-                    height: itemHeight,
+                    aspectRatio: isPanoramic ? '21 / 9' : '16 / 10',
+                    minHeight: isPanoramic ? '320px' : '260px',
+                    maxHeight: isPanoramic ? '540px' : '460px',
                     overflow: 'hidden',
                     backgroundColor: '#f3f4f6',
                     border: '1px solid #e5e7eb',
                     textDecoration: 'none',
                     transition: 'all var(--transition-base)',
                   }}
-                  className="mosaic-item"
+                  className="mosaic-item group"
                 >
                   <Image
                     src={product.heroImage.url}

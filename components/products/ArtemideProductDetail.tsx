@@ -303,7 +303,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             }}
           >
             {/* Left Column: Big Product Title */}
-            <div style={{ gridColumn: 'span 12' }} className="lg:col-span-4">
+            <div className="col-span-12 lg:col-span-4">
               <h1
                 style={{
                   fontFamily: 'var(--font-sans)',
@@ -336,7 +336,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             </div>
 
             {/* Right Column: Actions Row + Narrative */}
-            <div style={{ gridColumn: 'span 12' }} className="lg:col-span-8">
+            <div className="col-span-12 lg:col-span-8">
               {/* Top Row: Download Brochure Pill & Social Icons (Only show if at least one link is configured) */}
               {(() => {
                 const brochureUrl = product.downloads?.[0]?.fileUrl?.trim();

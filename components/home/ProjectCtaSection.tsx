@@ -56,7 +56,6 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
         {/* Left Column: Call to Action */}
         <div
           style={{
-            gridColumn: 'span 12',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
@@ -65,7 +64,7 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
             paddingLeft: 'clamp(1.5rem, 4.5vw, 6rem)',
             paddingRight: 'clamp(1.5rem, 3.5vw, 4.5rem)',
           }}
-          className="lg:col-span-6"
+          className="col-span-12 lg:col-span-6"
         >
           <div style={{ maxWidth: '520px', width: '100%' }}>
             <span
@@ -143,15 +142,14 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
         {/* Right Column: Full-Bleed Right Edge Image */}
         <div
           style={{
-            gridColumn: 'span 12',
             position: 'relative',
-            minHeight: 'clamp(380px, 40vw, 640px)',
+            minHeight: 'clamp(320px, 40vw, 640px)',
             width: '100%',
             backgroundColor: '#0a0a09',
             marginRight: 0,
             paddingRight: 0,
           }}
-          className="lg:col-span-6"
+          className="col-span-12 lg:col-span-6"
         >
           {activeImages.map((img, idx) => (
             <div

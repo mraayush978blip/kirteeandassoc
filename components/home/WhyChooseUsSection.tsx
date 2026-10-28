@@ -92,7 +92,7 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
             marginBottom: 'clamp(2.75rem, 5vw, 4.25rem)',
           }}
         >
-          <div style={{ gridColumn: 'span 12' }} className="lg:col-span-8">
+          <div className="col-span-12 lg:col-span-8">
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
@@ -123,7 +123,7 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
             </h2>
           </div>
 
-          <div style={{ gridColumn: 'span 12' }} className="lg:col-span-4">
+          <div className="col-span-12 lg:col-span-4">
             <p
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -156,7 +156,6 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                 onMouseEnter={() => setHoveredPillar(pillar.id)}
                 onMouseLeave={() => setHoveredPillar(null)}
                 style={{
-                  gridColumn: 'span 12',
                   backgroundColor: '#ffffff',
                   borderRadius: '6px',
                   overflow: 'hidden',
@@ -170,14 +169,14 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                   display: 'flex',
                   flexDirection: 'column',
                 }}
-                className="lg:col-span-3 sm:col-span-6 group"
+                className="col-span-12 sm:col-span-6 lg:col-span-3 group"
               >
                 {/* Image Container */}
                 <div
                   style={{
                     position: 'relative',
-                    height: '220px',
                     width: '100%',
+                    aspectRatio: '16 / 10',
                     overflow: 'hidden',
                     backgroundColor: '#EBE5DC',
                   }}

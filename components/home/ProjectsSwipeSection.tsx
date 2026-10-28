@@ -285,7 +285,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                   style={{
                     position: 'relative',
                     width: '100%',
-                    height: 'clamp(260px, 15vw, 320px)',
+                    aspectRatio: '16 / 11',
                     borderRadius: '2px',
                     overflow: 'hidden',
                     backgroundColor: '#353943',

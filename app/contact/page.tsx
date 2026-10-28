@@ -56,7 +56,7 @@ export default async function ContactPage() {
             }}
           >
             {/* Left Column: Contact Us Text & Info */}
-            <div style={{ gridColumn: 'span 12' }} className="lg:col-span-6">
+            <div className="col-span-12 lg:col-span-6">
               <div style={{ maxWidth: '580px' }}>
                 <h1
                   style={{
@@ -198,7 +198,7 @@ export default async function ContactPage() {
             </div>
 
             {/* Right Column: Pill-Shaped Rounded Card Form */}
-            <div style={{ gridColumn: 'span 12' }} className="lg:col-span-6">
+            <div className="col-span-12 lg:col-span-6">
               <Suspense
                 fallback={
                   <div

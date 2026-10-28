@@ -242,6 +242,7 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
       <button
         type="button"
         aria-label="Previous slide"
+        className="hero-nav-arrow hero-nav-arrow-left"
         onClick={(e) => {
           e.stopPropagation();
           prevSlide();
@@ -284,6 +285,7 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
       <button
         type="button"
         aria-label="Next slide"
+        className="hero-nav-arrow hero-nav-arrow-right"
         onClick={(e) => {
           e.stopPropagation();
           nextSlide();

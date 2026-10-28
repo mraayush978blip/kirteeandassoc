@@ -29,7 +29,7 @@ export const DifferenceSection: React.FC<DifferenceSectionProps> = ({ config }) 
             marginBottom: 'clamp(3.5rem, 6vw, 5.5rem)',
           }}
         >
-          <div style={{ gridColumn: 'span 12' }} className="lg:col-span-7">
+          <div className="col-span-12 lg:col-span-7">
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -58,14 +58,7 @@ export const DifferenceSection: React.FC<DifferenceSectionProps> = ({ config }) 
             </h2>
           </div>
 
-          <div
-            style={{
-              gridColumn: 'span 12',
-              display: 'flex',
-              alignItems: 'flex-end',
-            }}
-            className="lg:col-span-5"
-          >
+          <div className="col-span-12 lg:col-span-5 flex items-end">
             <p
               style={{
                 fontSize: '1.0625rem',
