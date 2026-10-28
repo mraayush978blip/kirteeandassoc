@@ -439,7 +439,7 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
         }}
       >
         {/* Scroll indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="hero-scroll-indicator" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div
             style={{
               width: '1px',
@@ -461,7 +461,7 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
         </div>
 
         {/* Swipe Left/Right Controls & Slide Dots */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div className="hero-bottom-controls" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           {/* Slide Indicator Number */}
           <span
             style={{
@@ -500,7 +500,7 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
           </div>
 
           {/* Arrow Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="hero-bottom-nav-arrows" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <button
               type="button"
               aria-label="Swipe previous image"

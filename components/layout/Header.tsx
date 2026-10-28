@@ -30,6 +30,17 @@ export const Header: React.FC = () => {
     setIsProductsDropdownOpen(false);
   }, [pathname]);
 
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [isMobileMenuOpen]);
+
   // Click outside to close dropdown
   useEffect(() => {
     if (isAdminRoute) return;
@@ -279,13 +290,15 @@ export const Header: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              width: '40px',
-              height: '40px',
+              width: '44px',
+              height: '44px',
+              minWidth: '44px',
+              minHeight: '44px',
               padding: 0,
               transition: 'background-color 0.2s ease, border-color 0.2s ease',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '18px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '20px' }}>
               <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
               <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
             </div>
@@ -358,8 +371,10 @@ export const Header: React.FC = () => {
                 background: 'rgba(255, 255, 255, 0.08)',
                 border: '1px solid rgba(255, 255, 255, 0.16)',
                 color: '#ffffff',
-                width: '38px',
-                height: '38px',
+                width: '44px',
+                height: '44px',
+                minWidth: '44px',
+                minHeight: '44px',
                 borderRadius: '50%',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -368,7 +383,7 @@ export const Header: React.FC = () => {
                 transition: 'background-color 0.2s ease',
               }}
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
 

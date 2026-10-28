@@ -60,8 +60,8 @@ export const Footer: React.FC = () => {
             flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            gap: '3rem',
-            paddingBottom: 'clamp(3rem, 5vw, 4.5rem)',
+            gap: 'clamp(2rem, 4vw, 3rem)',
+            paddingBottom: 'clamp(2.5rem, 5vw, 4.5rem)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           }}
         >
@@ -108,7 +108,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Links & Direct Contact */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '3.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: 'clamp(2rem, 4vw, 3.5rem)' }}>
             <nav
               aria-label="Footer Navigation"
               style={{

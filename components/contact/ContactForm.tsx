@@ -199,7 +199,7 @@ export const ContactForm: React.FC = () => {
     width: '100%',
     borderRadius: '9999px',
     border: '1px solid #e5e7eb',
-    padding: '1.1rem 1.65rem',
+    padding: 'clamp(0.85rem, 2vw, 1.1rem) clamp(1.15rem, 2.5vw, 1.65rem)',
     fontFamily: 'var(--font-sans)',
     fontSize: '1.0625rem',
     color: '#1f2937',
@@ -212,7 +212,7 @@ export const ContactForm: React.FC = () => {
     width: '100%',
     borderRadius: '20px',
     border: '1px solid #e5e7eb',
-    padding: '1.25rem 1.65rem',
+    padding: 'clamp(1rem, 2vw, 1.25rem) clamp(1.15rem, 2.5vw, 1.65rem)',
     fontFamily: 'var(--font-sans)',
     fontSize: '1.0625rem',
     color: '#1f2937',
@@ -227,10 +227,10 @@ export const ContactForm: React.FC = () => {
     <div
       style={{
         backgroundColor: '#ffffff',
-        borderRadius: '28px',
+        borderRadius: 'clamp(18px, 3vw, 28px)',
         border: '1px solid #f0f0f2',
         boxShadow: '0 24px 50px -12px rgba(0, 0, 0, 0.06)',
-        padding: 'clamp(2.25rem, 4.5vw, 3.5rem)',
+        padding: 'clamp(1.25rem, 4vw, 3.25rem)',
       }}
     >
       <form onSubmit={handleSubmit} noValidate>
@@ -271,7 +271,7 @@ export const ContactForm: React.FC = () => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
             gap: '1.25rem',
             marginBottom: '1.25rem',
           }}
@@ -316,7 +316,7 @@ export const ContactForm: React.FC = () => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
             gap: '1.25rem',
             marginBottom: '1.25rem',
           }}

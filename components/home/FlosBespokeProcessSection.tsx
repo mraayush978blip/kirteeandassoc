@@ -81,8 +81,8 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
     >
       <div className="container">
         <div className="bespoke-grid">
-          {/* Left Column: Image corresponding to active step */}
-          <div className="bespoke-image-container">
+          {/* Left Column: Image corresponding to active step (Desktop) */}
+          <div className="bespoke-image-container bespoke-desktop-image">
             {stepsList.map((step, idx) => {
               const isActive = idx === activeStep;
               const fallback = getImage(step.slotId, step.image, step.imageAlt);
@@ -155,6 +155,11 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
             >
               {stepsList.map((step, idx) => {
                 const isActive = idx === activeStep;
+                const fallback = getImage(step.slotId, step.image, step.imageAlt);
+                const stepResolved = {
+                  url: step.image || fallback.url,
+                  alt: step.imageAlt || fallback.alt,
+                };
                 return (
                   <div
                     key={step.number}
@@ -211,17 +216,41 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
                       {step.title}
                     </h3>
 
-                    {/* Step Description (smooth expand when active) */}
+                    {/* Step Description & Mobile Inline Visual (smooth expand when active) */}
                     <div
                       style={{
-                        maxHeight: isActive ? '180px' : '0px',
+                        maxHeight: isActive ? '500px' : '0px',
                         opacity: isActive ? 1 : 0,
                         overflow: 'hidden',
                         transition:
-                          'max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, margin-top 0.4s ease',
+                          'max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, margin-top 0.4s ease',
                         marginTop: isActive ? '0.85rem' : '0px',
                       }}
                     >
+                      {/* Mobile Inline Visual */}
+                      <div
+                        className="bespoke-mobile-image"
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          aspectRatio: '16 / 10',
+                          borderRadius: '4px',
+                          overflow: 'hidden',
+                          marginBottom: '1rem',
+                        }}
+                      >
+                        <Image
+                          src={stepResolved.url}
+                          alt={stepResolved.alt}
+                          fill
+                          sizes="100vw"
+                          style={{
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                          }}
+                        />
+                      </div>
+
                       <p
                         style={{
                           fontFamily: 'var(--font-sans)',

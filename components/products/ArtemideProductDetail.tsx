@@ -675,7 +675,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))',
                   gap: '1rem',
                 }}
               >
