@@ -13,25 +13,28 @@ import {
   DEFAULT_WHY_CHOOSE_US,
   DEFAULT_PROCESS,
   DEFAULT_PROJECT_CTA,
+  DEFAULT_PROJECT_SETTINGS,
   HeroSlideConfig,
   ProjectConfig,
   PhilosophyConfig,
   WhyChooseUsConfig,
   ProcessConfig,
   ProjectCtaConfig,
+  ProjectSettings,
 } from '@/lib/site-settings';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function HomePage() {
-  const [heroSlides, projects, philosophy, whyChooseUs, process, projectCta] = await Promise.all([
+  const [heroSlides, projects, philosophy, whyChooseUs, process, projectCta, projectSettings] = await Promise.all([
     getSetting<HeroSlideConfig[]>('hero_slides', DEFAULT_HERO_SLIDES),
     getSetting<ProjectConfig[]>('site_projects', DEFAULT_PROJECTS),
     getSetting<PhilosophyConfig>('home_philosophy', DEFAULT_PHILOSOPHY),
     getSetting<WhyChooseUsConfig>('home_why_choose_us', DEFAULT_WHY_CHOOSE_US),
     getSetting<ProcessConfig>('home_process', DEFAULT_PROCESS),
     getSetting<ProjectCtaConfig>('home_project_cta', DEFAULT_PROJECT_CTA),
+    getSetting<ProjectSettings>('project_settings', DEFAULT_PROJECT_SETTINGS),
   ]);
 
   return (
@@ -49,7 +52,7 @@ export default async function HomePage() {
       <FlosBespokeProcessSection config={process} />
 
       {/* 5. Featured Projects: Swipeable Architectural Showcase */}
-      <ProjectsSwipeSection initialProjects={projects} />
+      <ProjectsSwipeSection initialProjects={projects} settings={projectSettings} />
 
       {/* 6. Specification Consultation CTA */}
       <ProjectCtaSection config={projectCta} />

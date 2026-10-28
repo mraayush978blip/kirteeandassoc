@@ -24,10 +24,14 @@ interface ProjectCtaSectionProps {
 
 export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) => {
   const data = config || DEFAULT_PROJECT_CTA;
+  const activeImages = data.imageUrl
+    ? [{ url: data.imageUrl, alt: data.imageAlt || data.headline || 'Project Consultation' }]
+    : ctaImages;
+
   const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   const toggleImage = () => {
-    setActiveImageIdx((prev) => (prev + 1) % ctaImages.length);
+    setActiveImageIdx((prev) => (prev + 1) % activeImages.length);
   };
 
   return (
@@ -149,7 +153,7 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
           }}
           className="lg:col-span-6"
         >
-          {ctaImages.map((img, idx) => (
+          {activeImages.map((img, idx) => (
             <div
               key={idx}
               style={{
@@ -173,45 +177,47 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
             </div>
           ))}
 
-          {/* Toggle Arrow Button */}
-          <button
-            type="button"
-            onClick={toggleImage}
-            aria-label="Toggle next project image"
-            style={{
-              position: 'absolute',
-              left: '1.75rem',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: '42px',
-              height: '42px',
-              borderRadius: '50%',
-              backgroundColor: 'rgba(10, 10, 9, 0.75)',
-              border: '1px solid rgba(255, 255, 255, 0.35)',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              zIndex: 20,
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
-              e.currentTarget.style.borderColor = '#ffffff';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(10, 10, 9, 0.75)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-            }}
-          >
-            <ChevronLeft size={20} />
-          </button>
+          {/* Toggle Arrow Button (shown when multiple images exist) */}
+          {activeImages.length > 1 && (
+            <button
+              type="button"
+              onClick={toggleImage}
+              aria-label="Toggle next project image"
+              style={{
+                position: 'absolute',
+                left: '1.75rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '42px',
+                height: '42px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(10, 10, 9, 0.75)',
+                border: '1px solid rgba(255, 255, 255, 0.35)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 20,
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
+                e.currentTarget.style.borderColor = '#ffffff';
+                e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(10, 10, 9, 0.75)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
+                e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+              }}
+            >
+              <ChevronLeft size={20} />
+            </button>
+          )}
         </div>
       </div>
     </section>

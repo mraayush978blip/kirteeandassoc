@@ -1,17 +1,17 @@
 {
   "heading": "Contact us",
   "teamNotice": "Our architectural lighting team will be delighted to assist you.",
-  "description": "If you would like more information about our products or services, or wish to make a technical or commercial enquiry, please contact us using the form below.",
-  "contactPerson": "Divvya",
   "companyName": "Kirtee & Associates Studio",
+  "description": "If you would like more information about our products or services, or wish to make a technical or commercial enquiry, please contact us using the form below.",
+  "linkedinUrl": "https://linkedin.com/company/kirteeandassoc",
+  "phoneNumber": "+91 70969 62640",
   "addressLine1": "Level 14, Tower 3, One International Centre",
   "addressLine2": "Senapati Bapat Marg, Prabhadevi, Mumbai 400013, India",
-  "phoneNumber": "+91 70969 62640",
   "inquiryEmail": "inquiries@kirteeandassoc.com",
-  "studioAddress": "Level 14, Tower 3, One International Centre, Senapati Bapat Marg, Prabhadevi, Mumbai 400013, India",
-  "businessHours": "Monday – Friday: 09:30 to 18:30 IST",
-  "whatsappNumber": "+91 70969 62640",
-  "whatsappMessage": "Hello Kirtee & Associates, I would like to consult on architectural luminaires for an upcoming project.",
   "instagramUrl": "https://instagram.com/kirteeandassoc",
-  "linkedinUrl": "https://linkedin.com/company/kirteeandassoc"
+  "businessHours": "Monday – Friday: 09:30 to 18:30 IST",
+  "contactPerson": "Divvya",
+  "studioAddress": "Level 14, Tower 3, One International Centre, Senapati Bapat Marg, Prabhadevi, Mumbai 400013, India",
+  "whatsappNumber": "+91 70969 62640",
+  "whatsappMessage": "Hello Kirtee & Associates, I would like to consult on architectural luminaires for an upcoming project."
 }

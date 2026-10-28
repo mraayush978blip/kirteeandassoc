@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { siteConfig } from '@/config/site';
 
 export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 export const revalidate = 0;
 
 interface ProductDetailPageProps {

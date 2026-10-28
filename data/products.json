@@ -160,7 +160,7 @@
       "ogImage": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80"
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
-    "updatedAt": "2026-10-26T17:12:10.895Z"
+    "updatedAt": "2026-10-28T12:59:23.502Z"
   },
   {
     "id": "prod-a24",
@@ -195,8 +195,8 @@
     "heroCarouselImages": [
       {
         "id": "img-a-24-system",
-        "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80",
         "alt": "A.24 continuous architectural linear lighting system",
+        "url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80",
         "isPrimary": true
       }
     ],
@@ -256,7 +256,7 @@
       "ogImage": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
-    "updatedAt": "2026-10-24T06:47:45.864Z"
+    "updatedAt": "2026-10-28T12:59:23.572Z"
   },
   {
     "id": "prod-a39",
@@ -291,8 +291,8 @@
     "heroCarouselImages": [
       {
         "id": "img-a-39-system",
-        "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80",
         "alt": "A.39 architectural commercial downlight linear system",
+        "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80",
         "isPrimary": true
       }
     ],
@@ -347,7 +347,7 @@
       "ogImage": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80"
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
-    "updatedAt": "2026-10-21T14:08:57.572Z"
+    "updatedAt": "2026-10-28T12:59:23.632Z"
   },
   {
     "id": "prod-subterranean-grazer",
@@ -382,8 +382,8 @@
     "heroCarouselImages": [
       {
         "id": "img-subterranean-grazer",
-        "url": "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=1600&q=80",
         "alt": "Subterranean Grazer IP68 in-ground facade grazing luminaire",
+        "url": "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=1600&q=80",
         "isPrimary": true
       }
     ],
@@ -435,7 +435,7 @@
       "ogImage": "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=1600&q=80"
     },
     "createdAt": "2026-10-21T14:08:57.572Z",
-    "updatedAt": "2026-10-24T06:47:45.864Z"
+    "updatedAt": "2026-10-28T12:59:23.692Z"
   },
   {
     "id": "prod-Aliquam curia defleo vicinus trepide deputo claustrum.",
@@ -534,6 +534,6 @@
       "ogImage": "/media/photo-1793099013061.webp"
     },
     "createdAt": "2026-10-27T11:05:39.275Z",
-    "updatedAt": "2026-10-27T11:10:12.421Z"
+    "updatedAt": "2026-10-28T12:59:23.742Z"
   }
 ]

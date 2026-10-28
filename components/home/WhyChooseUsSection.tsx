@@ -183,7 +183,7 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                   }}
                 >
                   <Image
-                    src={getImage(`why-choose-${index + 1}`, pillar.image).url}
+                    src={pillar.image || getImage(`why-choose-${index + 1}`, pillar.image).url}
                     alt={pillar.title}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"

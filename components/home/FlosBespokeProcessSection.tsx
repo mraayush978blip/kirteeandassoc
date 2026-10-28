@@ -85,7 +85,11 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
           <div className="bespoke-image-container">
             {stepsList.map((step, idx) => {
               const isActive = idx === activeStep;
-              const resolved = getImage(step.slotId, step.image, step.imageAlt);
+              const fallback = getImage(step.slotId, step.image, step.imageAlt);
+              const resolved = {
+                url: step.image || fallback.url,
+                alt: step.imageAlt || fallback.alt,
+              };
               return (
                 <div
                   key={step.number}

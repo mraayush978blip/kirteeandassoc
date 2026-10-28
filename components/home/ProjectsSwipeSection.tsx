@@ -66,14 +66,17 @@ const projects: ProjectItem[] = [
 
 export interface ProjectsSwipeSectionProps {
   initialProjects?: any[];
+  settings?: { showOnWebsite?: boolean };
 }
 
-export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ initialProjects }) => {
+export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ initialProjects, settings }) => {
   const { getImage } = useSiteImages();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [showProjects, setShowProjects] = useState<boolean>(false);
+  const [showProjects, setShowProjects] = useState<boolean>(
+    settings?.showOnWebsite !== undefined ? settings.showOnWebsite : false
+  );
   const [projectList, setProjectList] = useState<ProjectItem[]>(
     initialProjects && initialProjects.length > 0 ? initialProjects : projects
   );
@@ -94,7 +97,6 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
       })
       .catch(() => {
         // Fallback default: false per user preference
-        setShowProjects(false);
       });
   }, []);
 
@@ -260,7 +262,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
           }}
           className="no-scrollbar"
         >
-          {projects.map((proj) => (
+          {projectList.map((proj) => (
             <div
               key={proj.id}
               style={{

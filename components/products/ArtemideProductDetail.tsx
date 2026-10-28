@@ -41,7 +41,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
   const handleShare = (platform: 'facebook' | 'twitter' | 'linkedin') => {
     if (typeof window === 'undefined') return;
     const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(`${product.name} by ZENVORA Architectural Collection`);
+    const text = encodeURIComponent(`${product.name} by Kirtee & Associates Architectural Collection`);
 
     if (platform === 'facebook') {
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'noopener,noreferrer');
