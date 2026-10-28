@@ -482,6 +482,14 @@ a {
   transition: all var(--transition-base);
 }
 
+@media (max-width: 768px) {
+  .mosaic-item {
+    aspect-ratio: 16 / 10 !important;
+    min-height: auto !important;
+    max-height: none !important;
+  }
+}
+
 .mosaic-item:hover {
   border-color: #374151;
 }

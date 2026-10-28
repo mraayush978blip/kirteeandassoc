@@ -78,7 +78,7 @@ export const DifferenceSection: React.FC<DifferenceSectionProps> = ({ config }) 
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
             gap: 'clamp(2rem, 4vw, 3.5rem)',
             borderTop: '1px solid #e5e7eb',
             paddingTop: '3.5rem',

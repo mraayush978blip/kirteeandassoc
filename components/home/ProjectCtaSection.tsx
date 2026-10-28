@@ -143,7 +143,8 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
         <div
           style={{
             position: 'relative',
-            minHeight: 'clamp(320px, 40vw, 640px)',
+            aspectRatio: '16 / 10',
+            minHeight: 'clamp(240px, 45vw, 640px)',
             width: '100%',
             backgroundColor: '#0a0a09',
             marginRight: 0,
