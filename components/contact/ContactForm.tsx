@@ -197,11 +197,13 @@ export const ContactForm: React.FC = () => {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
     borderRadius: '9999px',
     border: '1px solid #e5e7eb',
-    padding: 'clamp(0.85rem, 2vw, 1.1rem) clamp(1.15rem, 2.5vw, 1.65rem)',
+    padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.5rem)',
     fontFamily: 'var(--font-sans)',
-    fontSize: '1.0625rem',
+    fontSize: 'clamp(0.9375rem, 1.6vw, 1.0625rem)',
     color: '#1f2937',
     backgroundColor: '#ffffff',
     outline: 'none',
@@ -210,30 +212,36 @@ export const ContactForm: React.FC = () => {
 
   const textareaStyle: React.CSSProperties = {
     width: '100%',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
     borderRadius: '20px',
     border: '1px solid #e5e7eb',
-    padding: 'clamp(1rem, 2vw, 1.25rem) clamp(1.15rem, 2.5vw, 1.65rem)',
+    padding: 'clamp(0.85rem, 2vw, 1.15rem) clamp(1rem, 2.5vw, 1.5rem)',
     fontFamily: 'var(--font-sans)',
-    fontSize: '1.0625rem',
+    fontSize: 'clamp(0.9375rem, 1.6vw, 1.0625rem)',
     color: '#1f2937',
     backgroundColor: '#ffffff',
     outline: 'none',
-    minHeight: '175px',
+    minHeight: '150px',
     resize: 'vertical',
     transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
   };
 
   return (
     <div
+      className="contact-form-card"
       style={{
         backgroundColor: '#ffffff',
         borderRadius: 'clamp(18px, 3vw, 28px)',
         border: '1px solid #f0f0f2',
         boxShadow: '0 24px 50px -12px rgba(0, 0, 0, 0.06)',
-        padding: 'clamp(1.25rem, 4vw, 3.25rem)',
+        padding: 'clamp(1.15rem, 3.5vw, 2.75rem)',
+        boxSizing: 'border-box',
+        width: '100%',
+        maxWidth: '100%',
       }}
     >
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate style={{ width: '100%', boxSizing: 'border-box' }}>
         {/* Spam Honeypot */}
         <div style={{ display: 'none' }} aria-hidden="true">
           <input
@@ -269,11 +277,12 @@ export const ContactForm: React.FC = () => {
 
         {/* Row 1: Name * and Company */}
         <div
+          className="contact-form-row"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
-            gap: '1.25rem',
-            marginBottom: '1.25rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '1rem',
+            marginBottom: '1rem',
           }}
         >
           <div>
@@ -314,11 +323,12 @@ export const ContactForm: React.FC = () => {
 
         {/* Row 2: Email * and Phone */}
         <div
+          className="contact-form-row"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
-            gap: '1.25rem',
-            marginBottom: '1.25rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '1rem',
+            marginBottom: '1rem',
           }}
         >
           <div>

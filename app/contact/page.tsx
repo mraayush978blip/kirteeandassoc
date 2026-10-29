@@ -6,8 +6,7 @@ import { siteConfig } from '@/config/site';
 import { Phone, Mail, MapPin, MessageSquare } from 'lucide-react';
 import { getSetting, DEFAULT_CONTACT, ContactConfig } from '@/lib/site-settings';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Contact us | Kirtee & Associates Architectural Lighting',
@@ -31,6 +30,7 @@ export default async function ContactPage() {
 
   return (
     <div
+      className="contact-page-wrapper"
       style={{
         backgroundColor: '#ffffff',
         minHeight: '100vh',
@@ -38,26 +38,45 @@ export default async function ContactPage() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        overflowX: 'hidden',
+        width: '100%',
+        maxWidth: '100vw',
+        boxSizing: 'border-box',
       }}
     >
       <main
         style={{
-          paddingTop: 'calc(var(--header-height) + clamp(2.5rem, 4.5vh, 4.5rem))',
-          paddingBottom: 'clamp(4rem, 6vh, 6.5rem)',
+          paddingTop: 'calc(var(--header-height) + clamp(2rem, 4vh, 4rem))',
+          paddingBottom: 'clamp(3rem, 5vh, 5.5rem)',
+          width: '100%',
+          overflowX: 'hidden',
+          boxSizing: 'border-box',
         }}
       >
-        <div className="container" style={{ maxWidth: '1440px', paddingLeft: 'clamp(1.5rem, 4vw, 4rem)', paddingRight: 'clamp(1.5rem, 4vw, 4rem)' }}>
+        <div
+          className="container contact-container"
+          style={{
+            maxWidth: '1440px',
+            paddingLeft: 'clamp(1rem, 3.5vw, 4rem)',
+            paddingRight: 'clamp(1rem, 3.5vw, 4rem)',
+            boxSizing: 'border-box',
+            width: '100%',
+          }}
+        >
           <div
+            className="contact-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(12, 1fr)',
-              gap: 'clamp(3rem, 6vw, 6.5rem)',
+              gap: 'clamp(2rem, 5vw, 6.5rem)',
               alignItems: 'center',
+              width: '100%',
+              boxSizing: 'border-box',
             }}
           >
             {/* Left Column: Contact Us Text & Info */}
-            <div className="col-span-12 lg:col-span-6">
-              <div style={{ maxWidth: '580px' }}>
+            <div className="col-span-12 lg:col-span-6" style={{ width: '100%', minWidth: 0, boxSizing: 'border-box' }}>
+              <div style={{ maxWidth: '580px', width: '100%', boxSizing: 'border-box' }}>
                 <h1
                   style={{
                     fontFamily: 'var(--font-sans)',
@@ -198,7 +217,7 @@ export default async function ContactPage() {
             </div>
 
             {/* Right Column: Pill-Shaped Rounded Card Form */}
-            <div className="col-span-12 lg:col-span-6">
+            <div className="col-span-12 lg:col-span-6" style={{ width: '100%', minWidth: 0, boxSizing: 'border-box' }}>
               <Suspense
                 fallback={
                   <div

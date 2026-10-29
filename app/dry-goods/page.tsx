@@ -5,8 +5,7 @@ import { ArtemideCategoryView } from '@/components/products/ArtemideCategoryView
 import { JsonLd } from '@/components/seo/JsonLd';
 import { siteConfig } from '@/config/site';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'DRY GOODS | Architectural Indoor Systems',

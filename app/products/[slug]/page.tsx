@@ -6,9 +6,8 @@ import { ArtemideProductDetail } from '@/components/products/ArtemideProductDeta
 import { JsonLd } from '@/components/seo/JsonLd';
 import { siteConfig } from '@/config/site';
 
-export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
-export const revalidate = 0;
+export const revalidate = 60;
 
 interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
