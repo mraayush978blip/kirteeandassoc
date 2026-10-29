@@ -853,8 +853,16 @@ a {
   background-color: #374151;
 }
 
+/* Product Detail Hero Luminaire Stage */
+.product-hero-stage {
+  height: clamp(460px, 66vh, 720px);
+}
+
 /* Product Detail Page Responsive Classes */
 @media (max-width: 900px) {
+  .product-hero-stage {
+    height: clamp(250px, 38vh, 320px) !important;
+  }
   .related-col {
     grid-column: span 12 !important;
   }

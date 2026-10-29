@@ -144,11 +144,11 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
       {/* 1. TOP HERO LUMINAIRE CAROUSEL SLIDER */}
       {/* ========================================================= */}
       <section
+        className="product-hero-stage"
         aria-label={`${product.name} Gallery Showcase`}
         style={{
           position: 'relative',
           width: '100%',
-          height: 'clamp(460px, 66vh, 720px)',
           background: 'linear-gradient(135deg, #dcdcdc 0%, #ebebeb 45%, #f6f6f6 100%)',
           display: 'flex',
           alignItems: 'center',
@@ -166,7 +166,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               sizes="100vw"
               style={{
                 objectFit: 'cover',
-                objectPosition: 'center 42%',
+                objectPosition: 'center center',
                 transition: 'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
               }}
             />
