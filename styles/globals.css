@@ -862,22 +862,56 @@ a {
     height: auto !important;
     aspect-ratio: 16 / 10 !important;
   }
-  .photo-grid-feature,
-  .photo-grid-half {
-    grid-column: span 12 !important;
-    height: auto !important;
-    aspect-ratio: 16 / 10 !important;
+
+  /* Photo Gallery Responsive Grid on Mobile */
+  .photo-grid-container {
+    gap: 3px !important;
   }
-  .photo-grid-tall,
+  .photo-grid-half,
   .photo-grid-third {
+    grid-column: span 6 !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+  .photo-grid-wide-mobile {
     grid-column: span 12 !important;
     height: auto !important;
     aspect-ratio: 16 / 10 !important;
   }
-  .photo-grid-item {
-    grid-column: span 12 !important;
-    height: auto !important;
-    aspect-ratio: 16 / 10 !important;
+  .photo-grid-overlay {
+    bottom: 0.65rem !important;
+    left: 0.65rem !important;
+    right: 0.65rem !important;
+  }
+  .photo-grid-badge {
+    font-size: 0.53125rem !important;
+    padding: 0.15rem 0.35rem !important;
+    letter-spacing: 0.04em !important;
+    margin-bottom: 0.15rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+  }
+  .photo-grid-half .photo-grid-caption,
+  .photo-grid-third:not(.photo-grid-wide-mobile) .photo-grid-caption {
+    display: none !important;
+  }
+  .photo-grid-wide-mobile .photo-grid-caption {
+    display: block !important;
+    font-size: 0.75rem !important;
+    line-height: 1.35 !important;
+    max-width: 85% !important;
+  }
+  .photo-grid-zoom-btn {
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+  .photo-grid-zoom-btn svg {
+    width: 12px !important;
+    height: 12px !important;
   }
 }
 

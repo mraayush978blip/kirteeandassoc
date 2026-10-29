@@ -792,6 +792,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
 
         {/* ELEGANT MODULAR ZERO-GAP PHOTO GRID WITH BALANCED RATIOS */}
         <div
+          className="photo-grid-container"
           style={{
             width: '100%',
             display: 'grid',
@@ -804,9 +805,9 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             overflow: 'hidden',
           }}
         >
-          {/* Photo 1: Panel 1 (Span 6 - 50% width) */}
+          {/* Photo 1: Panel 1 (Span 6 on desktop, Span 6 on mobile) */}
           <div
-            className="photo-grid-half group"
+            className="photo-grid-item photo-grid-half group"
             onClick={() => setSelectedPhoto(productPhotos[0])}
             style={{
               gridColumn: 'span 6',
@@ -823,7 +824,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[0].url}
               alt={productPhotos[0].alt}
               fill
-              sizes="(max-width: 900px) 100vw, 50vw"
+              sizes="(max-width: 900px) 50vw, 50vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -838,6 +839,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               }}
             />
             <div
+              className="photo-grid-overlay"
               style={{
                 position: 'absolute',
                 bottom: '1.75rem',
@@ -850,6 +852,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             >
               <div>
                 <span
+                  className="photo-grid-badge"
                   style={{
                     display: 'inline-block',
                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -867,6 +870,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                   {productPhotos[0].tag}
                 </span>
                 <p
+                  className="photo-grid-caption"
                   style={{
                     fontFamily: 'var(--font-sans)',
                     fontSize: '0.875rem',
@@ -880,6 +884,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                 </p>
               </div>
               <div
+                className="photo-grid-zoom-btn"
                 style={{
                   backgroundColor: 'rgba(255, 255, 255, 0.2)',
                   backdropFilter: 'blur(8px)',
@@ -898,9 +903,9 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             </div>
           </div>
 
-          {/* Photo 2: Panel 2 (Span 6 - 50% width) */}
+          {/* Photo 2: Panel 2 (Span 6 on desktop, Span 6 on mobile) */}
           <div
-            className="photo-grid-half group"
+            className="photo-grid-item photo-grid-half group"
             onClick={() => setSelectedPhoto(productPhotos[1])}
             style={{
               gridColumn: 'span 6',
@@ -917,7 +922,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[1].url}
               alt={productPhotos[1].alt}
               fill
-              sizes="(max-width: 900px) 100vw, 50vw"
+              sizes="(max-width: 900px) 50vw, 50vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -932,6 +937,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               }}
             />
             <div
+              className="photo-grid-overlay"
               style={{
                 position: 'absolute',
                 bottom: '1.75rem',
@@ -944,6 +950,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             >
               <div>
                 <span
+                  className="photo-grid-badge"
                   style={{
                     display: 'inline-block',
                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -961,6 +968,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                   {productPhotos[1].tag}
                 </span>
                 <p
+                  className="photo-grid-caption"
                   style={{
                     fontFamily: 'var(--font-sans)',
                     fontSize: '0.875rem',
@@ -974,6 +982,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                 </p>
               </div>
               <div
+                className="photo-grid-zoom-btn"
                 style={{
                   backgroundColor: 'rgba(255, 255, 255, 0.2)',
                   backdropFilter: 'blur(8px)',
@@ -992,9 +1001,9 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             </div>
           </div>
 
-          {/* Photo 3: Panel 3 (Span 4 - 33.3% width) */}
+          {/* Photo 3: Panel 3 (Span 4 on desktop, Span 6 on mobile) */}
           <div
-            className="photo-grid-third group"
+            className="photo-grid-item photo-grid-third group"
             onClick={() => setSelectedPhoto(productPhotos[2])}
             style={{
               gridColumn: 'span 4',
@@ -1011,7 +1020,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[2].url}
               alt={productPhotos[2].alt}
               fill
-              sizes="(max-width: 900px) 100vw, 33vw"
+              sizes="(max-width: 900px) 50vw, 33vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -1026,46 +1035,71 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               }}
             />
             <div
+              className="photo-grid-overlay"
               style={{
                 position: 'absolute',
                 bottom: '1.5rem',
                 left: '1.75rem',
                 right: '1.75rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
               }}
             >
-              <span
+              <div>
+                <span
+                  className="photo-grid-badge"
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    padding: '0.25rem 0.55rem',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.625rem',
+                    fontWeight: 600,
+                    color: '#111827',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    marginBottom: '0.35rem',
+                    borderRadius: '2px',
+                  }}
+                >
+                  {productPhotos[2].tag}
+                </span>
+                <p
+                  className="photo-grid-caption"
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.8125rem',
+                    color: '#ffffff',
+                    margin: 0,
+                  }}
+                >
+                  {productPhotos[2].caption}
+                </p>
+              </div>
+              <div
+                className="photo-grid-zoom-btn"
                 style={{
-                  display: 'inline-block',
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  padding: '0.25rem 0.55rem',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.625rem',
-                  fontWeight: 600,
-                  color: '#111827',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  marginBottom: '0.35rem',
-                  borderRadius: '2px',
-                }}
-              >
-                {productPhotos[2].tag}
-              </span>
-              <p
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.8125rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   color: '#ffffff',
-                  margin: 0,
+                  flexShrink: 0,
                 }}
               >
-                {productPhotos[2].caption}
-              </p>
+                <Maximize2 size={14} />
+              </div>
             </div>
           </div>
 
-          {/* Photo 4: Panel 4 (Span 4 - 33.3% width) */}
+          {/* Photo 4: Panel 4 (Span 4 on desktop, Span 6 on mobile) */}
           <div
-            className="photo-grid-third group"
+            className="photo-grid-item photo-grid-third group"
             onClick={() => setSelectedPhoto(productPhotos[3])}
             style={{
               gridColumn: 'span 4',
@@ -1082,7 +1116,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               src={productPhotos[3].url}
               alt={productPhotos[3].alt}
               fill
-              sizes="(max-width: 900px) 100vw, 33vw"
+              sizes="(max-width: 900px) 50vw, 33vw"
               style={{
                 objectFit: 'cover',
                 transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -1097,46 +1131,71 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               }}
             />
             <div
+              className="photo-grid-overlay"
               style={{
                 position: 'absolute',
                 bottom: '1.5rem',
                 left: '1.75rem',
                 right: '1.75rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
               }}
             >
-              <span
+              <div>
+                <span
+                  className="photo-grid-badge"
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    padding: '0.25rem 0.55rem',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.625rem',
+                    fontWeight: 600,
+                    color: '#111827',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    marginBottom: '0.35rem',
+                    borderRadius: '2px',
+                  }}
+                >
+                  {productPhotos[3].tag}
+                </span>
+                <p
+                  className="photo-grid-caption"
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.8125rem',
+                    color: '#ffffff',
+                    margin: 0,
+                  }}
+                >
+                  {productPhotos[3].caption}
+                </p>
+              </div>
+              <div
+                className="photo-grid-zoom-btn"
                 style={{
-                  display: 'inline-block',
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  padding: '0.25rem 0.55rem',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.625rem',
-                  fontWeight: 600,
-                  color: '#111827',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  marginBottom: '0.35rem',
-                  borderRadius: '2px',
-                }}
-              >
-                {productPhotos[3].tag}
-              </span>
-              <p
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.8125rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   color: '#ffffff',
-                  margin: 0,
+                  flexShrink: 0,
                 }}
               >
-                {productPhotos[3].caption}
-              </p>
+                <Maximize2 size={14} />
+              </div>
             </div>
           </div>
 
-          {/* Photo 5: Panel 5 (Span 4 - 33.3% width) */}
+          {/* Photo 5: Panel 5 (Span 4 on desktop, Span 12 panoramic banner on mobile) */}
           <div
-            className="photo-grid-third group"
+            className="photo-grid-item photo-grid-third photo-grid-wide-mobile group"
             onClick={() => setSelectedPhoto(productPhotos[4])}
             style={{
               gridColumn: 'span 4',
@@ -1168,40 +1227,65 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               }}
             />
             <div
+              className="photo-grid-overlay"
               style={{
                 position: 'absolute',
                 bottom: '1.5rem',
                 left: '1.75rem',
                 right: '1.75rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
               }}
             >
-              <span
+              <div>
+                <span
+                  className="photo-grid-badge"
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    padding: '0.25rem 0.55rem',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.625rem',
+                    fontWeight: 600,
+                    color: '#111827',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    marginBottom: '0.35rem',
+                    borderRadius: '2px',
+                  }}
+                >
+                  {productPhotos[4].tag}
+                </span>
+                <p
+                  className="photo-grid-caption"
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.8125rem',
+                    color: '#ffffff',
+                    margin: 0,
+                  }}
+                >
+                  {productPhotos[4].caption}
+                </p>
+              </div>
+              <div
+                className="photo-grid-zoom-btn"
                 style={{
-                  display: 'inline-block',
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  padding: '0.25rem 0.55rem',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.625rem',
-                  fontWeight: 600,
-                  color: '#111827',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  marginBottom: '0.35rem',
-                  borderRadius: '2px',
-                }}
-              >
-                {productPhotos[4].tag}
-              </span>
-              <p
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.8125rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   color: '#ffffff',
-                  margin: 0,
+                  flexShrink: 0,
                 }}
               >
-                {productPhotos[4].caption}
-              </p>
+                <Maximize2 size={14} />
+              </div>
             </div>
           </div>
         </div>
