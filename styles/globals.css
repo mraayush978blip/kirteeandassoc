@@ -301,7 +301,8 @@ a {
 
 @media (max-width: 640px) {
   .grid-4, .grid-3, .grid-2 {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 }
 
@@ -864,11 +865,33 @@ a {
     height: clamp(250px, 38vh, 320px) !important;
   }
   .related-col {
-    grid-column: span 12 !important;
+    grid-column: span 6 !important;
   }
   .related-col a {
     height: auto !important;
-    aspect-ratio: 16 / 10 !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  /* Technical Specifications Responsive 2-Column Grid on Mobile */
+  .specs-section-wrapper {
+    margin-top: 2rem !important;
+    padding-top: 1.5rem !important;
+  }
+  .specs-grid-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .spec-card-item {
+    padding: 0.75rem 0.85rem !important;
+  }
+  .spec-card-label {
+    font-size: 0.5625rem !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 0.2rem !important;
+  }
+  .spec-card-value {
+    font-size: 0.8125rem !important;
+    line-height: 1.25 !important;
   }
 
   /* Photo Gallery Responsive Grid on Mobile */
@@ -920,6 +943,82 @@ a {
   .photo-grid-zoom-btn svg {
     width: 12px !important;
     height: 12px !important;
+  }
+
+  /* Category Page Header & Horizontal Filter Pills */
+  .category-page-wrapper {
+    padding-top: calc(var(--header-height, 70px) + 0.5rem) !important;
+    padding-bottom: 3.5rem !important;
+  }
+  .category-filter-pills-row {
+    padding-bottom: 0.6rem !important;
+    gap: 0.35rem !important;
+  }
+  .category-filter-pills-row .btn-pill {
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.6875rem !important;
+  }
+
+  /* 2-Column Product Cards on Mobile (Catalog Mosaic) */
+  .catalog-products-grid {
+    gap: 0.5rem !important;
+  }
+  .catalog-product-card:not(.col-span-12) .mosaic-item {
+    aspect-ratio: 1 / 1 !important;
+    min-height: auto !important;
+  }
+  .catalog-card-tag-container {
+    bottom: 0.5rem !important;
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    gap: 0.25rem !important;
+    flex-wrap: wrap !important;
+  }
+  .catalog-card-tag-name {
+    font-size: 0.625rem !important;
+    padding: 0.2rem 0.4rem !important;
+    max-width: 100% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .catalog-card-tag-designer {
+    display: none !important;
+  }
+  .catalog-card-arrow {
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    width: 26px !important;
+    height: 26px !important;
+  }
+  .catalog-card-arrow svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  /* Homepage Collections Section 2-in-a-row on Mobile */
+  .collections-grid-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .collection-card .collection-img-box {
+    height: 180px !important;
+  }
+  .collection-card .collection-content-box {
+    padding: 0.85rem !important;
+  }
+  .collection-card .collection-content-box h3 {
+    font-size: 0.875rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  .collection-card .collection-content-box p {
+    font-size: 0.6875rem !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.3 !important;
+  }
+  .collection-card .collection-content-box span {
+    font-size: 0.625rem !important;
+    letter-spacing: 0.08em !important;
   }
 }
 

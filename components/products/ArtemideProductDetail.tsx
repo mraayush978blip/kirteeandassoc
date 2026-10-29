@@ -625,13 +625,14 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
           {product.specifications && product.specifications.length > 0 && (
             <div
               id="technical-specifications"
+              className="specs-section-wrapper"
               style={{
-                marginTop: '4rem',
-                paddingTop: '3.5rem',
+                marginTop: 'clamp(2rem, 4vw, 3.5rem)',
+                paddingTop: 'clamp(1.75rem, 3.5vw, 3rem)',
                 borderTop: '1px solid #e5e7eb',
               }}
             >
-              <div style={{ marginBottom: '2.5rem' }}>
+              <div style={{ marginBottom: 'clamp(1.25rem, 2.5vw, 2.25rem)' }}>
                 <span
                   style={{
                     display: 'inline-block',
@@ -641,7 +642,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     letterSpacing: '0.16em',
                     textTransform: 'uppercase',
                     color: '#6b7280',
-                    marginBottom: '0.5rem',
+                    marginBottom: '0.35rem',
                   }}
                 >
                   {product.specsEyebrow || 'ENGINEERING & PHOTOMETRIC MATRIX'}
@@ -649,7 +650,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                 <h2
                   style={{
                     fontFamily: 'var(--font-sans)',
-                    fontSize: 'clamp(1.5rem, 2.8vw, 2rem)',
+                    fontSize: 'clamp(1.35rem, 2.6vw, 2rem)',
                     fontWeight: 600,
                     letterSpacing: '-0.02em',
                     color: '#111827',
@@ -661,11 +662,11 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                 <p
                   style={{
                     fontFamily: 'var(--font-sans)',
-                    fontSize: '0.9375rem',
+                    fontSize: 'clamp(0.8125rem, 1.4vw, 0.9375rem)',
                     color: '#4b5563',
-                    marginTop: '0.5rem',
+                    marginTop: '0.4rem',
                     maxWidth: '720px',
-                    lineHeight: 1.6,
+                    lineHeight: 1.5,
                   }}
                 >
                   {product.specsDescription || 'Precision photometric data, electrical ratings, and mechanical dimensions measured in accordance with laboratory standards.'}
@@ -673,17 +674,19 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               </div>
 
               <div
+                className="specs-grid-container"
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))',
-                  gap: '1rem',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))',
+                  gap: '0.75rem',
                 }}
               >
                 {product.specifications.map((spec: ProductSpecification) => (
                   <div
                     key={spec.id}
+                    className="spec-card-item"
                     style={{
-                      padding: '1.25rem 1.5rem',
+                      padding: '1rem 1.25rem',
                       border: '1px solid #e5e7eb',
                       backgroundColor: '#fafafa',
                       borderRadius: '4px',
@@ -701,23 +704,25 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     }}
                   >
                     <span
+                      className="spec-card-label"
                       style={{
                         display: 'block',
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '0.6875rem',
+                        fontSize: '0.625rem',
                         fontWeight: 600,
                         textTransform: 'uppercase',
                         color: '#6b7280',
                         letterSpacing: '0.08em',
-                        marginBottom: '0.5rem',
+                        marginBottom: '0.35rem',
                       }}
                     >
                       {spec.label}
                     </span>
                     <span
+                      className="spec-card-value"
                       style={{
                         fontFamily: 'var(--font-sans)',
-                        fontSize: '1rem',
+                        fontSize: '0.9375rem',
                         fontWeight: 600,
                         color: '#111827',
                         letterSpacing: '-0.01em',

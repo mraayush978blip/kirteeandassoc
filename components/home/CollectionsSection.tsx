@@ -110,12 +110,13 @@ export const CollectionsSection: React.FC = () => {
           </Link>
         </div>
 
-        {/* 2 Wide Collection Cards */}
+        {/* 2 Wide Collection Cards (2 in a row on mobile) */}
         <div
+          className="collections-grid-container"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: 'clamp(1.5rem, 3vw, 2.5rem)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'clamp(0.75rem, 2.5vw, 2.5rem)',
           }}
         >
           {/* Card 1: DRY GOODS */}
@@ -130,9 +131,10 @@ export const CollectionsSection: React.FC = () => {
               border: '1px solid rgba(255, 255, 255, 0.08)',
               transition: 'border-color 0.3s ease, transform 0.3s ease',
             }}
-            className="group"
+            className="group collection-card"
           >
             <div
+              className="collection-img-box"
               style={{
                 position: 'relative',
                 width: '100%',
@@ -161,7 +163,7 @@ export const CollectionsSection: React.FC = () => {
               />
             </div>
 
-            <div style={{ padding: '2rem' }}>
+            <div className="collection-content-box" style={{ padding: '2rem' }}>
               <h3
                 style={{
                   fontFamily: 'var(--font-sans)',
@@ -215,9 +217,10 @@ export const CollectionsSection: React.FC = () => {
               border: '1px solid rgba(255, 255, 255, 0.08)',
               transition: 'border-color 0.3s ease, transform 0.3s ease',
             }}
-            className="group"
+            className="group collection-card"
           >
             <div
+              className="collection-img-box"
               style={{
                 position: 'relative',
                 width: '100%',
@@ -246,7 +249,7 @@ export const CollectionsSection: React.FC = () => {
               />
             </div>
 
-            <div style={{ padding: '2rem' }}>
+            <div className="collection-content-box" style={{ padding: '2rem' }}>
               <h3
                 style={{
                   fontFamily: 'var(--font-sans)',

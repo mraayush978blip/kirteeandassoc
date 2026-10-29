@@ -33,70 +33,19 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
 
   return (
     <div
+      className="category-page-wrapper"
       style={{
-        paddingTop: 'calc(var(--header-height) + 2rem)',
-        paddingBottom: '6rem',
+        paddingTop: 'calc(var(--header-height) + 1.25rem)',
+        paddingBottom: '5rem',
         backgroundColor: '#ffffff',
         minHeight: '100vh',
       }}
     >
       <div className="container">
-        {/* Category Switcher Tabs (Dry vs Wet Goods) */}
+        {/* Category Header */}
         <div
           style={{
-            display: 'inline-flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: '0.5rem',
-            marginBottom: '1.5rem',
-            padding: '0.3rem',
-            backgroundColor: '#f3f4f6',
-            borderRadius: '4px',
-            maxWidth: '100%',
-          }}
-        >
-          <Link
-            href="/dry-goods"
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: '0.6875rem',
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              textDecoration: 'none',
-              padding: '0.4rem 0.85rem',
-              borderRadius: '3px',
-              backgroundColor: categoryType === 'dry' ? '#111111' : 'transparent',
-              color: categoryType === 'dry' ? '#ffffff' : '#6b7280',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            DRY GOODS (INDOOR)
-          </Link>
-          <Link
-            href="/wet-goods"
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: '0.6875rem',
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              textDecoration: 'none',
-              padding: '0.4rem 0.85rem',
-              borderRadius: '3px',
-              backgroundColor: categoryType === 'wet' ? '#111111' : 'transparent',
-              color: categoryType === 'wet' ? '#ffffff' : '#6b7280',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            WET GOODS (OUTDOOR)
-          </Link>
-        </div>
-
-        {/* Category Header (Artemide reference from PDF Page 2) */}
-        <div
-          style={{
-            marginBottom: '3.5rem',
+            marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
             maxWidth: '920px',
           }}
         >
@@ -108,7 +57,7 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
               letterSpacing: '-0.02em',
               textTransform: 'uppercase',
               color: '#111111',
-              marginBottom: '1.5rem',
+              marginBottom: '1rem',
               lineHeight: 1.08,
             }}
           >
@@ -119,7 +68,7 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
             style={{
               fontFamily: 'var(--font-sans)',
               fontSize: 'clamp(0.9375rem, 1.8vw, 1.125rem)',
-              lineHeight: 1.75,
+              lineHeight: 1.7,
               color: '#4b5563',
               fontWeight: 400,
               maxWidth: '820px',
@@ -129,16 +78,20 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
           </p>
         </div>
 
-        {/* Optional Filter Pills */}
+        {/* Sleek Horizontal Filter Pills Bar */}
         {subcategories.length > 0 && (
           <div
+            className="category-filter-pills-row no-scrollbar"
             style={{
               display: 'flex',
-              flexWrap: 'wrap',
-              gap: '0.625rem',
-              marginBottom: '3rem',
+              overflowX: 'auto',
+              flexWrap: 'nowrap',
+              gap: '0.5rem',
+              marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
               borderBottom: '1px solid #e5e7eb',
-              paddingBottom: '1.25rem',
+              paddingBottom: '0.875rem',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
             }}
           >
             <button
@@ -149,12 +102,14 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
                 background: filter === 'all' ? '#111111' : '#f3f4f6',
                 color: filter === 'all' ? '#ffffff' : '#374151',
                 border: 'none',
-                padding: '0.5rem 1.25rem',
+                padding: '0.45rem 1rem',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
                 transition: 'all var(--transition-fast)',
               }}
             >
@@ -170,12 +125,14 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
                   background: filter === subcat ? '#111111' : '#f3f4f6',
                   color: filter === subcat ? '#ffffff' : '#374151',
                   border: 'none',
-                  padding: '0.5rem 1.25rem',
+                  padding: '0.45rem 1rem',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   letterSpacing: '0.06em',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                   transition: 'all var(--transition-fast)',
                 }}
               >
@@ -185,12 +142,13 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
           </div>
         )}
 
-        {/* Artemide Asymmetric Architectural Mosaic Grid */}
+        {/* Artemide Asymmetric Architectural Mosaic Grid (2 per row on mobile) */}
         <div
+          className="catalog-products-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(12, 1fr)',
-            gap: '1.5rem',
+            gap: 'clamp(0.625rem, 1.5vw, 1.5rem)',
           }}
         >
           {filteredProducts.map((product, index) => {
@@ -207,7 +165,7 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
             return (
               <div
                 key={product.id}
-                className={`col-span-12 ${isPanoramic ? 'md:col-span-12' : 'md:col-span-6'}`}
+                className={`${isPanoramic ? 'col-span-12 md:col-span-12' : 'col-span-6 md:col-span-6'} catalog-product-card`}
               >
                 <Link
                   href={`/products/${product.slug}`}
@@ -216,7 +174,6 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
                     position: 'relative',
                     width: '100%',
                     aspectRatio: isPanoramic ? '21 / 9' : '16 / 10',
-                    minHeight: isPanoramic ? '320px' : '260px',
                     maxHeight: isPanoramic ? '540px' : '460px',
                     overflow: 'hidden',
                     backgroundColor: '#f3f4f6',
@@ -230,7 +187,7 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
                     src={product.heroImage.url}
                     alt={product.heroImage.alt || product.name}
                     fill
-                    sizes={colSpan === 12 ? '100vw' : '(max-width: 1024px) 100vw, 50vw'}
+                    sizes={colSpan === 12 ? '100vw' : '(max-width: 1024px) 50vw, 50vw'}
                     style={{
                       objectFit: 'cover',
                       transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -243,13 +200,14 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      background: 'linear-gradient(180deg, transparent 65%, rgba(0, 0, 0, 0.45) 100%)',
+                      background: 'linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.6) 100%)',
                       pointerEvents: 'none',
                     }}
                   />
 
-                  {/* Artemide Style Minimal Bottom Tag (↳ A.24, A.39, etc.) */}
+                  {/* Artemide Style Minimal Bottom Tag */}
                   <div
+                    className="catalog-card-tag-container"
                     style={{
                       position: 'absolute',
                       bottom: '1.25rem',
@@ -260,6 +218,7 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
                     }}
                   >
                     <span
+                      className="catalog-card-tag-name"
                       style={{
                         backgroundColor: 'rgba(255, 255, 255, 0.92)',
                         backdropFilter: 'blur(8px)',
@@ -282,6 +241,7 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
 
                     {product.designer && (
                       <span
+                        className="catalog-card-tag-designer"
                         style={{
                           backgroundColor: 'rgba(0, 0, 0, 0.75)',
                           backdropFilter: 'blur(8px)',
@@ -301,6 +261,7 @@ export const ArtemideCategoryView: React.FC<ArtemideCategoryViewProps> = ({
 
                   {/* Hover Arrow Indicator */}
                   <div
+                    className="catalog-card-arrow"
                     style={{
                       position: 'absolute',
                       top: '1.25rem',
