@@ -17,8 +17,21 @@ export const Header: React.FC = () => {
 
   useEffect(() => {
     if (isAdminRoute) return;
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const y = window.scrollY;
+          // Hysteresis prevents fluttering near threshold
+          if (y > 35) {
+            setIsScrolled(true);
+          } else if (y < 12) {
+            setIsScrolled(false);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -107,18 +120,24 @@ export const Header: React.FC = () => {
           right: 0,
           zIndex: 100,
           backgroundColor: isLightHeader
-            ? isScrolled ? 'rgba(255, 255, 255, 0.98)' : '#ffffff'
+            ? isScrolled
+              ? 'rgba(255, 255, 255, 0.94)'
+              : 'rgba(255, 255, 255, 0.98)'
             : 'rgba(10, 10, 9, 0.96)',
           borderBottom: isLightHeader
-            ? '1px solid #f0f0f2'
+            ? isScrolled
+              ? '1px solid #e5e7eb'
+              : '1px solid #f0f0f2'
             : isScrolled
             ? '1px solid #302F2B'
             : '1px solid rgba(48, 47, 43, 0.6)',
+          boxShadow: isScrolled ? '0 8px 24px -6px rgba(0, 0, 0, 0.05)' : 'none',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          transition: 'padding 0.3s ease, border-color 0.3s ease, background-color 0.3s ease',
-          paddingTop: isScrolled ? '0.85rem' : '1.15rem',
-          paddingBottom: isScrolled ? '0.85rem' : '1.15rem',
+          transition: 'background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
+          paddingTop: '0.95rem',
+          paddingBottom: '0.95rem',
+          boxSizing: 'border-box',
         }}
       >
         <div
@@ -139,7 +158,7 @@ export const Header: React.FC = () => {
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: 'clamp(1.1rem, 3.8vw, 1.35rem)',
+                fontSize: 'clamp(1.15rem, 3.8vw, 1.35rem)',
                 fontWeight: 700,
                 letterSpacing: '0.14em',
                 color: isLightHeader ? '#111827' : '#E9E6DE',
@@ -170,7 +189,7 @@ export const Header: React.FC = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 'clamp(1.5rem, 3vw, 2.75rem)',
+              gap: 'clamp(1.5rem, 2.5vw, 2.75rem)',
             }}
             className="desktop-nav"
           >
@@ -178,9 +197,10 @@ export const Header: React.FC = () => {
             <Link
               href="/"
               style={{
+                position: 'relative',
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.75rem',
-                fontWeight: 600,
+                fontWeight: pathname === '/' ? 700 : 500,
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
                 color: isLightHeader
@@ -188,6 +208,7 @@ export const Header: React.FC = () => {
                   : pathname === '/' ? '#E9E6DE' : '#96938C',
                 transition: 'color 0.2s ease',
                 textDecoration: 'none',
+                padding: '0.4rem 0',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#E9E6DE')}
               onMouseLeave={(e) =>
@@ -196,16 +217,30 @@ export const Header: React.FC = () => {
                   : pathname === '/' ? '#E9E6DE' : '#96938C')
               }
             >
-              HOME
+              <span>HOME</span>
+              {pathname === '/' && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    backgroundColor: isLightHeader ? '#111827' : '#E9E6DE',
+                    borderRadius: '1px',
+                  }}
+                />
+              )}
             </Link>
 
             {/* 2. DRY GOODS */}
             <Link
               href="/dry-goods"
               style={{
+                position: 'relative',
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.75rem',
-                fontWeight: 600,
+                fontWeight: pathname === '/dry-goods' ? 700 : 500,
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
                 color: isLightHeader
@@ -213,6 +248,7 @@ export const Header: React.FC = () => {
                   : pathname === '/dry-goods' ? '#E9E6DE' : '#96938C',
                 transition: 'color 0.2s ease',
                 textDecoration: 'none',
+                padding: '0.4rem 0',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#E9E6DE')}
               onMouseLeave={(e) =>
@@ -221,16 +257,30 @@ export const Header: React.FC = () => {
                   : pathname === '/dry-goods' ? '#E9E6DE' : '#96938C')
               }
             >
-              DRY GOODS
+              <span>DRY GOODS</span>
+              {pathname === '/dry-goods' && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    backgroundColor: isLightHeader ? '#111827' : '#E9E6DE',
+                    borderRadius: '1px',
+                  }}
+                />
+              )}
             </Link>
 
             {/* 3. WET GOODS */}
             <Link
               href="/wet-goods"
               style={{
+                position: 'relative',
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.75rem',
-                fontWeight: 600,
+                fontWeight: pathname === '/wet-goods' ? 700 : 500,
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
                 color: isLightHeader
@@ -238,6 +288,7 @@ export const Header: React.FC = () => {
                   : pathname === '/wet-goods' ? '#E9E6DE' : '#96938C',
                 transition: 'color 0.2s ease',
                 textDecoration: 'none',
+                padding: '0.4rem 0',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#E9E6DE')}
               onMouseLeave={(e) =>
@@ -246,16 +297,30 @@ export const Header: React.FC = () => {
                   : pathname === '/wet-goods' ? '#E9E6DE' : '#96938C')
               }
             >
-              WET GOODS
+              <span>WET GOODS</span>
+              {pathname === '/wet-goods' && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    backgroundColor: isLightHeader ? '#111827' : '#E9E6DE',
+                    borderRadius: '1px',
+                  }}
+                />
+              )}
             </Link>
 
-            {/* 3. CONTACT */}
+            {/* 4. CONTACT */}
             <Link
               href="/contact"
               style={{
+                position: 'relative',
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.75rem',
-                fontWeight: 600,
+                fontWeight: pathname === '/contact' ? 700 : 500,
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
                 color: isLightHeader
@@ -263,6 +328,7 @@ export const Header: React.FC = () => {
                   : pathname === '/contact' ? '#E9E6DE' : '#96938C',
                 transition: 'color 0.2s ease',
                 textDecoration: 'none',
+                padding: '0.4rem 0',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#E9E6DE')}
               onMouseLeave={(e) =>
@@ -271,9 +337,84 @@ export const Header: React.FC = () => {
                   : pathname === '/contact' ? '#E9E6DE' : '#96938C')
               }
             >
-              CONTACT
+              <span>CONTACT</span>
+              {pathname === '/contact' && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    backgroundColor: isLightHeader ? '#111827' : '#E9E6DE',
+                    borderRadius: '1px',
+                  }}
+                />
+              )}
             </Link>
           </nav>
+
+          {/* Right Action: Desktop Contact Pill & Direct Inquiries */}
+          <div
+            className="desktop-cta"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1.25rem',
+            }}
+          >
+            <a
+              href={`tel:${(contact.phoneNumber || '7096962640').replace(/[^0-9+]/g, '')}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.75rem',
+                color: isLightHeader ? '#4b5563' : '#96938C',
+                textDecoration: 'none',
+                letterSpacing: '0.04em',
+                transition: 'color 0.2s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#ffffff')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = isLightHeader ? '#4b5563' : '#96938C')}
+            >
+              <Phone size={13} style={{ color: isLightHeader ? '#9ca3af' : 'var(--color-accent)' }} />
+              <span>{contact.phoneNumber || '+91 70969 62640'}</span>
+            </a>
+
+            <Link
+              href="/contact"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.5rem 1.15rem',
+                backgroundColor: isLightHeader ? '#111827' : '#ffffff',
+                color: isLightHeader ? '#ffffff' : '#0a0a09',
+                borderRadius: '9999px',
+                fontFamily: 'var(--font-sans)',
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = isLightHeader ? '#374151' : 'var(--color-accent)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = isLightHeader ? '#111827' : '#ffffff';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <span>Enquire</span>
+              <ArrowUpRight size={13} />
+            </Link>
+          </div>
 
           {/* Mobile Navigation Toggle (Visible ONLY on mobile devices <=900px) */}
           <button
@@ -285,20 +426,20 @@ export const Header: React.FC = () => {
             style={{
               background: isLightHeader ? '#f3f4f6' : 'rgba(255, 255, 255, 0.06)',
               border: isLightHeader ? '1px solid #e5e7eb' : '1px solid rgba(255, 255, 255, 0.16)',
-              borderRadius: '4px',
+              borderRadius: '8px',
               color: isLightHeader ? '#111827' : '#ffffff',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              width: '44px',
-              height: '44px',
-              minWidth: '44px',
-              minHeight: '44px',
+              width: '42px',
+              height: '42px',
+              minWidth: '42px',
+              minHeight: '42px',
               padding: 0,
               transition: 'background-color 0.2s ease, border-color 0.2s ease',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '18px' }}>
               <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
               <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
             </div>
@@ -316,7 +457,9 @@ export const Header: React.FC = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            backgroundColor: '#282b32',
+            backgroundColor: 'rgba(12, 13, 16, 0.98)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -590,16 +733,17 @@ export const Header: React.FC = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
-                padding: '0.75rem 1.25rem',
+                padding: '0.85rem 1.25rem',
                 backgroundColor: '#ffffff',
-                color: '#282b32',
-                borderRadius: '3px',
+                color: '#0c0d10',
+                borderRadius: '9999px',
                 fontFamily: 'var(--font-sans)',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
                 textDecoration: 'none',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
               }}
             >
               <span>Schedule Consultation</span>

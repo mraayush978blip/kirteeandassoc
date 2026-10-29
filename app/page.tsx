@@ -23,8 +23,7 @@ import {
   ProjectSettings,
 } from '@/lib/site-settings';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function HomePage() {
   const [heroSlides, projects, philosophy, whyChooseUs, process, projectCta, projectSettings] = await Promise.all([

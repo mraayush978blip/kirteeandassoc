@@ -97,13 +97,13 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
 
-  // Auto-advance slides every 3 seconds
+  // Auto-advance slides every 5.5 seconds (gives user comfortable reading time)
   useEffect(() => {
     if (isDragging) return;
 
     const timer = setInterval(() => {
       nextSlide();
-    }, 3000);
+    }, 5500);
 
     return () => clearInterval(timer);
   }, [nextSlide, isDragging, currentSlide]);
@@ -118,28 +118,54 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [nextSlide, prevSlide]);
 
-  // Touch Swipe Handlers
+  // Touch Swipe Handlers with Direction Detection (Prevents vertical scroll lag & zoom jump)
+  const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
+  const isHorizontalSwipeRef = useRef<boolean | null>(null);
+
   const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+    isHorizontalSwipeRef.current = null;
     setDragStartX(e.touches[0].clientX);
     setDragOffset(0);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    const diff = e.touches[0].clientX - dragStartX;
-    setDragOffset(diff);
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const diffX = currentX - touchStartXRef.current;
+    const diffY = currentY - touchStartYRef.current;
+
+    // Detect gesture direction before committing to horizontal drag
+    if (isHorizontalSwipeRef.current === null) {
+      if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 8) {
+        // Vertical scroll: do not interfere with browser scroll, leave isDragging false
+        isHorizontalSwipeRef.current = false;
+        return;
+      } else if (Math.abs(diffX) > 12) {
+        // Horizontal swipe: activate drag
+        isHorizontalSwipeRef.current = true;
+        setIsDragging(true);
+      }
+    }
+
+    if (isHorizontalSwipeRef.current) {
+      setDragOffset(diffX);
+    }
   };
 
   const handleTouchEnd = () => {
-    if (!isDragging) return;
-    if (dragOffset < -50) {
-      nextSlide();
-    } else if (dragOffset > 50) {
-      prevSlide();
+    if (isHorizontalSwipeRef.current) {
+      if (dragOffset < -50) {
+        nextSlide();
+      } else if (dragOffset > 50) {
+        prevSlide();
+      }
     }
     setIsDragging(false);
     setDragOffset(0);
+    isHorizontalSwipeRef.current = null;
   };
 
   // Mouse Drag Handlers
@@ -174,8 +200,8 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
       aria-label="Zenvora Architectural Lighting Systems"
       style={{
         position: 'relative',
-        height: 'calc(100dvh - var(--header-height, 80px))',
-        minHeight: '560px',
+        height: 'clamp(540px, 86vh, 800px)',
+        minHeight: '520px',
         backgroundColor: '#0a0a0a',
         color: '#ffffff',
         overflow: 'hidden',
@@ -184,6 +210,7 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
         justifyContent: 'space-between',
         paddingTop: '1rem',
         userSelect: 'none',
+        touchAction: 'pan-y',
         cursor: isDragging ? 'grabbing' : 'grab',
       }}
       onTouchStart={handleTouchStart}
@@ -208,8 +235,8 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
                 opacity: isActive ? 1 : 0,
                 transform: `translateX(${
                   isActive ? `${dragOffset * 0.4}px` : index < currentSlide ? '-100%' : '100%'
-                }) scale(${isActive ? 1 : 1.05})`,
-                transition: isDragging && isActive ? 'none' : 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                })`,
+                transition: isDragging && isActive ? 'none' : 'opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
                 pointerEvents: 'none',
               }}
             >
