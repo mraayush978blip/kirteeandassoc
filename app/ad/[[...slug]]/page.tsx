@@ -964,7 +964,7 @@ function AdminDashboardContent() {
   // Authenticated Admin Dashboard Layout
   // -------------------------------------------------------------
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f9fafb', color: '#111827' }}>
+    <div className="admin-root-container">
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div
@@ -990,15 +990,276 @@ function AdminDashboardContent() {
         </div>
       )}
 
+      {/* Mobile Admin Header (Visible on screens < 1024px) */}
+      <header
+        className="admin-mobile-header"
+        style={{
+          backgroundColor: '#ffffff',
+          borderBottom: '1px solid #e5e7eb',
+          padding: '0.75rem 1rem',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'sticky',
+          top: 0,
+          zIndex: 40,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.125rem', fontWeight: 700, color: '#111827' }}>
+            ZENVORA
+          </span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', padding: '0.15rem 0.4rem', backgroundColor: '#f3f4f6', borderRadius: '3px', color: '#4b5563', textTransform: 'uppercase' }}>
+            {activeTab}
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            type="button"
+            onClick={handleLogout}
+            title="Sign Out"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+              padding: '0.45rem 0.65rem',
+              borderRadius: '4px',
+              border: '1px solid #fee2e2',
+              backgroundColor: '#fef2f2',
+              color: '#dc2626',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              minHeight: '38px',
+            }}
+          >
+            <LogOut size={13} />
+            <span>Sign Out</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsNavDrawerOpen(!isNavDrawerOpen)}
+            aria-label="Toggle navigation menu"
+            style={{
+              width: '40px',
+              height: '40px',
+              minWidth: '40px',
+              minHeight: '40px',
+              borderRadius: '4px',
+              backgroundColor: '#f3f4f6',
+              border: '1px solid #e5e7eb',
+              color: '#111827',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+          >
+            {isNavDrawerOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </header>
+
+      {/* Horizontal Mobile Tabs Bar (Instant 1-Tap Access to All Sections on Mobile) */}
+      <div
+        className="admin-mobile-tabs-bar"
+        style={{
+          backgroundColor: '#ffffff',
+          borderBottom: '1px solid #e5e7eb',
+          padding: '0.45rem 0.75rem',
+          gap: '0.4rem',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          position: 'sticky',
+          top: '55px',
+          zIndex: 35,
+          scrollbarWidth: 'none',
+        }}
+      >
+        {[
+          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { id: 'home', label: 'Home Page', icon: Sliders },
+          { id: 'products', label: 'Products', icon: Package },
+          { id: 'projects', label: 'Projects', icon: Layers },
+          { id: 'contact', label: 'Contact', icon: MessageSquare },
+          { id: 'settings', label: 'Settings', icon: Settings },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => navigateTab(tab.id as AdminTab)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.45rem 0.85rem',
+                borderRadius: '9999px',
+                border: isActive ? '1px solid #111827' : '1px solid #e5e7eb',
+                backgroundColor: isActive ? '#111827' : '#ffffff',
+                color: isActive ? '#ffffff' : '#374151',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                whiteSpace: 'nowrap',
+                cursor: 'pointer',
+                flexShrink: 0,
+                minHeight: '34px',
+              }}
+            >
+              <Icon size={13} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Mobile Drawer (When hamburger menu is opened) */}
+      {isNavDrawerOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+            display: 'flex',
+          }}
+          onClick={() => setIsNavDrawerOpen(false)}
+        >
+          <div
+            style={{
+              width: '280px',
+              maxWidth: '85%',
+              backgroundColor: '#ffffff',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              boxShadow: '4px 0 24px rgba(0,0,0,0.15)',
+              padding: '1.25rem',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid #f3f4f6' }}>
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', fontWeight: 700, color: '#111827' }}>
+                  ZENVORA ADMIN
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsNavDrawerOpen(false)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.3rem', color: '#6b7280' }}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
+                {[
+                  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+                  { id: 'home', label: 'Home Page', icon: Sliders },
+                  { id: 'products', label: 'Products', icon: Package },
+                  { id: 'projects', label: 'Projects', icon: Layers },
+                  { id: 'contact', label: 'Contact & WhatsApp', icon: MessageSquare },
+                  { id: 'settings', label: 'Settings & Storage', icon: Settings },
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => {
+                        navigateTab(tab.id as AdminTab);
+                        setIsNavDrawerOpen(false);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '6px',
+                        border: 'none',
+                        backgroundColor: isActive ? '#111827' : '#f9fafb',
+                        color: isActive ? '#ffffff' : '#374151',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        minHeight: '44px',
+                      }}
+                    >
+                      <Icon size={18} />
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <Link
+                href="/"
+                target="_blank"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.4rem',
+                  padding: '0.7rem',
+                  backgroundColor: '#f3f4f6',
+                  color: '#111827',
+                  borderRadius: '6px',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  minHeight: '44px',
+                }}
+              >
+                <span>View Public Website</span>
+                <ExternalLink size={14} />
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.4rem',
+                  padding: '0.7rem',
+                  backgroundColor: '#fef2f2',
+                  border: '1px solid #fee2e2',
+                  color: '#dc2626',
+                  borderRadius: '6px',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  minHeight: '44px',
+                }}
+              >
+                <LogOut size={16} />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ======================================================== */}
-      {/* SIDEBAR NAVIGATION DRAWER */}
+      {/* SIDEBAR NAVIGATION DRAWER (Desktop) */}
       {/* ======================================================== */}
       <aside
+        className="admin-sidebar-desktop"
         style={{
           width: '260px',
           backgroundColor: '#ffffff',
           borderRight: '1px solid #e5e7eb',
-          display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           position: 'sticky',
@@ -1163,7 +1424,7 @@ function AdminDashboardContent() {
       {/* ======================================================== */}
       {/* MAIN CONTENT AREA */}
       {/* ======================================================== */}
-      <main style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '2rem 2.5rem' }}>
+      <main className="admin-main-content" style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
         {/* ======================================================== */}
         {/* 1. DASHBOARD OVERVIEW TAB */}
         {/* ======================================================== */}
