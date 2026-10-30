@@ -417,34 +417,64 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Mobile Navigation Toggle (Visible ONLY on mobile devices <=900px) */}
-          <button
-            type="button"
-            className="mobile-menu-toggle"
-            onClick={() => setIsMobileMenuOpen(true)}
-            aria-label="Open mobile navigation menu"
-            aria-expanded={isMobileMenuOpen}
-            style={{
-              background: isLightHeader ? '#f3f4f6' : 'rgba(255, 255, 255, 0.06)',
-              border: isLightHeader ? '1px solid #e5e7eb' : '1px solid rgba(255, 255, 255, 0.16)',
-              borderRadius: '8px',
-              color: isLightHeader ? '#111827' : '#ffffff',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              width: '42px',
-              height: '42px',
-              minWidth: '42px',
-              minHeight: '42px',
-              padding: 0,
-              transition: 'background-color 0.2s ease, border-color 0.2s ease',
-            }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '18px' }}>
-              <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
-              <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
-            </div>
-          </button>
+          {/* Mobile Right Action Area: Direct Phone Dial Button + Hamburger */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            {contact.phoneNumber && (
+              <a
+                href={`tel:${contact.phoneNumber.replace(/[^0-9+]/g, '')}`}
+                className="mobile-header-contact"
+                aria-label={`Call studio at ${contact.phoneNumber}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  padding: '0.45rem 0.85rem',
+                  borderRadius: '9999px',
+                  backgroundColor: isLightHeader ? '#111827' : '#ffffff',
+                  color: isLightHeader ? '#ffffff' : '#0a0a09',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.04em',
+                  textDecoration: 'none',
+                  transition: 'transform 0.15s ease, background-color 0.2s ease',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.12)',
+                }}
+              >
+                <Phone size={11} strokeWidth={2.2} />
+                <span>{contact.phoneNumber}</span>
+              </a>
+            )}
+
+            {/* Mobile Navigation Toggle (Visible ONLY on mobile devices <=900px) */}
+            <button
+              type="button"
+              className="mobile-menu-toggle"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open mobile navigation menu"
+              aria-expanded={isMobileMenuOpen}
+              style={{
+                background: isLightHeader ? '#f3f4f6' : 'rgba(255, 255, 255, 0.06)',
+                border: isLightHeader ? '1px solid #e5e7eb' : '1px solid rgba(255, 255, 255, 0.16)',
+                borderRadius: '8px',
+                color: isLightHeader ? '#111827' : '#ffffff',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                width: '42px',
+                height: '42px',
+                minWidth: '42px',
+                minHeight: '42px',
+                padding: 0,
+                transition: 'background-color 0.2s ease, border-color 0.2s ease',
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '18px' }}>
+                <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
+                <div style={{ width: '100%', height: '1.5px', backgroundColor: isLightHeader ? '#111827' : '#ffffff', borderRadius: '1px' }} />
+              </div>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -542,6 +572,78 @@ export const Header: React.FC = () => {
               maxWidth: '480px',
             }}
           >
+            {/* Direct Studio Call & Consultation (Priority #1 on Mobile Drawer) */}
+            {contact.phoneNumber && (
+              <div
+                style={{
+                  padding: '0.85rem 1rem',
+                  borderRadius: '8px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.16)',
+                  marginBottom: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem',
+                }}
+              >
+                <div style={{ minWidth: 0 }}>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.625rem',
+                      color: 'rgba(255, 255, 255, 0.55)',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    Direct Consultation
+                  </span>
+                  <a
+                    href={`tel:${contact.phoneNumber.replace(/[^0-9+]/g, '')}`}
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.9375rem',
+                      fontWeight: 600,
+                      color: '#ffffff',
+                      textDecoration: 'none',
+                      letterSpacing: '0.04em',
+                      display: 'block',
+                      overflowWrap: 'break-word',
+                    }}
+                  >
+                    {contact.phoneNumber}
+                  </a>
+                </div>
+
+                <a
+                  href={`tel:${contact.phoneNumber.replace(/[^0-9+]/g, '')}`}
+                  aria-label="Call Studio Now"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '9999px',
+                    backgroundColor: 'var(--color-accent, #c9a96e)',
+                    color: '#0a0a09',
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: '0.6875rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    textDecoration: 'none',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Phone size={11} strokeWidth={2.4} />
+                  <span>Call</span>
+                </a>
+              </div>
+            )}
+
             {/* 1. HOME */}
             <Link
               href="/"

@@ -515,6 +515,9 @@ a {
 .mobile-menu-toggle {
   display: none !important;
 }
+.mobile-header-contact {
+  display: none !important;
+}
 
 @media (max-width: 900px) {
   .desktop-nav,
@@ -522,6 +525,9 @@ a {
     display: none !important;
   }
   .mobile-menu-toggle {
+    display: inline-flex !important;
+  }
+  .mobile-header-contact {
     display: inline-flex !important;
   }
 }
