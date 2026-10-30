@@ -46,6 +46,7 @@ import {
   Star,
   Upload,
   ArrowLeft,
+  Type,
 } from 'lucide-react';
 import { formatBytes } from '@/lib/format';
 import { Product, ProductSpecification, ProductImage } from '@/types/product';
@@ -70,8 +71,9 @@ import {
 } from '@/lib/site-settings-types';
 import { ProductGridBuilder, GridPhotoItem } from '@/components/admin/ProductGridBuilder';
 import { ImageCropperModal } from '@/components/admin/ImageCropperModal';
+import { AdminTypographyManager } from '@/components/admin/AdminTypographyManager';
 
-type AdminTab = 'dashboard' | 'home' | 'products' | 'projects' | 'contact' | 'settings';
+type AdminTab = 'dashboard' | 'home' | 'products' | 'projects' | 'contact' | 'typography' | 'settings';
 
 function AdminDashboardContent() {
   const router = useRouter();
@@ -288,6 +290,8 @@ function AdminDashboardContent() {
       setActiveTab('projects');
     } else if (mainSection === 'contact') {
       setActiveTab('contact');
+    } else if (mainSection === 'typography') {
+      setActiveTab('typography');
     } else if (mainSection === 'settings') {
       setActiveTab('settings');
     } else {
@@ -1083,6 +1087,7 @@ function AdminDashboardContent() {
           { id: 'products', label: 'Products', icon: Package },
           { id: 'projects', label: 'Projects', icon: Layers },
           { id: 'contact', label: 'Contact', icon: MessageSquare },
+          { id: 'typography', label: 'Typography', icon: Type },
           { id: 'settings', label: 'Settings', icon: Settings },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -1165,6 +1170,7 @@ function AdminDashboardContent() {
                   { id: 'products', label: 'Products', icon: Package },
                   { id: 'projects', label: 'Projects', icon: Layers },
                   { id: 'contact', label: 'Contact & WhatsApp', icon: MessageSquare },
+                  { id: 'typography', label: 'Typography & Fonts', icon: Type },
                   { id: 'settings', label: 'Settings & Storage', icon: Settings },
                 ].map((tab) => {
                   const Icon = tab.icon;
@@ -1317,6 +1323,7 @@ function AdminDashboardContent() {
               { id: 'products', label: 'Products', icon: Package },
               { id: 'projects', label: 'Projects', icon: Layers },
               { id: 'contact', label: 'Contact & WhatsApp', icon: MessageSquare },
+              { id: 'typography', label: 'Typography & Fonts', icon: Type },
               { id: 'settings', label: 'Settings & Storage', icon: Settings },
             ].map((tab) => {
               const Icon = tab.icon;
@@ -3273,6 +3280,13 @@ function AdminDashboardContent() {
               </div>
             </form>
           </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* TYPOGRAPHY & FONT CONTROL TAB */}
+        {/* ======================================================== */}
+        {activeTab === 'typography' && (
+          <AdminTypographyManager />
         )}
 
         {/* ======================================================== */}

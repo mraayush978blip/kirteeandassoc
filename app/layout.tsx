@@ -4,6 +4,8 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { siteConfig } from '@/config/site';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { DynamicTypography } from '@/components/typography/DynamicTypography';
+import { getSetting, DEFAULT_TYPOGRAPHY, TypographyConfig } from '@/lib/site-settings';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -64,20 +66,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const typography = await getSetting<TypographyConfig>('site_typography', DEFAULT_TYPOGRAPHY);
+
   return (
     <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap"
-          rel="stylesheet"
-        />
+        <DynamicTypography typography={typography} />
       </head>
       <body>
         <a href="#main-content" className="skip-to-content">

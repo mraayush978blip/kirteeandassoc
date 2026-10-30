@@ -11,6 +11,7 @@ import {
   DEFAULT_WHY_CHOOSE_US,
   DEFAULT_PROCESS,
   DEFAULT_PROJECT_CTA,
+  DEFAULT_TYPOGRAPHY,
   HeroSlideConfig,
   ProjectConfig,
   ContactConfig,
@@ -19,6 +20,7 @@ import {
   WhyChooseUsConfig,
   ProcessConfig,
   ProjectCtaConfig,
+  TypographyConfig,
 } from '@/lib/site-settings';
 
 export const dynamic = 'force-dynamic';
@@ -74,6 +76,11 @@ export async function GET(req: NextRequest) {
     if (key === 'project_cta' || key === 'home_project_cta') {
       const projectCta = await getSetting<ProjectCtaConfig>('home_project_cta', DEFAULT_PROJECT_CTA);
       return NextResponse.json({ success: true, data: projectCta }, { headers: NO_CACHE_HEADERS });
+    }
+
+    if (key === 'typography' || key === 'site_typography') {
+      const typography = await getSetting<TypographyConfig>('site_typography', DEFAULT_TYPOGRAPHY);
+      return NextResponse.json({ success: true, data: typography }, { headers: NO_CACHE_HEADERS });
     }
 
     // Default 'all'

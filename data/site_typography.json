@@ -1,0 +1,20 @@
+{
+  "headingFont": "Cinzel",
+  "headingWeight": "500",
+  "headingScale": "normal",
+  "headingLetterSpacing": "normal",
+  "headingTransform": "none",
+  "subheadingFont": "Inter",
+  "subheadingWeight": "600",
+  "subheadingLetterSpacing": "normal",
+  "bodyFont": "Inter",
+  "bodyBaseSize": "16px",
+  "bodyLineHeight": "1.5",
+  "brandFont": "Inter",
+  "brandLetterSpacing": "wide",
+  "navFont": "Inter",
+  "navSize": "12px",
+  "navLetterSpacing": "wide",
+  "accentFont": "JetBrains Mono",
+  "accentLetterSpacing": "wide"
+}

@@ -107,11 +107,12 @@ export const Header: React.FC = () => {
               style={{ display: 'inline-flex', flexDirection: 'column', textDecoration: 'none' }}
             >
               <span
+                className="brand-title"
                 style={{
-                  fontFamily: 'var(--font-sans)',
+                  fontFamily: 'var(--font-brand, var(--font-sans))',
                   fontSize: 'clamp(1.15rem, 3.8vw, 1.35rem)',
                   fontWeight: 700,
-                  letterSpacing: '0.14em',
+                  letterSpacing: 'var(--brand-spacing, 0.14em)',
                   color: isLightHeader ? '#111827' : '#E9E6DE',
                   textTransform: 'uppercase',
                   lineHeight: 1.1,
@@ -124,7 +125,7 @@ export const Header: React.FC = () => {
                   fontFamily: 'var(--font-mono)',
                   fontSize: 'clamp(0.48rem, 1.8vw, 0.5625rem)',
                   fontWeight: 500,
-                  letterSpacing: '0.22em',
+                  letterSpacing: 'var(--accent-spacing, 0.22em)',
                   color: isLightHeader ? '#6b7280' : '#96938C',
                   textTransform: 'uppercase',
                   marginTop: '2px',

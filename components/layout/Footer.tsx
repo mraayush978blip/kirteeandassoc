@@ -271,7 +271,7 @@ export const Footer: React.FC = () => {
             color: 'rgba(255, 255, 255, 0.45)',
           }}
         >
-          <span>&copy; {currentYear} Kirtee &amp; Associates. All rights reserved.</span>
+
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <Link

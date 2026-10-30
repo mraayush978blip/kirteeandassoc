@@ -345,3 +345,65 @@ export const DEFAULT_PROJECT_CTA: ProjectCtaConfig = {
   imageUrl: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1400&q=80',
   imageAlt: 'Architectural space with marble steps and indirect lighting',
 };
+
+export interface TypographyConfig {
+  // 1. Headings (H1, H2, Hero titles, Large display text)
+  headingFont: string;
+  headingCustomFont?: string;
+  headingWeight: '300' | '400' | '500' | '600' | '700';
+  headingScale: 'compact' | 'normal' | 'large' | 'grand'; // 0.9, 1.0, 1.12, 1.25
+  headingLetterSpacing: 'tight' | 'normal' | 'wide' | 'ultra-wide'; // -0.02em, 0, 0.04em, 0.12em
+  headingTransform: 'none' | 'uppercase' | 'capitalize';
+
+  // 2. Subheadings (H3, H4, Product Titles, Card Titles)
+  subheadingFont: string;
+  subheadingCustomFont?: string;
+  subheadingWeight: '400' | '500' | '600' | '700';
+  subheadingLetterSpacing: 'tight' | 'normal' | 'wide';
+
+  // 3. Body & Content Text (Paragraphs, Descriptions, Specs, Modals, Forms)
+  bodyFont: string;
+  bodyCustomFont?: string;
+  bodyBaseSize: '14px' | '15px' | '16px' | '17px' | '18px';
+  bodyLineHeight: '1.4' | '1.5' | '1.6' | '1.7';
+
+  // 4. Brand Logo & Header Navigation
+  brandFont: string;
+  brandCustomFont?: string;
+  brandLetterSpacing: 'normal' | 'wide' | 'extra-wide'; // 0.08em, 0.14em, 0.22em
+  navFont: string;
+  navCustomFont?: string;
+  navSize: '11px' | '12px' | '13px' | '14px';
+  navLetterSpacing: 'normal' | 'wide' | 'extra-wide'; // 0.08em, 0.14em, 0.2em
+
+  // 5. Technical Badges, Eyebrows & Specs (Monospace elements, Item counters)
+  accentFont: string;
+  accentCustomFont?: string;
+  accentLetterSpacing: 'normal' | 'wide' | 'extra-wide'; // 0.14em, 0.22em, 0.3em
+}
+
+export const DEFAULT_TYPOGRAPHY: TypographyConfig = {
+  headingFont: 'Cinzel',
+  headingWeight: '500',
+  headingScale: 'normal',
+  headingLetterSpacing: 'normal',
+  headingTransform: 'none',
+
+  subheadingFont: 'Inter',
+  subheadingWeight: '600',
+  subheadingLetterSpacing: 'normal',
+
+  bodyFont: 'Inter',
+  bodyBaseSize: '16px',
+  bodyLineHeight: '1.5',
+
+  brandFont: 'Inter',
+  brandLetterSpacing: 'wide',
+  navFont: 'Inter',
+  navSize: '12px',
+  navLetterSpacing: 'wide',
+
+  accentFont: 'JetBrains Mono',
+  accentLetterSpacing: 'wide',
+};
+
