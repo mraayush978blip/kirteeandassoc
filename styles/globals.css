@@ -871,13 +871,20 @@ a {
 
 /* Product Detail Hero Luminaire Stage */
 .product-hero-stage {
-  height: clamp(460px, 66vh, 720px);
+  height: clamp(380px, 50vh, 560px);
 }
 
 /* Product Detail Page Responsive Classes */
 @media (max-width: 900px) {
   .product-hero-stage {
-    height: clamp(250px, 38vh, 320px) !important;
+    height: clamp(260px, 42vh, 380px) !important;
+  }
+  .product-hero-arrow {
+    display: none !important;
+  }
+  .product-detail-actions {
+    justify-content: flex-start !important;
+    margin-bottom: 1.25rem !important;
   }
   .related-col {
     grid-column: span 6 !important;
@@ -889,24 +896,28 @@ a {
 
   /* Technical Specifications Responsive 2-Column Grid on Mobile */
   .specs-section-wrapper {
-    margin-top: 2rem !important;
-    padding-top: 1.5rem !important;
+    margin-top: 1.5rem !important;
+    padding-top: 1.25rem !important;
   }
   .specs-grid-container {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.5rem !important;
   }
   .spec-card-item {
-    padding: 0.75rem 0.85rem !important;
+    padding: 0.65rem 0.75rem !important;
   }
   .spec-card-label {
     font-size: 0.5625rem !important;
     letter-spacing: 0.05em !important;
     margin-bottom: 0.2rem !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
   }
   .spec-card-value {
     font-size: 0.8125rem !important;
     line-height: 1.25 !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
   }
 
   /* Photo Gallery Responsive Grid on Mobile */

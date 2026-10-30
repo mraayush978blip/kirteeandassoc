@@ -177,6 +177,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
         {allImages.length > 1 && (
           <button
             type="button"
+            className="product-hero-arrow"
             onClick={prevImage}
             aria-label="Previous luminaire view"
             style={{
@@ -213,6 +214,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
         {allImages.length > 1 && (
           <button
             type="button"
+            className="product-hero-arrow"
             onClick={nextImage}
             aria-label="Next luminaire view"
             style={{
@@ -287,32 +289,87 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
       {/* ========================================================= */}
       <section
         style={{
-          paddingTop: 'clamp(3rem, 5.5vw, 5rem)',
-          paddingBottom: 'clamp(3rem, 5vw, 4.5rem)',
+          paddingTop: 'clamp(1.75rem, 3vw, 2.75rem)',
+          paddingBottom: 'clamp(2rem, 3.5vw, 3.25rem)',
           backgroundColor: '#ffffff',
           color: '#111827',
         }}
       >
         <div className="container" style={{ maxWidth: '1440px' }}>
+          {/* Architectural Breadcrumb */}
+          <nav
+            aria-label="Breadcrumb"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              marginBottom: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+              flexWrap: 'wrap',
+            }}
+          >
+            <Link
+              href="/"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.6875rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: '#6b7280',
+                textDecoration: 'none',
+              }}
+            >
+              Home
+            </Link>
+            <span style={{ fontSize: '0.625rem', color: '#9ca3af' }}>/</span>
+            <Link
+              href={product.catalogType === 'wet' ? '/wet-goods' : '/dry-goods'}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.6875rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: '#6b7280',
+                textDecoration: 'none',
+              }}
+            >
+              {product.catalogType === 'wet' ? 'Wet Goods' : 'Dry Goods'}
+            </Link>
+            <span style={{ fontSize: '0.625rem', color: '#9ca3af' }}>/</span>
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.6875rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: '#111827',
+                fontWeight: 600,
+              }}
+            >
+              {product.name}
+            </span>
+          </nav>
+
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(12, 1fr)',
-              gap: 'clamp(2rem, 5vw, 4.5rem)',
+              gap: 'clamp(1.75rem, 4vw, 4rem)',
               alignItems: 'start',
             }}
           >
             {/* Left Column: Big Product Title */}
-            <div className="col-span-12 lg:col-span-4">
+            <div className="col-span-12 lg:col-span-4" style={{ minWidth: 0 }}>
               <h1
                 style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: 'clamp(2.75rem, 5vw, 4.25rem)',
+                  fontSize: 'clamp(2rem, 3.8vw, 3.25rem)',
                   fontWeight: 600,
                   letterSpacing: '-0.025em',
                   color: '#111827',
                   margin: 0,
-                  lineHeight: 1.05,
+                  lineHeight: 1.12,
+                  overflowWrap: 'break-word',
+                  wordBreak: 'break-word',
                 }}
               >
                 {product.name}
@@ -325,9 +382,10 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                     fontFamily: 'var(--font-sans)',
                     fontSize: '0.875rem',
                     color: '#6b7280',
-                    marginTop: '0.85rem',
+                    marginTop: '0.75rem',
                     fontWeight: 400,
                     letterSpacing: '0.02em',
+                    overflowWrap: 'break-word',
                   }}
                 >
                   Design by {product.designer}
@@ -336,7 +394,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             </div>
 
             {/* Right Column: Actions Row + Narrative */}
-            <div className="col-span-12 lg:col-span-8">
+            <div className="col-span-12 lg:col-span-8" style={{ minWidth: 0 }}>
               {/* Top Row: Download Brochure Pill & Social Icons (Only show if at least one link is configured) */}
               {(() => {
                 const brochureUrl = product.downloads?.[0]?.fileUrl?.trim();
@@ -357,12 +415,13 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
 
                 return (
                   <div
+                    className="product-detail-actions"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'flex-end',
-                      gap: '1rem',
-                      marginBottom: '2rem',
+                      gap: '0.85rem',
+                      marginBottom: '1.5rem',
                       flexWrap: 'wrap',
                     }}
                   >
@@ -544,11 +603,12 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
                   style={{
                     fontFamily: 'var(--font-sans)',
                     fontSize: 'clamp(0.9375rem, 1.15vw, 1.0625rem)',
-                    lineHeight: 1.8,
+                    lineHeight: 1.75,
                     color: '#374151',
                     fontWeight: 400,
                     margin: 0,
-                    textAlign: 'justify',
+                    textAlign: 'left',
+                    overflowWrap: 'break-word',
                   }}
                 >
                   {product.editorialStory || product.fullDescription}
@@ -627,8 +687,8 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
               id="technical-specifications"
               className="specs-section-wrapper"
               style={{
-                marginTop: 'clamp(2rem, 4vw, 3.5rem)',
-                paddingTop: 'clamp(1.75rem, 3.5vw, 3rem)',
+                marginTop: 'clamp(1.75rem, 3vw, 2.5rem)',
+                paddingTop: 'clamp(1.5rem, 2.5vw, 2.25rem)',
                 borderTop: '1px solid #e5e7eb',
               }}
             >
@@ -746,10 +806,10 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
         style={{
           width: '100%',
           backgroundColor: '#ffffff',
-          paddingTop: '3.5rem',
-          paddingBottom: '3.5rem',
-          paddingLeft: 'clamp(1.5rem, 4vw, 3.75rem)',
-          paddingRight: 'clamp(1.5rem, 4vw, 3.75rem)',
+          paddingTop: 'clamp(2rem, 3.5vw, 3rem)',
+          paddingBottom: 'clamp(2rem, 3.5vw, 3rem)',
+          paddingLeft: 'clamp(1rem, 3.5vw, 3.75rem)',
+          paddingRight: 'clamp(1rem, 3.5vw, 3.75rem)',
           boxSizing: 'border-box',
         }}
       >
@@ -1303,10 +1363,10 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
         <section
           style={{
             borderTop: '1px solid #e5e7eb',
-            paddingTop: '2.75rem',
-            paddingBottom: '2.5rem',
-            paddingLeft: 'clamp(1.5rem, 4vw, 3.75rem)',
-            paddingRight: 'clamp(1.5rem, 4vw, 3.75rem)',
+            paddingTop: 'clamp(2rem, 3vw, 2.75rem)',
+            paddingBottom: 'clamp(2rem, 3vw, 2.5rem)',
+            paddingLeft: 'clamp(1rem, 3.5vw, 3.75rem)',
+            paddingRight: 'clamp(1rem, 3.5vw, 3.75rem)',
             backgroundColor: '#ffffff',
             boxSizing: 'border-box',
           }}
