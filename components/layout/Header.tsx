@@ -361,7 +361,7 @@ export const Header: React.FC = () => {
             </Link>
           </nav>
 
-          {/* Right Action: Desktop Contact Pill & Direct Inquiries (Aligned to Far Right Hand Side) */}
+          {/* Right Action: Desktop Inquiries CTA (Aligned to Far Right Hand Side) */}
           <div
             className="desktop-cta"
             style={{
@@ -369,29 +369,8 @@ export const Header: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-end',
-              gap: '1.25rem',
             }}
           >
-            <a
-              href={`tel:${(contact.phoneNumber || '7096962640').replace(/[^0-9+]/g, '')}`}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                color: isLightHeader ? '#4b5563' : '#96938C',
-                textDecoration: 'none',
-                letterSpacing: '0.04em',
-                transition: 'color 0.2s ease',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = isLightHeader ? '#111827' : '#ffffff')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = isLightHeader ? '#4b5563' : '#96938C')}
-            >
-              <Phone size={13} style={{ color: isLightHeader ? '#9ca3af' : 'var(--color-accent)' }} />
-              <span>{contact.phoneNumber || '+91 70969 62640'}</span>
-            </a>
-
             <Link
               href="/contact"
               style={{
@@ -425,34 +404,8 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Mobile Right Action Area: Direct Phone Dial Button + Hamburger */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            {contact.phoneNumber && (
-              <a
-                href={`tel:${contact.phoneNumber.replace(/[^0-9+]/g, '')}`}
-                className="mobile-header-contact"
-                aria-label={`Call studio at ${contact.phoneNumber}`}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '9999px',
-                  backgroundColor: isLightHeader ? '#111827' : '#ffffff',
-                  color: isLightHeader ? '#ffffff' : '#0a0a09',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.04em',
-                  textDecoration: 'none',
-                  transition: 'transform 0.15s ease, background-color 0.2s ease',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.12)',
-                }}
-              >
-                <Phone size={11} strokeWidth={2.2} />
-                <span>{contact.phoneNumber}</span>
-              </a>
-            )}
+          {/* Mobile Right Action Area: Hamburger Toggle */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
 
             {/* Mobile Navigation Toggle (Visible ONLY on mobile devices <=900px) */}
             <button
