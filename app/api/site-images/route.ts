@@ -11,11 +11,18 @@ export async function GET() {
     for (const slot of slots) {
       map[slot.id] = { url: slot.url, alt: slot.alt };
     }
-    return NextResponse.json({
-      success: true,
-      images: map,
-      slots,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        images: map,
+        slots,
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: error.message || 'Failed to read site images' },

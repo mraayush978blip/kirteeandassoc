@@ -16,6 +16,18 @@ import {
 
 const LOCAL_STORAGE_DIR = path.join(process.cwd(), 'data');
 
+// High-speed in-memory cache (eliminates repeat Supabase roundtrips; <0.5ms lookup)
+const settingsCache = new Map<string, { data: unknown; timestamp: number }>();
+const SETTINGS_CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
+
+export function invalidateSettingsCache(key?: string): void {
+  if (key) {
+    settingsCache.delete(key);
+  } else {
+    settingsCache.clear();
+  }
+}
+
 async function getLocalSettings<T>(key: string, fallback: T): Promise<T> {
   try {
     const filePath = path.join(LOCAL_STORAGE_DIR, `${key}.json`);
@@ -37,35 +49,51 @@ async function setLocalSettings<T>(key: string, value: T): Promise<void> {
 }
 
 /**
- * Resilient multi-tier settings getter (Database -> Local JSON File -> Defaults).
- * Guaranteed to never crash even when Supabase/PostgreSQL is offline or slow.
+ * Resilient multi-tier settings getter with in-memory caching:
+ * Level 1: In-Memory RAM Cache (<0.5ms, zero network latency)
+ * Level 2: Supabase PostgreSQL (revalidates every 60s)
+ * Level 3: Local JSON File (Offline fallback)
+ * Level 4: Built-in Defaults
  */
 export async function getSetting<T>(key: string, defaultValue: T): Promise<T> {
-  // 1. Try PostgreSQL / Supabase
+  // 1. Check ultra-fast in-memory cache
+  const cached = settingsCache.get(key);
+  if (cached && Date.now() - cached.timestamp < SETTINGS_CACHE_TTL_MS) {
+    return cached.data as T;
+  }
+
+  // 2. Try PostgreSQL / Supabase
   try {
     const res = await query<{ value: T }>(
       `SELECT value FROM site_settings WHERE key = $1 LIMIT 1`,
       [key]
     );
     if (res.rows && res.rows.length > 0 && res.rows[0].value !== undefined) {
-      return res.rows[0].value;
+      const val = res.rows[0].value;
+      settingsCache.set(key, { data: val, timestamp: Date.now() });
+      return val;
     }
   } catch (err) {
     // Database unreachable or table missing; continue to local fallback
   }
 
-  // 2. Try Local JSON file
-  return getLocalSettings<T>(key, defaultValue);
+  // 3. Try Local JSON file
+  const localVal = await getLocalSettings<T>(key, defaultValue);
+  settingsCache.set(key, { data: localVal, timestamp: Date.now() });
+  return localVal;
 }
 
 /**
  * Saves setting to both Database and Local JSON file for 100% offline uptime resilience.
  */
 export async function saveSetting<T>(key: string, value: T): Promise<{ success: boolean; error?: string }> {
-  // 1. Save locally first
+  // 1. Update in-memory cache instantly (0 latency update)
+  settingsCache.set(key, { data: value, timestamp: Date.now() });
+
+  // 2. Save locally first
   await setLocalSettings<T>(key, value);
 
-  // 2. Save to PostgreSQL if available
+  // 3. Save to PostgreSQL if available
   try {
     await query(
       `

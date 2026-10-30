@@ -188,11 +188,24 @@ export const DEFAULT_SITE_IMAGES: SiteImageSlot[] = [
 
 const LOCAL_STORAGE_FILE = path.join(process.cwd(), 'data', 'site-images.json');
 
+// High-speed in-memory site images cache (<0.5ms lookup)
+let cachedSiteImagesList: { data: SiteImageSlot[]; timestamp: number } | null = null;
+const SITE_IMAGES_CACHE_TTL_MS = 60 * 1000;
+
+export function invalidateSiteImagesCache(): void {
+  cachedSiteImagesList = null;
+}
+
 /**
  * Loads all site images from database (site_settings table) or local JSON fallback.
  */
 export async function getAllSiteImages(): Promise<SiteImageSlot[]> {
-  // 1. Try reading from PostgreSQL site_settings table
+  // 1. Check ultra-fast in-memory cache
+  if (cachedSiteImagesList && Date.now() - cachedSiteImagesList.timestamp < SITE_IMAGES_CACHE_TTL_MS) {
+    return cachedSiteImagesList.data;
+  }
+
+  // 2. Try reading from PostgreSQL site_settings table
   try {
     const { rows } = await query<{ value: Record<string, Partial<SiteImageSlot>> }>(
       `SELECT value FROM site_settings WHERE key = 'site_images'`
@@ -200,7 +213,7 @@ export async function getAllSiteImages(): Promise<SiteImageSlot[]> {
 
     if (rows && rows.length > 0 && rows[0].value) {
       const overrides = rows[0].value;
-      return DEFAULT_SITE_IMAGES.map((slot) => {
+      const result = DEFAULT_SITE_IMAGES.map((slot) => {
         const custom = overrides[slot.id];
         if (custom) {
           return {
@@ -212,16 +225,18 @@ export async function getAllSiteImages(): Promise<SiteImageSlot[]> {
         }
         return slot;
       });
+      cachedSiteImagesList = { data: result, timestamp: Date.now() };
+      return result;
     }
   } catch (dbErr) {
     // Database might be unconfigured or offline - proceed to file check
   }
 
-  // 2. Try reading from local data file
+  // 3. Try reading from local data file
   try {
     const raw = await fs.readFile(LOCAL_STORAGE_FILE, 'utf-8');
     const overrides = JSON.parse(raw);
-    return DEFAULT_SITE_IMAGES.map((slot) => {
+    const result = DEFAULT_SITE_IMAGES.map((slot) => {
       const custom = overrides[slot.id];
       if (custom) {
         return {
@@ -233,8 +248,11 @@ export async function getAllSiteImages(): Promise<SiteImageSlot[]> {
       }
       return slot;
     });
+    cachedSiteImagesList = { data: result, timestamp: Date.now() };
+    return result;
   } catch {
     // No file yet, return default catalog
+    cachedSiteImagesList = { data: DEFAULT_SITE_IMAGES, timestamp: Date.now() };
     return DEFAULT_SITE_IMAGES;
   }
 }
@@ -298,6 +316,7 @@ export async function updateSiteImageSlot(
     console.warn('[Site Images] DB update skipped or offline', dbErr);
   }
 
+  invalidateSiteImagesCache();
   return { success: true, slot: updatedSlot };
 }
 

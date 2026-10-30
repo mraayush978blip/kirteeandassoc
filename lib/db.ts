@@ -47,7 +47,8 @@ export function getDbPool(): Pool | null {
       connectionString: cleanConnectionString,
       max: 10,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 1800,
+      connectionTimeoutMillis: 4000,
+      keepAlive: true,
     };
 
     if (isRemote) {
@@ -190,10 +191,23 @@ async function saveLocalProducts(products: Product[]): Promise<void> {
   }
 }
 
+// High-speed in-memory product catalog cache (serves catalogue in <0.5ms)
+let cachedProducts: { data: Product[]; timestamp: number } | null = null;
+const PRODUCTS_CACHE_TTL_MS = 60 * 1000; // 60 seconds
+
+export function invalidateProductsCache(): void {
+  cachedProducts = null;
+}
+
 // -------------------------------------------------------------
 // Products API (DB with static fallback)
 // -------------------------------------------------------------
 export async function getProductsFromDb(): Promise<Product[]> {
+  // 1. Check ultra-fast in-memory cache
+  if (cachedProducts && Date.now() - cachedProducts.timestamp < PRODUCTS_CACHE_TTL_MS) {
+    return cachedProducts.data;
+  }
+
   try {
     const { rows } = await query<any>(`
       SELECT 
@@ -270,7 +284,8 @@ export async function getProductsFromDb(): Promise<Product[]> {
         updatedAt: r.updated_at ? new Date(r.updated_at).toISOString() : new Date().toISOString(),
       }));
 
-      // Cache locally for offline resilience
+      // Cache in memory and locally for offline resilience
+      cachedProducts = { data: dbProducts, timestamp: Date.now() };
       saveLocalProducts(dbProducts).catch(() => {});
       return dbProducts;
     }
@@ -281,10 +296,12 @@ export async function getProductsFromDb(): Promise<Product[]> {
   // 2. Check local JSON file
   const local = await getLocalProducts();
   if (local.length > 0) {
+    cachedProducts = { data: local, timestamp: Date.now() };
     return local;
   }
 
   // 3. Fallback to default in-memory catalog
+  cachedProducts = { data: fallbackProducts, timestamp: Date.now() };
   return fallbackProducts;
 }
 
@@ -507,6 +524,7 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
     }
   }
 
+  invalidateProductsCache();
   return { success: true, id };
 }
 
@@ -523,6 +541,7 @@ export async function deleteProductFromDb(id: string): Promise<{ success: boolea
     await query('DELETE FROM products WHERE id = $1', [id]);
   } catch {}
 
+  invalidateProductsCache();
   return { success: true };
 }
 

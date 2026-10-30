@@ -18,8 +18,13 @@ export function useSiteImages() {
     let isMounted = true;
 
     async function load() {
+      if (cachedSiteImages && Object.keys(cachedSiteImages).length > 0) {
+        if (isMounted) setIsLoading(false);
+        return;
+      }
+
       try {
-        const res = await fetch('/api/site-images', { cache: 'no-store' });
+        const res = await fetch('/api/site-images');
         const data = await res.json();
         if (data.success && data.images && isMounted) {
           cachedSiteImages = data.images;

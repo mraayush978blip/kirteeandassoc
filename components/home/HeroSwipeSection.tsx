@@ -75,9 +75,11 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
   const [dragOffset, setDragOffset] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch dynamic hero slides from site settings / DB with resilient static fallback
+  // Only fetch client-side if initialSlides was not provided via server SSR
   useEffect(() => {
-    fetch('/api/content?key=hero_slides', { cache: 'no-store' })
+    if (initialSlides && initialSlides.length > 0) return;
+
+    fetch('/api/content?key=hero_slides')
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
@@ -87,7 +89,7 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
       .catch(() => {
         // Fallback to static slides in case server is slow or offline
       });
-  }, []);
+  }, [initialSlides]);
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
