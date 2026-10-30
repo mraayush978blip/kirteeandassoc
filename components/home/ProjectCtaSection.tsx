@@ -7,11 +7,11 @@ import { ArrowRight, ChevronLeft } from 'lucide-react';
 
 const ctaImages = [
   {
-    url: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1400&q=80',
+    url: '/media/hero-slide-3.webp',
     alt: 'Architectural space with marble steps and indirect lighting',
   },
   {
-    url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80',
+    url: '/media/hero-slide-1.webp',
     alt: 'Linear wall grazing in minimalist executive pavilion',
   },
 ];
@@ -37,9 +37,9 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
   return (
     <section
       style={{
-        backgroundColor: '#0a0a09',
-        color: '#ffffff',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        backgroundColor: '#ffffff',
+        color: '#111827',
+        borderTop: '1px solid #e5e7eb',
         overflow: 'hidden',
         position: 'relative',
       }}
@@ -75,7 +75,7 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.2em',
-                color: 'rgba(255, 255, 255, 0.65)',
+                color: '#6b7280',
                 display: 'block',
                 marginBottom: '1rem',
                 overflowWrap: 'break-word',
@@ -91,7 +91,7 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
                 lineHeight: 1.1,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
-                color: '#ffffff',
+                color: '#111827',
                 marginBottom: '1.25rem',
                 overflowWrap: 'break-word',
                 wordBreak: 'break-word',
@@ -104,9 +104,9 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
               style={{
                 fontSize: 'clamp(0.9375rem, 1.5vw, 1.0625rem)',
                 lineHeight: 1.65,
-                color: 'rgba(255, 255, 255, 0.75)',
+                color: '#4b5563',
                 marginBottom: '2rem',
-                fontWeight: 300,
+                fontWeight: 400,
                 overflowWrap: 'break-word',
               }}
             >
@@ -121,24 +121,24 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
                 fontWeight: 600,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#ffffff',
+                color: '#111827',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.75rem',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
+                borderBottom: '1px solid #111827',
                 paddingBottom: '0.4rem',
-                transition: 'border-color 0.2s ease, gap 0.2s ease',
+                transition: 'border-color 0.2s ease, gap 0.2s ease, color 0.2s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#ffffff';
+                e.currentTarget.style.borderColor = '#000000';
                 e.currentTarget.style.gap = '1rem';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.borderColor = '#111827';
                 e.currentTarget.style.gap = '0.75rem';
               }}
             >
-              <span>{data.buttonText || 'DISCUSS YOUR SPECIFICATION'}</span>
+              <span>{data.buttonText || 'SCHEDULE CONSULTATION'}</span>
               <ArrowRight size={15} />
             </Link>
           </div>
@@ -151,7 +151,7 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
             aspectRatio: '16 / 10',
             minHeight: 'clamp(240px, 45vw, 640px)',
             width: '100%',
-            backgroundColor: '#0a0a09',
+            backgroundColor: '#f3f4f6',
             marginRight: 0,
             paddingRight: 0,
           }}
