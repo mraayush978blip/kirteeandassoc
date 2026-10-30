@@ -73,8 +73,8 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
       style={{
         backgroundColor: '#F3EFEA',
         color: '#1C1917',
-        paddingTop: 'clamp(5rem, 7.5vw, 7.5rem)',
-        paddingBottom: 'clamp(5rem, 7.5vw, 7.5rem)',
+        paddingTop: 'clamp(3.5rem, 6vw, 6.5rem)',
+        paddingBottom: 'clamp(3.5rem, 6vw, 6.5rem)',
         position: 'relative',
         overflow: 'hidden',
         borderTop: '1px solid #E5DFD5',
@@ -89,10 +89,10 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
             gridTemplateColumns: 'repeat(12, 1fr)',
             gap: 'clamp(1.5rem, 4vw, 3rem)',
             alignItems: 'flex-end',
-            marginBottom: 'clamp(2.75rem, 5vw, 4.25rem)',
+            marginBottom: 'clamp(2.5rem, 4.5vw, 3.75rem)',
           }}
         >
-          <div className="col-span-12 lg:col-span-8">
+          <div className="col-span-12 lg:col-span-8" style={{ minWidth: 0 }}>
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
@@ -102,7 +102,8 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                 letterSpacing: '0.22em',
                 color: '#7C7467',
                 display: 'block',
-                marginBottom: '0.85rem',
+                marginBottom: '0.75rem',
+                overflowWrap: 'break-word',
               }}
             >
               {data.eyebrow || 'WHY SPECIFY ZENVORA'}
@@ -111,19 +112,21 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
             <h2
               style={{
                 fontFamily: 'var(--font-serif)',
-                fontSize: 'clamp(2rem, 4vw, 3.25rem)',
+                fontSize: 'clamp(1.85rem, 4vw, 3.25rem)',
                 lineHeight: 1.15,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
                 color: '#1C1917',
                 margin: 0,
+                overflowWrap: 'break-word',
+                wordBreak: 'break-word',
               }}
             >
               {data.headline || 'ENGINEERED FOR ARCHITECTS. CRAFTED FOR VISIONARIES.'}
             </h2>
           </div>
 
-          <div className="col-span-12 lg:col-span-4">
+          <div className="col-span-12 lg:col-span-4" style={{ minWidth: 0 }}>
             <p
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -131,6 +134,7 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                 lineHeight: 1.65,
                 color: '#57534E',
                 margin: 0,
+                overflowWrap: 'break-word',
               }}
             >
               {data.description ||
@@ -220,6 +224,10 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                         backdropFilter: 'blur(8px)',
                         WebkitBackdropFilter: 'blur(8px)',
                         boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                        maxWidth: '70%',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       {pillar.tag}
@@ -237,6 +245,7 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                         backdropFilter: 'blur(8px)',
                         WebkitBackdropFilter: 'blur(8px)',
                         boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+                        flexShrink: 0,
                       }}
                     >
                       {pillar.num}
@@ -252,9 +261,10 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
+                    minWidth: 0,
                   }}
                 >
-                  <div>
+                  <div style={{ minWidth: 0 }}>
                     {/* Metric Tag */}
                     <div
                       style={{
@@ -269,6 +279,10 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                         borderRadius: '3px',
                         marginBottom: '0.75rem',
                         letterSpacing: '0.02em',
+                        maxWidth: '100%',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       {pillar.metric}
@@ -284,6 +298,8 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                         color: '#1C1917',
                         margin: '0 0 0.45rem 0',
                         lineHeight: 1.35,
+                        overflowWrap: 'break-word',
+                        wordBreak: 'break-word',
                       }}
                     >
                       {pillar.title}
@@ -297,6 +313,7 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ config }
                         lineHeight: 1.6,
                         color: '#57534E',
                         margin: 0,
+                        overflowWrap: 'break-word',
                       }}
                     >
                       {pillar.description}

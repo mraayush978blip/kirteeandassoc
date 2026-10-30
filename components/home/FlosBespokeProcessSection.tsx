@@ -74,8 +74,8 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
       style={{
         backgroundColor: '#ffffff',
         color: '#2d333e',
-        paddingTop: 'clamp(5rem, 8vw, 8rem)',
-        paddingBottom: 'clamp(5rem, 8vw, 8rem)',
+        paddingTop: 'clamp(3.5rem, 6vw, 6.5rem)',
+        paddingBottom: 'clamp(3.5rem, 6vw, 6.5rem)',
         overflow: 'hidden',
       }}
     >
@@ -203,13 +203,15 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
                     <h3
                       style={{
                         fontFamily: 'var(--font-sans)',
-                        fontSize: 'clamp(1.85rem, 3.2vw, 2.65rem)',
+                        fontSize: 'clamp(1.75rem, 3.2vw, 2.65rem)',
                         fontWeight: 400,
                         lineHeight: 1.15,
                         letterSpacing: '-0.02em',
                         color: isActive ? '#2d333e' : '#a8a8a8',
                         margin: 0,
                         transition: 'color 0.3s ease',
+                        overflowWrap: 'break-word',
+                        wordBreak: 'break-word',
                       }}
                       className="bespoke-title"
                     >
@@ -219,7 +221,7 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
                     {/* Step Description & Mobile Inline Visual (smooth expand when active) */}
                     <div
                       style={{
-                        maxHeight: isActive ? '500px' : '0px',
+                        maxHeight: isActive ? '1200px' : '0px',
                         opacity: isActive ? 1 : 0,
                         overflow: 'hidden',
                         transition:
@@ -259,6 +261,7 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
                           color: '#4b5563',
                           maxWidth: '440px',
                           margin: 0,
+                          overflowWrap: 'break-word',
                         }}
                       >
                         {step.description}

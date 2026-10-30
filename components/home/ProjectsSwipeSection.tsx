@@ -125,8 +125,8 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
       style={{
         backgroundColor: '#282b32',
         color: '#ffffff',
-        paddingTop: 'clamp(5rem, 8vw, 8rem)',
-        paddingBottom: 'clamp(5rem, 8vw, 8rem)',
+        paddingTop: 'clamp(3.5rem, 6vw, 6.5rem)',
+        paddingBottom: 'clamp(3.5rem, 6vw, 6.5rem)',
         overflow: 'hidden',
       }}
     >
@@ -313,8 +313,8 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                 </div>
 
                 {/* Project Info */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                  <div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem' }}>
+                  <div style={{ minWidth: 0, flex: 1 }}>
                     <span
                       style={{
                         fontFamily: 'var(--font-mono)',
@@ -335,6 +335,8 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                         textTransform: 'uppercase',
                         color: '#ffffff',
                         marginBottom: '0.25rem',
+                        overflowWrap: 'break-word',
+                        wordBreak: 'break-word',
                       }}
                     >
                       {proj.title}
@@ -343,13 +345,15 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                       style={{
                         fontSize: '0.8125rem',
                         color: 'rgba(255, 255, 255, 0.65)',
+                        overflowWrap: 'break-word',
+                        wordBreak: 'break-word',
                       }}
                     >
                       {proj.location}
                     </p>
                   </div>
 
-                  <ArrowRight size={16} color="rgba(255, 255, 255, 0.7)" style={{ marginTop: '0.5rem' }} />
+                  <ArrowRight size={16} color="rgba(255, 255, 255, 0.7)" style={{ marginTop: '0.5rem', flexShrink: 0 }} />
                 </div>
               </Link>
             </div>

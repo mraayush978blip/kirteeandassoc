@@ -59,14 +59,15 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
-            paddingTop: 'clamp(4rem, 6vw, 6.5rem)',
-            paddingBottom: 'clamp(4rem, 6vw, 6.5rem)',
-            paddingLeft: 'clamp(1.5rem, 4.5vw, 6rem)',
-            paddingRight: 'clamp(1.5rem, 3.5vw, 4.5rem)',
+            paddingTop: 'clamp(3rem, 5vw, 5.5rem)',
+            paddingBottom: 'clamp(3rem, 5vw, 5.5rem)',
+            paddingLeft: 'clamp(1.25rem, 4vw, 6rem)',
+            paddingRight: 'clamp(1.25rem, 3.5vw, 4.5rem)',
+            boxSizing: 'border-box',
           }}
           className="col-span-12 lg:col-span-6"
         >
-          <div style={{ maxWidth: '520px', width: '100%' }}>
+          <div style={{ maxWidth: '520px', width: '100%', minWidth: 0 }}>
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -76,7 +77,8 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
                 letterSpacing: '0.2em',
                 color: 'rgba(255, 255, 255, 0.65)',
                 display: 'block',
-                marginBottom: '1.25rem',
+                marginBottom: '1rem',
+                overflowWrap: 'break-word',
               }}
             >
               {data.eyebrow || "LET'S WORK TOGETHER"}
@@ -85,12 +87,14 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
             <h2
               style={{
                 fontFamily: 'var(--font-serif)',
-                fontSize: 'clamp(2.5rem, 5vw, 3.75rem)',
+                fontSize: 'clamp(2rem, 4.5vw, 3.5rem)',
                 lineHeight: 1.1,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
                 color: '#ffffff',
-                marginBottom: '1.5rem',
+                marginBottom: '1.25rem',
+                overflowWrap: 'break-word',
+                wordBreak: 'break-word',
               }}
             >
               {data.headline || 'HAVE A PROJECT IN MIND?'}
@@ -98,11 +102,12 @@ export const ProjectCtaSection: React.FC<ProjectCtaSectionProps> = ({ config }) 
 
             <p
               style={{
-                fontSize: '1.0625rem',
-                lineHeight: 1.7,
+                fontSize: 'clamp(0.9375rem, 1.5vw, 1.0625rem)',
+                lineHeight: 1.65,
                 color: 'rgba(255, 255, 255, 0.75)',
-                marginBottom: '2.5rem',
+                marginBottom: '2rem',
                 fontWeight: 300,
+                overflowWrap: 'break-word',
               }}
             >
               {data.description || 'Our specification team is here to help you bring your vision to life.'}
