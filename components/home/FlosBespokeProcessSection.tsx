@@ -108,7 +108,7 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
                     alt={resolved.alt}
                     fill
                     priority={idx === 0}
-                    sizes="(max-width: 1024px) 100vw, 58vw"
+                    sizes="(max-width: 1024px) 100vw, 65vw"
                     style={{
                       objectFit: 'cover',
                       objectPosition: 'center',
@@ -235,10 +235,10 @@ export const FlosBespokeProcessSection: React.FC<FlosBespokeProcessSectionProps>
                         style={{
                           position: 'relative',
                           width: '100%',
-                          aspectRatio: '16 / 10',
-                          borderRadius: '4px',
+                          aspectRatio: '4 / 3',
+                          borderRadius: '6px',
                           overflow: 'hidden',
-                          marginBottom: '1rem',
+                          marginBottom: '1.25rem',
                         }}
                       >
                         <Image
