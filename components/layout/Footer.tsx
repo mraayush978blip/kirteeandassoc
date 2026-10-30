@@ -45,9 +45,9 @@ export const Footer: React.FC = () => {
   return (
     <footer
       style={{
-        backgroundColor: '#0a0a09',
-        color: '#ffffff',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        backgroundColor: '#ffffff',
+        color: '#111827',
+        borderTop: '1px solid #e5e7eb',
         paddingTop: 'clamp(4rem, 6vw, 6rem)',
         paddingBottom: '2.5rem',
       }}
@@ -62,18 +62,18 @@ export const Footer: React.FC = () => {
             alignItems: 'flex-start',
             gap: 'clamp(2rem, 4vw, 3rem)',
             paddingBottom: 'clamp(2.5rem, 5vw, 4.5rem)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            borderBottom: '1px solid #f0f0f2',
           }}
         >
           {/* Brand Monogram */}
           <div style={{ maxWidth: '380px' }}>
             <span
               style={{
-                fontFamily: 'var(--font-sans)',
+                fontFamily: 'var(--font-brand, var(--font-sans))',
                 fontSize: '1.25rem',
                 fontWeight: 700,
-                letterSpacing: '0.14em',
-                color: '#ffffff',
+                letterSpacing: 'var(--brand-spacing, 0.14em)',
+                color: '#111827',
                 textTransform: 'uppercase',
                 display: 'block',
                 marginBottom: '0.4rem',
@@ -88,7 +88,7 @@ export const Footer: React.FC = () => {
                 fontWeight: 500,
                 letterSpacing: '0.18em',
                 textTransform: 'uppercase',
-                color: 'rgba(255, 255, 255, 0.5)',
+                color: '#6b7280',
                 display: 'block',
                 marginBottom: '1rem',
               }}
@@ -99,7 +99,7 @@ export const Footer: React.FC = () => {
               style={{
                 fontSize: '0.875rem',
                 lineHeight: 1.6,
-                color: 'rgba(255, 255, 255, 0.6)',
+                color: '#4b5563',
                 margin: 0,
               }}
             >
@@ -123,7 +123,7 @@ export const Footer: React.FC = () => {
                   fontSize: '0.6875rem',
                   letterSpacing: '0.16em',
                   textTransform: 'uppercase',
-                  color: 'rgba(255, 255, 255, 0.4)',
+                  color: '#9ca3af',
                   marginBottom: '0.25rem',
                 }}
               >
@@ -132,17 +132,17 @@ export const Footer: React.FC = () => {
               <Link
                 href="/"
                 style={{
-                  fontFamily: 'var(--font-sans)',
+                  fontFamily: 'var(--font-nav, var(--font-sans))',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
                   letterSpacing: '0.14em',
-                  color: 'rgba(255, 255, 255, 0.75)',
+                  color: '#374151',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#374151')}
               >
                 HOME
               </Link>
@@ -150,51 +150,51 @@ export const Footer: React.FC = () => {
               <Link
                 href="/dry-goods"
                 style={{
-                  fontFamily: 'var(--font-sans)',
+                  fontFamily: 'var(--font-nav, var(--font-sans))',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
                   letterSpacing: '0.14em',
-                  color: 'rgba(255, 255, 255, 0.75)',
+                  color: '#374151',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#374151')}
               >
                 DRY GOODS
               </Link>
               <Link
                 href="/wet-goods"
                 style={{
-                  fontFamily: 'var(--font-sans)',
+                  fontFamily: 'var(--font-nav, var(--font-sans))',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
                   letterSpacing: '0.14em',
-                  color: 'rgba(255, 255, 255, 0.75)',
+                  color: '#374151',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#374151')}
               >
                 WET GOODS
               </Link>
               <Link
                 href="/contact"
                 style={{
-                  fontFamily: 'var(--font-sans)',
+                  fontFamily: 'var(--font-nav, var(--font-sans))',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
                   letterSpacing: '0.14em',
-                  color: 'rgba(255, 255, 255, 0.75)',
+                  color: '#374151',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#374151')}
               >
                 CONTACT
               </Link>
@@ -208,7 +208,7 @@ export const Footer: React.FC = () => {
                   fontSize: '0.6875rem',
                   letterSpacing: '0.16em',
                   textTransform: 'uppercase',
-                  color: 'rgba(255, 255, 255, 0.4)',
+                  color: '#9ca3af',
                   marginBottom: '0.25rem',
                 }}
               >
@@ -220,12 +220,13 @@ export const Footer: React.FC = () => {
                   alignItems: 'flex-start',
                   gap: '0.5rem',
                   fontSize: '0.8125rem',
-                  color: 'rgba(255, 255, 255, 0.55)',
+                  color: '#4b5563',
                   marginTop: '0.25rem',
                   maxWidth: '260px',
+                  lineHeight: 1.5,
                 }}
               >
-                <MapPin size={14} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <MapPin size={14} style={{ flexShrink: 0, marginTop: '3px', color: '#6b7280' }} />
                 <span>{contact.studioAddress || contact.companyName || 'Kirtee & Associates Architectural Studio'}</span>
               </div>
 
@@ -236,9 +237,9 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
-                  style={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'color 0.2s ease' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)')}
+                  style={{ color: '#4b5563', transition: 'color 0.2s ease' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '#4b5563')}
                 >
                   <LinkedinIcon size={16} />
                 </a>
@@ -247,9 +248,9 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  style={{ color: 'rgba(255, 255, 255, 0.7)', transition: 'color 0.2s ease' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)')}
+                  style={{ color: '#4b5563', transition: 'color 0.2s ease' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '#4b5563')}
                 >
                   <InstagramIcon size={16} />
                 </a>
@@ -268,25 +269,27 @@ export const Footer: React.FC = () => {
             alignItems: 'center',
             gap: '1rem',
             fontSize: '0.75rem',
-            color: 'rgba(255, 255, 255, 0.45)',
+            color: '#9ca3af',
           }}
         >
-
+          <div>
+            &copy; {currentYear} Kirtee &amp; Associates. All rights reserved.
+          </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <Link
               href="/privacy"
-              style={{ color: 'inherit', textDecoration: 'none' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.45)')}
+              style={{ color: '#6b7280', textDecoration: 'none', transition: 'color 0.2s ease' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#6b7280')}
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms"
-              style={{ color: 'inherit', textDecoration: 'none' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.45)')}
+              style={{ color: '#6b7280', textDecoration: 'none', transition: 'color 0.2s ease' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#111827')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#6b7280')}
             >
               Terms of Use
             </Link>
