@@ -8,7 +8,7 @@
     "ctaText": "EXPLORE COLLECTIONS",
     "eyebrow": "ARCHITECTURAL LIGHTING SYSTEMS",
     "imageAlt": "Bespoke pendant luminaire illuminating warm dining table overlooking ocean twilight",
-    "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85",
+    "imageUrl": "/media/hero-slide-1.webp",
     "subtitle": "Bespoke architectural lighting systems engineered for exceptional spaces."
   },
   {
@@ -20,7 +20,7 @@
     "ctaText": "DISCOVER DRY GOODS",
     "eyebrow": "PRECISION OPTICAL CRAFT",
     "imageAlt": "Continuous linear lighting grazing architectural travertine wall",
-    "imageUrl": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=2000&q=85",
+    "imageUrl": "/media/hero-slide-2.webp",
     "subtitle": "Micro-aperture linear wall grazers and dark-light downlights for monolithic architecture."
   },
   {
@@ -32,7 +32,7 @@
     "ctaText": "DISCOVER WET GOODS",
     "eyebrow": "IP68 SUBMERSIBLE SYSTEMS",
     "imageAlt": "Articulated architectural bronze projectors illuminating water and facade",
-    "imageUrl": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=2000&q=85",
+    "imageUrl": "/media/hero-slide-3.webp",
     "subtitle": "Marine-grade in-ground facade projectors crafted for extreme subterranean resilience."
   },
   {

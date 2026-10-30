@@ -22,7 +22,7 @@ const slides: SlideItem[] = [
     subtitle: 'Herzog & de Meuron',
     description: 'A sublime exploration of transparency, crystalline refraction and master glassmaking.',
     slug: 'boltons',
-    imageUrl: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=2000&q=85',
+    imageUrl: '/media/hero-slide-3.webp',
     buttonLabel: 'DISCOVER MORE',
   },
   {
@@ -31,7 +31,7 @@ const slides: SlideItem[] = [
     subtitle: 'Neil Poulton',
     description: 'Organic honeycomb architectural luminaire generated from algorithmic fractal moon scans.',
     slug: 'calipso',
-    imageUrl: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=2000&q=85',
+    imageUrl: '/media/hero-slide-2.webp',
     buttonLabel: 'DISCOVER MORE',
   },
   {
@@ -40,7 +40,7 @@ const slides: SlideItem[] = [
     subtitle: 'Carlotta de Bevilacqua',
     description: 'Open, flexible architectural linear system capable of drawing continuous lines of light.',
     slug: 'a-24-system',
-    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85',
+    imageUrl: '/media/hero-slide-1.webp',
     buttonLabel: 'DISCOVER MORE',
   },
   {

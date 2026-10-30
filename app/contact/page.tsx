@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { siteConfig } from '@/config/site';
-import { Phone, Mail, MapPin, MessageSquare } from 'lucide-react';
+import { MapPin, MessageSquare } from 'lucide-react';
 import { getSetting, DEFAULT_CONTACT, ContactConfig } from '@/lib/site-settings';
 
 export const revalidate = 60;
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default async function ContactPage() {
   const contact = await getSetting<ContactConfig>('site_contact', DEFAULT_CONTACT);
 
-  const cleanPhone = (contact.phoneNumber || '+91 70969 62640').replace(/[^0-9+]/g, '');
+
   const cleanWhatsapp = (contact.whatsappNumber || '+91 70969 62640').replace(/[^0-9]/g, '');
   const whatsappMsg = encodeURIComponent(
     contact.whatsappMessage ||
@@ -120,46 +120,7 @@ export default async function ContactPage() {
 
                 {/* Direct Contact Details */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  {/* Email */}
-                  <a href={`mailto:${contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}`} className="contact-detail-link">
-                    <div
-                      style={{
-                        width: '46px',
-                        height: '46px',
-                        borderRadius: '50%',
-                        backgroundColor: '#f3f4f6',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Mail size={20} style={{ color: '#111827' }} />
-                    </div>
-                    <span>{contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}</span>
-                  </a>
 
-                  {/* Phone */}
-                  <a href={`tel:${cleanPhone}`} className="contact-detail-link">
-                    <div
-                      style={{
-                        width: '46px',
-                        height: '46px',
-                        borderRadius: '50%',
-                        backgroundColor: '#f3f4f6',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Phone size={20} style={{ color: '#111827' }} />
-                    </div>
-                    <span>
-                      {contact.contactPerson ? `${contact.contactPerson} — ` : ''}
-                      {contact.phoneNumber || '+91 70969 62640'}
-                    </span>
-                  </a>
 
                   {/* Address */}
                   <div

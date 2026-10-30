@@ -27,7 +27,7 @@ const heroSlides: HeroSlide[] = [
     subtitle: 'Bespoke architectural lighting systems engineered for exceptional spaces.',
     ctaText: 'EXPLORE COLLECTIONS',
     ctaHref: '/products',
-    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85',
+    imageUrl: '/media/hero-slide-1.webp',
     imageAlt: 'Bespoke pendant luminaire illuminating warm dining table overlooking ocean twilight',
   },
   {
@@ -38,7 +38,7 @@ const heroSlides: HeroSlide[] = [
     subtitle: 'Micro-aperture linear wall grazers and dark-light downlights for monolithic architecture.',
     ctaText: 'DISCOVER DRY GOODS',
     ctaHref: '/dry-goods',
-    imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=2000&q=85',
+    imageUrl: '/media/hero-slide-2.webp',
     imageAlt: 'Continuous linear lighting grazing architectural travertine wall',
   },
   {
@@ -49,7 +49,7 @@ const heroSlides: HeroSlide[] = [
     subtitle: 'Marine-grade in-ground facade projectors crafted for extreme subterranean resilience.',
     ctaText: 'DISCOVER WET GOODS',
     ctaHref: '/wet-goods',
-    imageUrl: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=2000&q=85',
+    imageUrl: '/media/hero-slide-3.webp',
     imageAlt: 'Articulated architectural bronze projectors illuminating water and facade',
   },
 ];

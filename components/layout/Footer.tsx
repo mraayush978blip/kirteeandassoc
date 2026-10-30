@@ -4,16 +4,16 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LinkedinIcon, InstagramIcon } from '@/components/ui/Icons';
-import { Phone, Mail, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
   const [contact, setContact] = React.useState({
-    phoneNumber: '+91 70969 62640',
-    contactPerson: 'Divvya',
-    inquiryEmail: 'inquiries@kirteeandassoc.com',
+    phoneNumber: '',
+    contactPerson: '',
+    inquiryEmail: '',
     studioAddress: 'Kirtee & Associates Architectural Studio',
     companyName: 'Kirtee & Associates Architectural Studio',
     linkedinUrl: 'https://linkedin.com/company/kirteeandassoc',
@@ -216,7 +216,7 @@ export const Footer: React.FC = () => {
               </Link>
             </nav>
 
-            {/* Direct Specification & Contact Info */}
+            {/* Studio Location Info */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
               <span
                 style={{
@@ -228,42 +228,8 @@ export const Footer: React.FC = () => {
                   marginBottom: '0.25rem',
                 }}
               >
-                SPECIFICATION CONTACT
+                STUDIO LOCATION
               </span>
-              <a
-                href={`tel:${(contact.phoneNumber || '7096962640').replace(/[^0-9+]/g, '')}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  fontSize: '0.875rem',
-                  color: '#ffffff',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#ffffff')}
-              >
-                <Phone size={14} style={{ color: 'var(--color-accent)' }} />
-                <span>{contact.contactPerson ? `${contact.contactPerson} — ` : ''}{contact.phoneNumber || '+91 70969 62640'}</span>
-              </a>
-              <a
-                href={`mailto:${contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  fontSize: '0.875rem',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)')}
-              >
-                <Mail size={14} />
-                <span>{contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}</span>
-              </a>
               <div
                 style={{
                   display: 'flex',

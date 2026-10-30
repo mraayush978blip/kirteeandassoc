@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { X, Phone, ArrowUpRight, ChevronDown } from 'lucide-react';
+import { X, ArrowUpRight, ChevronDown } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
@@ -106,8 +106,6 @@ export const Header: React.FC = () => {
     return null;
   }
 
-  const isProductsActive =
-    pathname.startsWith('/products') || pathname === '/dry-goods' || pathname === '/wet-goods';
   const isLightHeader = !pathname.startsWith('/admin') && !pathname.startsWith('/ad');
 
   return (
@@ -533,77 +531,7 @@ export const Header: React.FC = () => {
               maxWidth: '480px',
             }}
           >
-            {/* Direct Studio Call & Consultation (Priority #1 on Mobile Drawer) */}
-            {contact.phoneNumber && (
-              <div
-                style={{
-                  padding: '0.85rem 1rem',
-                  borderRadius: '8px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.16)',
-                  marginBottom: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '0.75rem',
-                }}
-              >
-                <div style={{ minWidth: 0 }}>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.625rem',
-                      color: 'rgba(255, 255, 255, 0.55)',
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      marginBottom: '2px',
-                    }}
-                  >
-                    Direct Consultation
-                  </span>
-                  <a
-                    href={`tel:${contact.phoneNumber.replace(/[^0-9+]/g, '')}`}
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.9375rem',
-                      fontWeight: 600,
-                      color: '#ffffff',
-                      textDecoration: 'none',
-                      letterSpacing: '0.04em',
-                      display: 'block',
-                      overflowWrap: 'break-word',
-                    }}
-                  >
-                    {contact.phoneNumber}
-                  </a>
-                </div>
 
-                <a
-                  href={`tel:${contact.phoneNumber.replace(/[^0-9+]/g, '')}`}
-                  aria-label="Call Studio Now"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    padding: '0.45rem 0.85rem',
-                    borderRadius: '9999px',
-                    backgroundColor: 'var(--color-accent, #c9a96e)',
-                    color: '#0a0a09',
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.6875rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    textDecoration: 'none',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Phone size={11} strokeWidth={2.4} />
-                  <span>Call</span>
-                </a>
-              </div>
-            )}
 
             {/* 1. HOME */}
             <Link
@@ -623,144 +551,43 @@ export const Header: React.FC = () => {
               HOME
             </Link>
 
-            {/* 2. PRODUCTS with DRY & WET GOODS */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <Link
-                  href="/products"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: 'clamp(1.1875rem, 4.5vw, 1.45rem)',
-                    fontWeight: 600,
-                    color: isProductsActive ? 'var(--color-accent)' : '#ffffff',
-                    textDecoration: 'none',
-                    letterSpacing: '0.14em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  PRODUCTS
-                </Link>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.625rem',
-                    letterSpacing: '0.1em',
-                    color: 'rgba(255, 255, 255, 0.45)',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  CATALOGUE
-                </span>
-              </div>
+            {/* 2. DRY GOODS */}
+            <Link
+              href="/dry-goods"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 'clamp(1.1875rem, 4.5vw, 1.45rem)',
+                fontWeight: 600,
+                color: pathname === '/dry-goods' ? 'var(--color-accent)' : '#ffffff',
+                textDecoration: 'none',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                transition: 'color 0.2s ease',
+              }}
+            >
+              DRY GOODS
+            </Link>
 
-              {/* Sub-items for Dry Goods & Wet Goods */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                  paddingLeft: '1rem',
-                  borderLeft: '2px solid rgba(255, 255, 255, 0.14)',
-                  marginTop: '0.25rem',
-                }}
-              >
-                <Link
-                  href="/dry-goods"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      color:
-                        pathname === '/dry-goods'
-                          ? 'var(--color-accent)'
-                          : 'rgba(255, 255, 255, 0.9)',
-                    }}
-                  >
-                    DRY GOODS
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.6875rem',
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      marginTop: '2px',
-                    }}
-                  >
-                    Architectural Indoor Systems
-                  </span>
-                </Link>
+            {/* 3. WET GOODS */}
+            <Link
+              href="/wet-goods"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 'clamp(1.1875rem, 4.5vw, 1.45rem)',
+                fontWeight: 600,
+                color: pathname === '/wet-goods' ? 'var(--color-accent)' : '#ffffff',
+                textDecoration: 'none',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                transition: 'color 0.2s ease',
+              }}
+            >
+              WET GOODS
+            </Link>
 
-                <Link
-                  href="/wet-goods"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      color:
-                        pathname === '/wet-goods'
-                          ? 'var(--color-accent)'
-                          : 'rgba(255, 255, 255, 0.9)',
-                    }}
-                  >
-                    WET GOODS
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.6875rem',
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      marginTop: '2px',
-                    }}
-                  >
-                    Outdoor &amp; IP68 Submersible
-                  </span>
-                </Link>
-
-                <Link
-                  href="/products"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.75rem',
-                    fontWeight: 500,
-                    color: 'rgba(255, 255, 255, 0.55)',
-                    textDecoration: 'none',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    marginTop: '0.25rem',
-                  }}
-                >
-                  View All Products Catalogue →
-                </Link>
-              </div>
-            </div>
-
-            {/* 3. CONTACT */}
+            {/* 4. CONTACT */}
             <Link
               href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -779,7 +606,7 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Drawer Footer: Quick Consultation CTA & Direct Contact Info */}
+          {/* Drawer Footer: Get In Touch CTA */}
           <div
             style={{
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
@@ -810,44 +637,11 @@ export const Header: React.FC = () => {
                 boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
               }}
             >
-              <span>Schedule Consultation</span>
+              <span>Get In Touch</span>
               <ArrowUpRight size={14} />
             </Link>
 
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                fontSize: '0.75rem',
-                color: 'rgba(255, 255, 255, 0.6)',
-              }}
-            >
-              <a
-                href={`tel:${(contact.phoneNumber || '7096962640').replace(/[^0-9+]/g, '')}`}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  textDecoration: 'none',
-                }}
-              >
-                <Phone size={13} style={{ color: 'var(--color-accent)' }} />
-                <span>Primary Contact: {contact.contactPerson ? `${contact.contactPerson} (` : ''}{contact.phoneNumber || '+91 70969 62640'}{contact.contactPerson ? ')' : ''}</span>
-              </a>
 
-              <a
-                href={`mailto:${contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}`}
-                style={{
-                  color: 'rgba(255, 255, 255, 0.55)',
-                  textDecoration: 'none',
-                  paddingLeft: '1.3rem',
-                }}
-              >
-                {contact.inquiryEmail || 'inquiries@kirteeandassoc.com'}
-              </a>
-            </div>
           </div>
         </div>
       )}
