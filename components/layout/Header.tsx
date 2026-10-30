@@ -141,48 +141,52 @@ export const Header: React.FC = () => {
         }}
       >
         <div
-          className="container"
           style={{
             width: '100%',
+            paddingLeft: 'clamp(1rem, 2.5vw, 3rem)',
+            paddingRight: 'clamp(1rem, 2.5vw, 3rem)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '1.5rem',
+            gap: '1rem',
+            boxSizing: 'border-box',
           }}
         >
-          {/* Brand Logo: ZENVORA */}
-          <Link
-            href="/"
-            aria-label="ZENVORA Architectural Lighting"
-            style={{ display: 'inline-flex', flexDirection: 'column', textDecoration: 'none' }}
-          >
-            <span
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: 'clamp(1.15rem, 3.8vw, 1.35rem)',
-                fontWeight: 700,
-                letterSpacing: '0.14em',
-                color: isLightHeader ? '#111827' : '#E9E6DE',
-                textTransform: 'uppercase',
-                lineHeight: 1.1,
-              }}
+          {/* Brand Logo: ZENVORA (Left Column, flex 1) */}
+          <div style={{ flex: '1 0 0', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+            <Link
+              href="/"
+              aria-label="ZENVORA Architectural Lighting"
+              style={{ display: 'inline-flex', flexDirection: 'column', textDecoration: 'none' }}
             >
-              ZENVORA
-            </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 'clamp(0.48rem, 1.8vw, 0.5625rem)',
-                fontWeight: 500,
-                letterSpacing: '0.22em',
-                color: isLightHeader ? '#6b7280' : '#96938C',
-                textTransform: 'uppercase',
-                marginTop: '2px',
-              }}
-            >
-              ARCHITECTURAL LIGHTING
-            </span>
-          </Link>
+              <span
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: 'clamp(1.15rem, 3.8vw, 1.35rem)',
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  color: isLightHeader ? '#111827' : '#E9E6DE',
+                  textTransform: 'uppercase',
+                  lineHeight: 1.1,
+                }}
+              >
+                ZENVORA
+              </span>
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 'clamp(0.48rem, 1.8vw, 0.5625rem)',
+                  fontWeight: 500,
+                  letterSpacing: '0.22em',
+                  color: isLightHeader ? '#6b7280' : '#96938C',
+                  textTransform: 'uppercase',
+                  marginTop: '2px',
+                }}
+              >
+                ARCHITECTURAL LIGHTING
+              </span>
+            </Link>
+          </div>
 
           {/* Center Navigation Links: HOME, DRY GOODS, WET GOODS, CONTACT */}
           <nav
@@ -190,7 +194,9 @@ export const Header: React.FC = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: 'clamp(1.5rem, 2.5vw, 2.75rem)',
+              flexShrink: 0,
             }}
             className="desktop-nav"
           >
@@ -355,12 +361,14 @@ export const Header: React.FC = () => {
             </Link>
           </nav>
 
-          {/* Right Action: Desktop Contact Pill & Direct Inquiries */}
+          {/* Right Action: Desktop Contact Pill & Direct Inquiries (Aligned to Far Right Hand Side) */}
           <div
             className="desktop-cta"
             style={{
+              flex: '1 0 0',
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'flex-end',
               gap: '1.25rem',
             }}
           >
