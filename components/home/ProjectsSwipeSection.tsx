@@ -75,20 +75,27 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [showProjects, setShowProjects] = useState<boolean>(
-    settings?.showOnWebsite !== undefined ? settings.showOnWebsite : false
+    Boolean(settings?.showOnWebsite)
   );
   const [projectList, setProjectList] = useState<ProjectItem[]>(
     initialProjects && initialProjects.length > 0 ? initialProjects : projects
   );
 
+  // Sync state if settings prop changes
+  React.useEffect(() => {
+    if (settings?.showOnWebsite !== undefined) {
+      setShowProjects(Boolean(settings.showOnWebsite));
+    }
+  }, [settings?.showOnWebsite]);
+
   // Check showOnWebsite master toggle and load dynamic projects
   React.useEffect(() => {
-    fetch('/api/content?key=projects', { cache: 'no-store' })
+    fetch(`/api/content?key=projects&_t=${Date.now()}`, { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data) {
           if (data.data.settings && data.data.settings.showOnWebsite !== undefined) {
-            setShowProjects(data.data.settings.showOnWebsite);
+            setShowProjects(Boolean(data.data.settings.showOnWebsite));
           }
           if (data.data.projects && Array.isArray(data.data.projects) && data.data.projects.length > 0) {
             setProjectList(data.data.projects);

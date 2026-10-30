@@ -74,5 +74,5 @@ export const defaultFooter: FooterConfig = {
     { label: 'Terms of Use', href: '/terms' },
     { label: 'Photometric Compliance', href: '/compliance' },
   ],
-  copyright: `© ${new Date().getFullYear()} Kirtee & Associates. All rights reserved.`,
+  copyright: '© ' + new Date().getFullYear() + ' Kirtee & Associates. All rights reserved.',
 };

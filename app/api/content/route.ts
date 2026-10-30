@@ -24,8 +24,10 @@ import {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const CACHE_HEADERS = {
-  'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate',
+  'Pragma': 'no-cache',
+  'Expires': '0',
 };
 
 export async function GET(req: NextRequest) {
@@ -35,48 +37,48 @@ export async function GET(req: NextRequest) {
 
     if (key === 'hero_slides') {
       const slides = await getSetting<HeroSlideConfig[]>('hero_slides', DEFAULT_HERO_SLIDES);
-      return NextResponse.json({ success: true, data: slides }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: slides }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'projects') {
       const projects = await getSetting<ProjectConfig[]>('site_projects', DEFAULT_PROJECTS);
       const settings = await getSetting<ProjectSettings>('project_settings', DEFAULT_PROJECT_SETTINGS);
-      return NextResponse.json({ success: true, data: { projects, settings } }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: { projects, settings } }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'contact') {
       const contact = await getSetting<ContactConfig>('site_contact', DEFAULT_CONTACT);
-      return NextResponse.json({ success: true, data: contact }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: contact }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'project_settings') {
       const settings = await getSetting<ProjectSettings>('project_settings', DEFAULT_PROJECT_SETTINGS);
-      return NextResponse.json({ success: true, data: settings }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: settings }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'philosophy' || key === 'home_philosophy') {
       const philosophy = await getSetting<PhilosophyConfig>('home_philosophy', DEFAULT_PHILOSOPHY);
-      return NextResponse.json({ success: true, data: philosophy }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: philosophy }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'why_choose_us' || key === 'home_why_choose_us') {
       const whyChooseUs = await getSetting<WhyChooseUsConfig>('home_why_choose_us', DEFAULT_WHY_CHOOSE_US);
-      return NextResponse.json({ success: true, data: whyChooseUs }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: whyChooseUs }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'process' || key === 'home_process') {
       const process = await getSetting<ProcessConfig>('home_process', DEFAULT_PROCESS);
-      return NextResponse.json({ success: true, data: process }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: process }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'project_cta' || key === 'home_project_cta') {
       const projectCta = await getSetting<ProjectCtaConfig>('home_project_cta', DEFAULT_PROJECT_CTA);
-      return NextResponse.json({ success: true, data: projectCta }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: projectCta }, { headers: NO_CACHE_HEADERS });
     }
 
     if (key === 'typography' || key === 'site_typography') {
       const typography = await getSetting<TypographyConfig>('site_typography', DEFAULT_TYPOGRAPHY);
-      return NextResponse.json({ success: true, data: typography }, { headers: CACHE_HEADERS });
+      return NextResponse.json({ success: true, data: typography }, { headers: NO_CACHE_HEADERS });
     }
 
     const [heroSlides, projects, projectSettings, contact, philosophy, whyChooseUs, process, projectCta] =
@@ -105,7 +107,7 @@ export async function GET(req: NextRequest) {
           projectCta,
         },
       },
-      { headers: CACHE_HEADERS }
+      { headers: NO_CACHE_HEADERS }
     );
   } catch (error: unknown) {
     return NextResponse.json(
@@ -122,7 +124,7 @@ export async function GET(req: NextRequest) {
           projectCta: DEFAULT_PROJECT_CTA,
         },
       },
-      { status: 200, headers: CACHE_HEADERS }
+      { status: 200, headers: NO_CACHE_HEADERS }
     );
   }
 }

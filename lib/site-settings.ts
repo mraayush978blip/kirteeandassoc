@@ -18,7 +18,7 @@ const LOCAL_STORAGE_DIR = path.join(process.cwd(), 'data');
 
 // High-speed in-memory cache (eliminates repeat Supabase roundtrips; <0.5ms lookup)
 const settingsCache = new Map<string, { data: unknown; timestamp: number }>();
-const SETTINGS_CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
+const SETTINGS_CACHE_TTL_MS = 2000; // 2 seconds TTL (instant real-time responsiveness)
 
 export function invalidateSettingsCache(key?: string): void {
   if (key) {

@@ -23,7 +23,8 @@ import {
   ProjectSettings,
 } from '@/lib/site-settings';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function HomePage() {
   const [heroSlides, projects, philosophy, whyChooseUs, process, projectCta, projectSettings] = await Promise.all([
@@ -51,7 +52,9 @@ export default async function HomePage() {
       <FlosBespokeProcessSection config={process} />
 
       {/* 5. Featured Projects: Swipeable Architectural Showcase */}
-      <ProjectsSwipeSection initialProjects={projects} settings={projectSettings} />
+      {projectSettings?.showOnWebsite ? (
+        <ProjectsSwipeSection initialProjects={projects} settings={projectSettings} />
+      ) : null}
 
       {/* 6. Specification Consultation CTA */}
       <ProjectCtaSection config={projectCta} />

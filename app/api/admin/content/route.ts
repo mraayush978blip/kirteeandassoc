@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import {
   getSetting,
   saveSetting,
+  invalidateSettingsCache,
   DEFAULT_HERO_SLIDES,
   DEFAULT_PROJECTS,
   DEFAULT_CONTACT,
@@ -133,10 +134,12 @@ export async function POST(req: NextRequest) {
     }
 
     await saveSetting(key, value);
+    invalidateSettingsCache(key);
 
     // Instantly invalidate server cache so that homepage & public routes reflect changes immediately
     try {
       revalidatePath('/', 'layout');
+      revalidatePath('/', 'page');
       revalidatePath('/');
       revalidatePath('/contact');
       revalidatePath('/dry-goods');
