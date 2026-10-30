@@ -1,17 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { X, ArrowUpRight, ChevronDown } from 'lucide-react';
+import { X, ArrowUpRight } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
-  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const dropdownContainerRef = useRef<HTMLDivElement>(null);
 
   const isAdminRoute = pathname?.startsWith('/admin') || pathname?.startsWith('/ad');
 
@@ -40,7 +37,6 @@ export const Header: React.FC = () => {
   // Close menus on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
-    setIsProductsDropdownOpen(false);
   }, [pathname]);
 
   // Lock body scroll when mobile drawer is open
@@ -53,53 +49,6 @@ export const Header: React.FC = () => {
       };
     }
   }, [isMobileMenuOpen]);
-
-  // Click outside to close dropdown
-  useEffect(() => {
-    if (isAdminRoute) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        dropdownContainerRef.current &&
-        !dropdownContainerRef.current.contains(e.target as Node)
-      ) {
-        setIsProductsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isAdminRoute]);
-
-  const [contact, setContact] = useState({
-    phoneNumber: '+91 70969 62640',
-    contactPerson: 'Divvya',
-    inquiryEmail: 'inquiries@kirteeandassoc.com',
-  });
-
-  useEffect(() => {
-    if (isAdminRoute) return;
-    fetch('/api/content?key=contact', { cache: 'no-store' })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.data) {
-          setContact((prev) => ({
-            ...prev,
-            ...data.data,
-          }));
-        }
-      })
-      .catch(() => {});
-  }, [isAdminRoute]);
-
-  const handleMouseEnterProducts = () => {
-    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
-    setIsProductsDropdownOpen(true);
-  };
-
-  const handleMouseLeaveProducts = () => {
-    dropdownTimeoutRef.current = setTimeout(() => {
-      setIsProductsDropdownOpen(false);
-    }, 150);
-  };
 
   // Eliminate duplicate header on admin routes (called after all hooks to satisfy React Rules of Hooks)
   if (isAdminRoute) {
@@ -150,8 +99,8 @@ export const Header: React.FC = () => {
             boxSizing: 'border-box',
           }}
         >
-          {/* Brand Logo: ZENVORA (Left Column, flex 1) */}
-          <div style={{ flex: '1 0 0', display: 'flex', alignItems: 'center', minWidth: 0 }}>
+          {/* Brand Logo: ZENVORA (Left Column) */}
+          <div style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
             <Link
               href="/"
               aria-label="ZENVORA Architectural Lighting"
@@ -186,15 +135,16 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Center Navigation Links: HOME, DRY GOODS, WET GOODS, CONTACT */}
+          {/* Right Navigation Links: HOME, DRY GOODS, WET GOODS, CONTACT (Shifted to Right) */}
           <nav
             aria-label="Main Navigation"
             style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'flex-end',
               gap: 'clamp(1.5rem, 2.5vw, 2.75rem)',
               flexShrink: 0,
+              marginLeft: 'auto',
             }}
             className="desktop-nav"
           >
@@ -358,49 +308,6 @@ export const Header: React.FC = () => {
               )}
             </Link>
           </nav>
-
-          {/* Right Action: Desktop Inquiries CTA (Aligned to Far Right Hand Side) */}
-          <div
-            className="desktop-cta"
-            style={{
-              flex: '1 0 0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <Link
-              href="/contact"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                padding: '0.5rem 1.15rem',
-                backgroundColor: isLightHeader ? '#111827' : '#ffffff',
-                color: isLightHeader ? '#ffffff' : '#0a0a09',
-                borderRadius: '9999px',
-                fontFamily: 'var(--font-sans)',
-                fontSize: '0.6875rem',
-                fontWeight: 600,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = isLightHeader ? '#374151' : 'var(--color-accent)';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = isLightHeader ? '#111827' : '#ffffff';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <span>Enquire</span>
-              <ArrowUpRight size={13} />
-            </Link>
-          </div>
 
           {/* Mobile Right Action Area: Hamburger Toggle */}
           <div style={{ display: 'flex', alignItems: 'center' }}>

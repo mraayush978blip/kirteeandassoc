@@ -34,7 +34,7 @@ export const Footer: React.FC = () => {
           }));
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [isAdminRoute]);
 
   // Hide public footer on admin panel
@@ -146,23 +146,7 @@ export const Footer: React.FC = () => {
               >
                 HOME
               </Link>
-              <Link
-                href="/products"
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.14em',
-                  color: 'rgba(255, 255, 255, 0.75)',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
-              >
-                PRODUCTS
-              </Link>
+
               <Link
                 href="/dry-goods"
                 style={{
@@ -178,7 +162,7 @@ export const Footer: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
               >
-                DRY GOODS (INDOOR)
+                DRY GOODS
               </Link>
               <Link
                 href="/wet-goods"
@@ -195,7 +179,7 @@ export const Footer: React.FC = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)')}
               >
-                WET GOODS (OUTDOOR)
+                WET GOODS
               </Link>
               <Link
                 href="/contact"
