@@ -136,42 +136,16 @@ export const ImageCropperModal: React.FC<ImageCropperModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 999999,
-        backgroundColor: 'rgba(15, 18, 22, 0.85)',
-        backdropFilter: 'blur(8px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.5rem',
-      }}
+      className="admin-modal-overlay"
     >
       <div
+        className="admin-modal-container"
         style={{
-          width: '100%',
           maxWidth: '720px',
-          backgroundColor: '#ffffff',
-          borderRadius: '8px',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          maxHeight: '90vh',
         }}
       >
         {/* Header */}
-        <div
-          style={{
-            padding: '1.25rem 1.75rem',
-            borderBottom: '1px solid #e5e7eb',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: '#f9fafb',
-          }}
-        >
+        <div className="admin-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <Crop size={18} style={{ color: '#111827' }} />
             <h3

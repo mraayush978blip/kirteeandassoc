@@ -1745,26 +1745,10 @@ function AdminDashboardContent() {
               {heroSlides.map((slide, index) => (
                 <div
                   key={slide.id || index}
-                  style={{
-                    backgroundColor: '#ffffff',
-                    borderRadius: '8px',
-                    border: '1px solid #e5e7eb',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                  }}
+                  className="admin-slide-card"
                 >
                   {/* Slide Image Preview with Change button */}
-                  <div
-                    style={{
-                      width: '320px',
-                      height: '220px',
-                      position: 'relative',
-                      backgroundColor: '#111827',
-                      flexShrink: 0,
-                    }}
-                  >
+                  <div className="admin-slide-preview">
                     <Image src={slide.imageUrl} alt={slide.imageAlt} fill style={{ objectFit: 'cover' }} sizes="400px" />
                     <div style={{ position: 'absolute', bottom: '0.75rem', left: '0.75rem', display: 'flex', gap: '0.4rem', zIndex: 2 }}>
                       <label
@@ -2573,7 +2557,7 @@ function AdminDashboardContent() {
                 backgroundColor: '#ffffff',
                 borderRadius: '8px',
                 border: '1px solid #e5e7eb',
-                padding: '1rem 1.5rem',
+                padding: 'clamp(0.85rem, 2vw, 1.25rem)',
                 display: 'flex',
                 flexWrap: 'wrap',
                 alignItems: 'center',
@@ -2583,7 +2567,7 @@ function AdminDashboardContent() {
               }}
             >
               {/* Category Dropdown */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                 <label style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#374151' }}>Category:</label>
                 <select
                   value={productCategoryFilter}
@@ -2606,7 +2590,7 @@ function AdminDashboardContent() {
               </div>
 
               {/* Search Bar */}
-              <div style={{ position: 'relative', minWidth: '260px' }}>
+              <div style={{ position: 'relative', flex: '1 1 240px', minWidth: 'min(100%, 240px)' }}>
                 <input
                   type="text"
                   placeholder="Search by name, SKU or slug..."
@@ -2677,7 +2661,7 @@ function AdminDashboardContent() {
                   </div>
 
                   {/* Right: Action Buttons (Edit, Delete, Preview, Duplicate) */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div className="admin-card-actions">
                     <Link
                       href={`/products/${p.slug}`}
                       target="_blank"
@@ -2821,9 +2805,11 @@ function AdminDashboardContent() {
                 backgroundColor: '#ffffff',
                 borderRadius: '8px',
                 border: '1px solid #e5e7eb',
-                padding: '1.5rem',
+                padding: 'clamp(1rem, 2vw, 1.5rem)',
                 marginBottom: '2rem',
                 display: 'flex',
+                flexWrap: 'wrap',
+                gap: '1rem',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
@@ -3561,42 +3547,11 @@ function AdminDashboardContent() {
         <div
           role="dialog"
           aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 99999,
-            backgroundColor: 'rgba(10, 10, 9, 0.85)',
-            backdropFilter: 'blur(8px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.5rem',
-          }}
+          className="admin-modal-overlay"
         >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '920px',
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              boxShadow: '0 25px 60px rgba(0,0,0,0.35)',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              maxHeight: '92vh',
-            }}
-          >
+          <div className="admin-modal-container">
             {/* Modal Header */}
-            <div
-              style={{
-                padding: '1.25rem 2rem',
-                borderBottom: '1px solid #e5e7eb',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: '#fafafa',
-              }}
-            >
+            <div className="admin-modal-header">
               <div>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', fontWeight: 600, color: '#6b7280', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                   {editingProduct.id?.startsWith('prod-') ? 'EDIT LUMINAIRE' : 'NEW LUMINAIRE SPECIFICATION'}
@@ -3654,9 +3609,9 @@ function AdminDashboardContent() {
             </div>
 
             {/* Modal Body */}
-            <form onSubmit={saveProductSubmit} style={{ overflowY: 'auto', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+            <form onSubmit={saveProductSubmit} className="admin-modal-body">
               {/* Category, Name, Slug Row */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1.5fr', gap: '1rem' }}>
+              <div className="admin-form-grid-3">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
                     Category
@@ -4213,7 +4168,7 @@ function AdminDashboardContent() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {(editingProduct.specifications || []).map((spec, sIdx) => (
-                    <div key={spec.id || sIdx} style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr 36px', gap: '0.5rem', alignItems: 'center' }}>
+                    <div key={spec.id || sIdx} className="admin-spec-row">
                       <input
                         type="text"
                         placeholder="Label (e.g. Luminous Flux)"
@@ -4463,7 +4418,7 @@ function AdminDashboardContent() {
             zIndex: 999999,
             backgroundColor: '#f3f4f6',
             overflowY: 'auto',
-            padding: '2rem',
+            padding: 'clamp(0.5rem, 2vw, 2rem)',
           }}
         >
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -4504,29 +4459,15 @@ function AdminDashboardContent() {
         <div
           role="dialog"
           aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 99999,
-            backgroundColor: 'rgba(10, 10, 9, 0.85)',
-            backdropFilter: 'blur(8px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.5rem',
-          }}
+          className="admin-modal-overlay"
         >
           <div
+            className="admin-modal-container"
             style={{
-              width: '100%',
               maxWidth: '600px',
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
             }}
           >
-            <div style={{ padding: '1.25rem 1.75rem', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f9fafb' }}>
+            <div className="admin-modal-header">
               <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#111827' }}>
                 {editingProject.id?.startsWith('proj-') ? 'Edit Project' : 'Add New Architectural Project'}
               </h3>
@@ -4535,7 +4476,7 @@ function AdminDashboardContent() {
               </button>
             </div>
 
-            <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="admin-modal-body">
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>Project Title</label>
                 <input
@@ -4546,7 +4487,7 @@ function AdminDashboardContent() {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-grid-2">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>Location</label>
                   <input
@@ -4624,33 +4565,16 @@ function AdminDashboardContent() {
         <div
           role="dialog"
           aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 99999,
-            backgroundColor: 'rgba(10, 10, 9, 0.85)',
-            backdropFilter: 'blur(8px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.5rem',
-          }}
+          className="admin-modal-overlay"
         >
           <div
+            className="admin-modal-container"
             style={{
-              width: '100%',
               maxWidth: '700px',
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
-              maxHeight: '90vh',
-              display: 'flex',
-              flexDirection: 'column',
             }}
           >
             {/* Modal Header */}
-            <div style={{ padding: '1.25rem 1.75rem', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f9fafb' }}>
+            <div className="admin-modal-header">
               <div>
                 <h3 style={{ margin: '0 0 0.2rem 0', fontSize: '1.0625rem', fontWeight: 700, color: '#111827' }}>
                   Add New Homepage Hero Slide
@@ -4669,7 +4593,7 @@ function AdminDashboardContent() {
             </div>
 
             {/* Modal Body */}
-            <div style={{ padding: '1.75rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div className="admin-modal-body">
               {/* Image Preview & Upload Controls */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
@@ -4787,7 +4711,7 @@ function AdminDashboardContent() {
               </div>
 
               {/* Eyebrow & Headline */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-grid-2">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
                     Category / Eyebrow
@@ -4830,7 +4754,7 @@ function AdminDashboardContent() {
               </div>
 
               {/* Button Text & Link */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-grid-2">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
                     Button Label
