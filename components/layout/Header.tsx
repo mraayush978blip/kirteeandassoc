@@ -134,15 +134,16 @@ export const Header: React.FC = () => {
           boxShadow: isScrolled ? '0 8px 24px -6px rgba(0, 0, 0, 0.05)' : 'none',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          transition: 'background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
-          paddingTop: '0.95rem',
-          paddingBottom: '0.95rem',
+          height: 'var(--header-height, 72px)',
+          display: 'flex',
+          alignItems: 'center',
           boxSizing: 'border-box',
         }}
       >
         <div
           className="container"
           style={{
+            width: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',

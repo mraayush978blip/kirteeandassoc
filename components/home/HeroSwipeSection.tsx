@@ -200,8 +200,8 @@ export const HeroSwipeSection: React.FC<HeroSwipeSectionProps> = ({ initialSlide
       aria-label="Zenvora Architectural Lighting Systems"
       style={{
         position: 'relative',
-        height: 'clamp(540px, 86vh, 800px)',
-        minHeight: '520px',
+        height: 'calc(100vh - var(--header-height, 72px))',
+        minHeight: 'max(540px, calc(100dvh - var(--header-height, 72px)))',
         backgroundColor: '#0a0a0a',
         color: '#ffffff',
         overflow: 'hidden',
