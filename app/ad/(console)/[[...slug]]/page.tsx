@@ -49,6 +49,9 @@ import {
   Type,
 } from 'lucide-react';
 import { formatBytes } from '@/lib/format';
+import { AdminChrome, AdminTab } from '@/components/admin/AdminChrome';
+import { EnquiriesPanel } from '@/components/admin/EnquiriesPanel';
+import { useAdminUser } from '@/components/admin/AdminUserContext';
 import { Product, ProductSpecification, ProductImage } from '@/types/product';
 import {
   HeroSlideConfig,
@@ -72,28 +75,26 @@ import { ProductGridBuilder, GridPhotoItem } from '@/components/admin/ProductGri
 import { ImageCropperModal } from '@/components/admin/ImageCropperModal';
 import { AdminTypographyManager } from '@/components/admin/AdminTypographyManager';
 
-type AdminTab = 'dashboard' | 'home' | 'products' | 'projects' | 'contact' | 'typography' | 'settings';
 
 function AdminDashboardContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
-  const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(false);
+  const adminUser = useAdminUser();
 
-  const navigateTab = (tab: AdminTab) => {
-    setActiveTab(tab);
-    if (tab === 'dashboard') {
-      router.push('/ad');
-    } else {
-      router.push(`/ad/${tab}`);
+  // Switch URL without a Next.js navigation: the console stays mounted (no remount, no refetch flash).
+  // usePathname()/useSearchParams() still update because Next integrates with history.pushState.
+  const go = (url: string) => {
+    if (typeof window !== 'undefined' && window.location.pathname + window.location.search !== url) {
+      window.history.pushState(null, '', url);
     }
   };
 
-  // Authentication State
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
-  const [currentUser, setCurrentUser] = useState<{ email: string; role: string; id?: string } | null>(null);
+  const navigateTab = (tab: AdminTab) => {
+    setActiveTab(tab);
+    go(tab === 'dashboard' ? '/ad' : `/ad/${tab}`);
+  };
 
   // Form Auto-Save / Draft State
   const [productDraft, setProductDraft] = useState<{
@@ -104,9 +105,12 @@ function AdminDashboardContent() {
   // General Notification Toast
   const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Only the newest toast's timer may dismiss it (an older timer must not hide a newer message)
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const showToast = (text: string, type: 'success' | 'error' = 'success') => {
     setToastMessage({ text, type });
-    setTimeout(() => setToastMessage(null), 4000);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastMessage(null), 4000);
   };
 
   // -------------------------------------------------------------
@@ -173,7 +177,8 @@ function AdminDashboardContent() {
   const [contactConfig, setContactConfig] = useState<ContactConfig>(DEFAULT_CONTACT);
   const [isLoadingContact, setIsLoadingContact] = useState(false);
   const [isSavingContact, setIsSavingContact] = useState(false);
-  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [enquiryStats, setEnquiryStats] = useState<{ total: number; newCount: number }>({ total: 0, newCount: 0 });
+  const newEnquiryCount = enquiryStats.newCount;
   const [isLoadingSubmissions, setIsLoadingSubmissions] = useState(false);
 
   // 6. Settings & Storage Management
@@ -208,63 +213,36 @@ function AdminDashboardContent() {
   }>({ isOpen: false });
 
   // -------------------------------------------------------------
-  // Session Authentication Check & Redirect
+  // Session: verified on the server by app/ad/(console)/layout.tsx before this page renders.
+  // Here we only handle sign-out and a session that expires while the console is open.
   // -------------------------------------------------------------
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch('/api/admin/session', { cache: 'no-store' });
-        const data = await res.json().catch(() => null);
-        if (res.ok && data?.authenticated && !cancelled) {
-          setIsAuthenticated(true);
-          setCurrentUser(data.user);
-          setIsAuthChecking(false);
-          return;
-        }
-      } catch {}
-      if (cancelled) return;
-      setIsAuthChecking(false);
-      const targetUrl = window.location.pathname + window.location.search;
-      router.replace(`/ad/login?redirect=${encodeURIComponent(targetUrl)}`);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [router]);
-
   const handleLogout = async () => {
     try {
       await fetch('/api/admin/logout', { method: 'POST' });
     } catch {}
-    setIsAuthenticated(false);
-    setCurrentUser(null);
-    router.replace('/ad/login');
+    window.location.assign('/ad/login');
   };
 
-  // If the server session expires mid-use, any 401 from the admin API sends us back to login
   useEffect(() => {
-    if (!isAuthenticated) return;
     const originalFetch = window.fetch;
     window.fetch = async (...args: Parameters<typeof fetch>) => {
       const res = await originalFetch(...args);
       const url = typeof args[0] === 'string' ? args[0] : args[0] instanceof URL ? args[0].href : args[0].url;
       if (res.status === 401 && url.includes('/api/admin/') && !url.includes('/api/admin/login')) {
-        setIsAuthenticated(false);
-        router.replace('/ad/login');
+        window.location.assign('/ad/login');
       }
       return res;
     };
     return () => {
       window.fetch = originalFetch;
     };
-  }, [isAuthenticated, router]);
+  }, []);
 
   const closeProductModal = () => {
     setIsProductModalOpen(false);
     setEditingProduct(null);
     if (pathname && (pathname.includes('/products/new') || pathname.includes('/products/edit'))) {
-      router.push('/ad/products');
+      go('/ad/products');
     }
   };
 
@@ -312,6 +290,8 @@ function AdminDashboardContent() {
       }
     } else if (mainSection === 'projects') {
       setActiveTab('projects');
+    } else if (mainSection === 'enquiries') {
+      setActiveTab('enquiries');
     } else if (mainSection === 'contact') {
       setActiveTab('contact');
     } else if (mainSection === 'typography') {
@@ -343,7 +323,7 @@ function AdminDashboardContent() {
     if (!productDraft) return;
     setEditingProduct(productDraft.product);
     setIsProductModalOpen(true);
-    router.push('/ad/products/new');
+    go('/ad/products/new');
     showToast(`Restored draft from ${productDraft.savedAt}.`);
   };
 
@@ -365,14 +345,14 @@ function AdminDashboardContent() {
     fetchProducts();
     fetchProjects();
     fetchContact();
+    fetchEnquiryStats();
     fetchStorageStats();
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchAllData();
-    }
-  }, [isAuthenticated]);
+    fetchAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // DB Status
   const fetchDbStatus = async () => {
@@ -519,27 +499,36 @@ function AdminDashboardContent() {
   const fetchContact = async () => {
     setIsLoadingContact(true);
     try {
-      // Load contact settings and customer inquiries in parallel
-      const [cfgRes, subRes] = await Promise.all([
-        fetch(`/api/admin/content?key=contact&_t=${Date.now()}`, { cache: 'no-store' }),
-        fetch(`/api/admin/submissions?_t=${Date.now()}`, { cache: 'no-store' }),
-      ]);
-      const data = await cfgRes.json();
-      if (data.success && data.data) {
-        setContactConfig(data.data);
-      }
-      const subData = await subRes.json();
-      if (subData.success && Array.isArray(subData.submissions)) {
-        setSubmissions(subData.submissions);
-      }
+      const res = await fetch(`/api/admin/content?key=contact&_t=${Date.now()}`, { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success && data.data) setContactConfig(data.data);
     } catch {
     } finally {
       setIsLoadingContact(false);
     }
   };
 
+  // Enquiry counters for the dashboard card and the sidebar badge
+  const fetchEnquiryStats = async () => {
+    try {
+      const res = await fetch(`/api/admin/submissions?_t=${Date.now()}`, { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.submissions)) {
+        setEnquiryStats({
+          total: data.submissions.length,
+          newCount: data.submissions.filter((x: { status?: string }) => (x.status || 'new') === 'new').length,
+        });
+      }
+    } catch {}
+  };
+
   const saveContactDetails = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Visible validation (the browser's own tooltip is easy to miss)
+    if (!contactConfig.whatsappNumber?.trim()) return showToast('WhatsApp number is required.', 'error');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((contactConfig.inquiryEmail || '').trim())) {
+      return showToast('Please enter a valid Primary Inquiry Email.', 'error');
+    }
     setIsSavingContact(true);
     try {
       const res = await fetch('/api/admin/content', {
@@ -695,7 +684,7 @@ function AdminDashboardContent() {
     setNewCarouselUrl('');
     setIsProductModalOpen(true);
     if (updateUrl) {
-      router.push('/ad/products/new');
+      go('/ad/products/new');
     }
   };
 
@@ -717,7 +706,7 @@ function AdminDashboardContent() {
     });
     setIsProductModalOpen(true);
     if (updateUrl) {
-      router.push(`/ad/products/edit?id=${encodeURIComponent(p.id)}`);
+      go(`/ad/products/edit?id=${encodeURIComponent(p.id)}`);
     }
   };
 
@@ -984,489 +973,23 @@ function AdminDashboardContent() {
   };
 
   // -------------------------------------------------------------
-  // Render Guard: Login View if Not Authenticated
-  // -------------------------------------------------------------
-  if (isAuthChecking || !isAuthenticated) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f1216' }}>
-        <div style={{ textAlign: 'center', color: '#ffffff' }}>
-          <RefreshCw size={28} className="animate-spin" style={{ margin: '0 auto 1rem', color: '#60a5fa' }} />
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', letterSpacing: '0.1em' }}>
-            VERIFYING ADMINISTRATIVE ACCESS...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // -------------------------------------------------------------
   // Authenticated Admin Dashboard Layout
   // -------------------------------------------------------------
   return (
     <div className="admin-root-container">
-      {/* Toast Notification Banner */}
-      {toastMessage && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '2rem',
-            right: '2rem',
-            zIndex: 999999,
-            backgroundColor: toastMessage.type === 'success' ? '#10b981' : '#ef4444',
-            color: '#ffffff',
-            padding: '0.85rem 1.5rem',
-            borderRadius: '4px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            fontSize: '0.875rem',
-            fontWeight: 500,
-          }}
-        >
-          {toastMessage.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-          <span>{toastMessage.text}</span>
-        </div>
-      )}
-
-      {/* Mobile Admin Header (Visible on screens < 1024px) */}
-      <header
-        className="admin-mobile-header"
-        style={{
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #e5e7eb',
-          padding: '0.75rem 1rem',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          position: 'sticky',
-          top: 0,
-          zIndex: 40,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.125rem', fontWeight: 700, color: '#111827' }}>
-            ZENVORA
-          </span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', padding: '0.15rem 0.4rem', backgroundColor: '#f3f4f6', borderRadius: '3px', color: '#4b5563', textTransform: 'uppercase' }}>
-            {activeTab}
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <button
-            type="button"
-            onClick={handleLogout}
-            title="Sign Out"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-              padding: '0.45rem 0.65rem',
-              borderRadius: '4px',
-              border: '1px solid #fee2e2',
-              backgroundColor: '#fef2f2',
-              color: '#dc2626',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              minHeight: '38px',
-            }}
-          >
-            <LogOut size={13} />
-            <span>Sign Out</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsNavDrawerOpen(!isNavDrawerOpen)}
-            aria-label="Toggle navigation menu"
-            style={{
-              width: '40px',
-              height: '40px',
-              minWidth: '40px',
-              minHeight: '40px',
-              borderRadius: '4px',
-              backgroundColor: '#f3f4f6',
-              border: '1px solid #e5e7eb',
-              color: '#111827',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            {isNavDrawerOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </header>
-
-      {/* Horizontal Mobile Tabs Bar (Instant 1-Tap Access to All Sections on Mobile) */}
-      <div
-        className="admin-mobile-tabs-bar"
-        style={{
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #e5e7eb',
-          padding: '0.45rem 0.75rem',
-          gap: '0.4rem',
-          overflowX: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          position: 'sticky',
-          top: '55px',
-          zIndex: 35,
-          scrollbarWidth: 'none',
-        }}
-      >
-        {[
-          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { id: 'home', label: 'Home Page', icon: Sliders },
-          { id: 'products', label: 'Products', icon: Package },
-          { id: 'projects', label: 'Projects', icon: Layers },
-          { id: 'contact', label: 'Contact', icon: MessageSquare },
-          { id: 'typography', label: 'Typography', icon: Type },
-          { id: 'settings', label: 'Settings', icon: Settings },
-        ].map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => navigateTab(tab.id as AdminTab)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                padding: '0.45rem 0.85rem',
-                borderRadius: '9999px',
-                border: isActive ? '1px solid #111827' : '1px solid #e5e7eb',
-                backgroundColor: isActive ? '#111827' : '#ffffff',
-                color: isActive ? '#ffffff' : '#374151',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-                flexShrink: 0,
-                minHeight: '34px',
-              }}
-            >
-              <Icon size={13} />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Mobile Drawer (When hamburger menu is opened) */}
-      {isNavDrawerOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 99999,
-            backgroundColor: 'rgba(0, 0, 0, 0.45)',
-            display: 'flex',
-          }}
-          onClick={() => setIsNavDrawerOpen(false)}
-        >
-          <div
-            style={{
-              width: '280px',
-              maxWidth: '85%',
-              backgroundColor: '#ffffff',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxShadow: '4px 0 24px rgba(0,0,0,0.15)',
-              padding: '1.25rem',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid #f3f4f6' }}>
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', fontWeight: 700, color: '#111827' }}>
-                  ZENVORA ADMIN
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsNavDrawerOpen(false)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.3rem', color: '#6b7280' }}
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
-                {[
-                  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-                  { id: 'home', label: 'Home Page', icon: Sliders },
-                  { id: 'products', label: 'Products', icon: Package },
-                  { id: 'projects', label: 'Projects', icon: Layers },
-                  { id: 'contact', label: 'Contact & WhatsApp', icon: MessageSquare },
-                  { id: 'typography', label: 'Typography & Fonts', icon: Type },
-                  { id: 'settings', label: 'Settings & Storage', icon: Settings },
-                ].map((tab) => {
-                  const Icon = tab.icon;
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => {
-                        navigateTab(tab.id as AdminTab);
-                        setIsNavDrawerOpen(false);
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.75rem',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '6px',
-                        border: 'none',
-                        backgroundColor: isActive ? '#111827' : '#f9fafb',
-                        color: isActive ? '#ffffff' : '#374151',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        minHeight: '44px',
-                      }}
-                    >
-                      <Icon size={18} />
-                      <span>{tab.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
-
-            <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <Link
-                href="/"
-                target="_blank"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.4rem',
-                  padding: '0.7rem',
-                  backgroundColor: '#f3f4f6',
-                  color: '#111827',
-                  borderRadius: '6px',
-                  fontSize: '0.8125rem',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  minHeight: '44px',
-                }}
-              >
-                <span>View Public Website</span>
-                <ExternalLink size={14} />
-              </Link>
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.4rem',
-                  padding: '0.7rem',
-                  backgroundColor: '#fef2f2',
-                  border: '1px solid #fee2e2',
-                  color: '#dc2626',
-                  borderRadius: '6px',
-                  fontSize: '0.8125rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  minHeight: '44px',
-                }}
-              >
-                <LogOut size={16} />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ======================================================== */}
-      {/* SIDEBAR NAVIGATION DRAWER (Desktop) */}
-      {/* ======================================================== */}
-      <aside
-        className="admin-sidebar-desktop"
-        style={{
-          width: '260px',
-          backgroundColor: '#ffffff',
-          borderRight: '1px solid #e5e7eb',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
-          zIndex: 50,
-          flexShrink: 0,
-        }}
-      >
-        <div>
-          {/* Admin Header Monogram */}
-          <div
-            style={{
-              padding: '1.5rem 1.75rem',
-              borderBottom: '1px solid #f3f4f6',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div>
-              <span
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.625rem',
-                  fontWeight: 600,
-                  color: '#6b7280',
-                  letterSpacing: '0.16em',
-                  textTransform: 'uppercase',
-                  display: 'block',
-                }}
-              >
-                ADMIN CONSOLE
-              </span>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1.25rem',
-                  fontWeight: 700,
-                  color: '#111827',
-                  margin: 0,
-                  letterSpacing: '0.04em',
-                }}
-              >
-                ZENVORA
-              </h2>
-            </div>
-          </div>
-
-          {/* Navigation Links */}
-          <nav style={{ padding: '1rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-            {[
-              { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-              { id: 'home', label: 'Home Page', icon: Sliders },
-              { id: 'products', label: 'Products', icon: Package },
-              { id: 'projects', label: 'Projects', icon: Layers },
-              { id: 'contact', label: 'Contact & WhatsApp', icon: MessageSquare },
-              { id: 'typography', label: 'Typography & Fonts', icon: Type },
-              { id: 'settings', label: 'Settings & Storage', icon: Settings },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => navigateTab(tab.id as AdminTab)}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '6px',
-                    border: 'none',
-                    backgroundColor: isActive ? '#111827' : 'transparent',
-                    color: isActive ? '#ffffff' : '#4b5563',
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.8125rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'all 0.15s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.backgroundColor = '#f3f4f6';
-                      e.currentTarget.style.color = '#111827';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color = '#4b5563';
-                    }
-                  }}
-                >
-                  <Icon size={17} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Bottom User Card & Quick Link */}
-        <div style={{ padding: '1.25rem', borderTop: '1px solid #f3f4f6' }}>
-          <div style={{ marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#111827', display: 'block' }}>
-              zenvora204@gmail.com
-            </span>
-            <span style={{ fontSize: '0.6875rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10b981' }} />
-              Super Admin Session
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <Link
-              href="/"
-              target="_blank"
-              style={{
-                flex: 1,
-                padding: '0.45rem',
-                borderRadius: '4px',
-                border: '1px solid #e5e7eb',
-                backgroundColor: '#ffffff',
-                color: '#374151',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                textAlign: 'center',
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.3rem',
-              }}
-            >
-              <span>View Site</span>
-              <ExternalLink size={12} />
-            </Link>
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              title="Sign Out"
-              style={{
-                padding: '0.45rem 0.65rem',
-                borderRadius: '4px',
-                border: '1px solid #fee2e2',
-                backgroundColor: '#fef2f2',
-                color: '#dc2626',
-                cursor: 'pointer',
-              }}
-            >
-              <LogOut size={14} />
-            </button>
-          </div>
-        </div>
-      </aside>
+      <AdminChrome
+        activeTab={activeTab}
+        onNavigate={navigateTab}
+        onLogout={handleLogout}
+        userEmail={adminUser?.email}
+        newEnquiryCount={newEnquiryCount}
+        toast={toastMessage}
+      />
 
       {/* ======================================================== */}
       {/* MAIN CONTENT AREA */}
       {/* ======================================================== */}
-      <main className="admin-main-content" style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
+      <div className="admin-main-content" style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
         {/* ======================================================== */}
         {/* 1. DASHBOARD OVERVIEW TAB */}
         {/* ======================================================== */}
@@ -1586,7 +1109,7 @@ function AdminDashboardContent() {
                   </span>
                   <MessageSquare size={18} style={{ color: '#f59e0b' }} />
                 </div>
-                <div style={{ fontSize: '2rem', fontWeight: 700, color: '#111827' }}>{submissions.length}</div>
+                <div style={{ fontSize: '2rem', fontWeight: 700, color: '#111827' }}>{enquiryStats.total}</div>
                 <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.35rem' }}>
                   WhatsApp: {contactConfig.whatsappNumber}
                 </div>
@@ -2872,6 +2395,9 @@ function AdminDashboardContent() {
                 </span>
                 <button
                   type="button"
+                  role="switch"
+                  aria-checked={projectSettings.showOnWebsite}
+                  aria-label="Show projects section on the website"
                   onClick={() => toggleShowProjects(!projectSettings.showOnWebsite)}
                   style={{
                     width: '52px',
@@ -2984,6 +2510,8 @@ function AdminDashboardContent() {
           </div>
         )}
 
+        {activeTab === 'enquiries' && <EnquiriesPanel onStatsChange={setEnquiryStats} showToast={showToast} />}
+
         {/* ======================================================== */}
         {/* 5. CONTACT & WHATSAPP REDIRECTION TAB */}
         {/* ======================================================== */}
@@ -3001,7 +2529,7 @@ function AdminDashboardContent() {
               </p>
             </div>
 
-            <form onSubmit={saveContactDetails} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '800px' }}>
+            <form noValidate onSubmit={saveContactDetails} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '800px' }}>
               {/* WhatsApp Card */}
               <div
                 style={{
@@ -3116,7 +2644,7 @@ function AdminDashboardContent() {
                     </label>
                     <input
                       type="text"
-                      required
+                      
                       value={contactConfig.phoneNumber}
                       onChange={(e) => setContactConfig({ ...contactConfig, phoneNumber: e.target.value })}
                       style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
@@ -3314,47 +2842,6 @@ function AdminDashboardContent() {
                 </button>
               </div>
             </form>
-
-            {/* Customer inquiries received through the public contact form */}
-            <div style={{ marginTop: '2.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <h2 style={{ fontFamily: 'var(--font-sans)', fontSize: '1.25rem', fontWeight: 600, color: '#111827', margin: 0 }}>
-                  Customer Inquiries ({submissions.length})
-                </h2>
-                <button
-                  type="button"
-                  onClick={fetchContact}
-                  style={{ padding: '0.5rem 1rem', border: '1px solid #d1d5db', borderRadius: '4px', background: '#fff', fontSize: '0.8125rem', cursor: 'pointer' }}
-                >
-                  Refresh
-                </button>
-              </div>
-              {submissions.length === 0 ? (
-                <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280', border: '1px dashed #d1d5db', borderRadius: '8px', fontSize: '0.875rem' }}>
-                  No inquiries received yet.
-                </div>
-              ) : (
-                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                  {submissions.map((sub, idx) => (
-                    <div key={sub.id || idx} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '1rem 1.25rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-                        <strong style={{ color: '#111827' }}>{sub.name}{sub.company ? ` — ${sub.company}` : ''}</strong>
-                        <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-                          {sub.created_at ? new Date(sub.created_at).toLocaleString() : ''}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: '0.8125rem', color: '#374151', margin: '0.35rem 0' }}>
-                        <a href={`mailto:${sub.email}`} style={{ color: '#2563eb' }}>{sub.email}</a>
-                        {sub.phone ? <> &bull; <a href={`tel:${sub.phone}`} style={{ color: '#2563eb' }}>{sub.phone}</a></> : null}
-                        {sub.topic ? <> &bull; {sub.topic}</> : null}
-                        {sub.product ? <> &bull; Product: {sub.product}</> : null}
-                      </div>
-                      <p style={{ margin: 0, fontSize: '0.875rem', color: '#111827', whiteSpace: 'pre-wrap' }}>{sub.message}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         )}
 
@@ -3454,7 +2941,7 @@ function AdminDashboardContent() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', marginBottom: '0.35rem' }}>
                     <span style={{ color: '#6b7280' }}>Catalog Records</span>
                     <span style={{ fontWeight: 600, color: '#111827' }}>
-                      {products.length} Products &bull; {submissions.length} Inquiries
+                      {products.length} Products &bull; {enquiryStats.total} Enquiries
                     </span>
                   </div>
                   <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
@@ -3628,7 +3115,7 @@ function AdminDashboardContent() {
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       {/* ======================================================== */}
       {/* ADD / EDIT PRODUCT MODAL (WITH DYNAMIC SPECS & GRID BUILDER) */}

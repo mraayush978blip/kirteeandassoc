@@ -20,7 +20,7 @@ export const Footer: React.FC = () => {
     instagramUrl: 'https://instagram.com/kirteeandassoc',
   });
 
-  const isAdminRoute = pathname?.startsWith('/admin') || pathname?.startsWith('/ad');
+  const isAdminRoute = /^\/(ad|admin)(\/|$)/.test(pathname || '');
 
   React.useEffect(() => {
     if (isAdminRoute) return;

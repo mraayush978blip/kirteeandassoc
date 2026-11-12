@@ -103,7 +103,20 @@ async function main() {
   assert((await call('/api/contact', { method: 'POST', body: { name: 'a', email: 'a@b.co', message: 'short' } })).status === 400, 'short message -> 400');
   assert((await call('/api/contact', { method: 'POST', body: { websiteHoneypot: 'bot' } })).status === 200, 'honeypot silently accepted (nothing stored)');
 
-  console.log('\n[8] Logout');
+  console.log('\n[8] Enquiries API + console gate');
+  assert((await call('/api/admin/submissions', { method: 'PATCH', body: { id: 'x', status: 'new' } })).status === 401, 'PATCH enquiry requires auth');
+  assert((await call('/api/admin/submissions?id=x', { method: 'DELETE' })).status === 401, 'DELETE enquiry requires auth');
+  assert((await call('/api/admin/submissions', { method: 'PATCH', cookie, body: { id: 'x', status: 'bogus' } })).status === 400, 'invalid enquiry status rejected');
+  assert((await call('/api/admin/submissions', { method: 'PATCH', cookie, body: { id: 'does-not-exist', status: 'reviewed' } })).status === 404, 'unknown enquiry -> 404');
+  assert((await call('/api/admin/submissions?id=does-not-exist', { method: 'DELETE', cookie })).status === 404, 'delete unknown enquiry -> 404');
+  for (const p of ['/ad', '/ad/products', '/ad/enquiries']) {
+    const r = await fetch(`${BASE_URL}${p}`, { redirect: 'manual' });
+    assert(r.status === 307 && (r.headers.get('location') || '').includes('/ad/login'), `${p} redirects signed-out visitors to login (server-side)`);
+    const r2 = await fetch(`${BASE_URL}${p}`, { redirect: 'manual', headers: { Cookie: cookie } });
+    assert(r2.status === 200, `${p} renders for a signed-in admin`);
+  }
+
+  console.log('\n[9] Logout');
   await call('/api/admin/logout', { method: 'POST', cookie });
   console.log(`\n${passed} passed, ${failed} failed`);
   process.exit(failed ? 1 : 0);

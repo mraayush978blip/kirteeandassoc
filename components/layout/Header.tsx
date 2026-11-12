@@ -10,7 +10,7 @@ export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const isAdminRoute = pathname?.startsWith('/admin') || pathname?.startsWith('/ad');
+  const isAdminRoute = /^\/(ad|admin)(\/|$)/.test(pathname || '');
 
   useEffect(() => {
     if (isAdminRoute) return;
@@ -57,7 +57,7 @@ export const Header: React.FC = () => {
     return null;
   }
 
-  const isLightHeader = !pathname.startsWith('/admin') && !pathname.startsWith('/ad');
+  const isLightHeader = !isAdminRoute;
 
   return (
     <>
