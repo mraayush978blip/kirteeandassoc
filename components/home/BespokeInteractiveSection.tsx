@@ -199,10 +199,11 @@ export const BespokeInteractiveSection: React.FC = () => {
                 }}
               >
                 <Image
-                  src="https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=800&q=80"
+                  src="/media/bespoke-cylinder-luminaire.webp"
                   alt="Customizable cylinder luminaire with precision optical reflector"
                   fill
                   sizes="400px"
+                  priority
                   style={{
                     objectFit: 'cover',
                     borderRadius: '8px',
