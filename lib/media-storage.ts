@@ -29,14 +29,19 @@ export function isSafeFilename(name: string): boolean {
   return /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,200}$/.test(name) && !name.includes('..');
 }
 
+/**
+ * Auth headers for the Storage REST API.
+ * - New-style secret keys (`sb_secret_...`) are not JWTs: send them in `apikey` only.
+ * - Legacy service_role keys are JWTs: send them as both `apikey` and Bearer token.
+ */
+function authHeaders(key: string): Record<string, string> {
+  return key.startsWith('sb_secret_') ? { apikey: key } : { apikey: key, Authorization: `Bearer ${key}` };
+}
+
 async function ensureBucket(cfg: { url: string; key: string }): Promise<void> {
   await fetch(`${cfg.url}/storage/v1/bucket`, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${cfg.key}`,
-      apikey: cfg.key,
-      'Content-Type': 'application/json',
-    },
+    headers: { ...authHeaders(cfg.key), 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: BUCKET, name: BUCKET, public: true }),
     signal: AbortSignal.timeout(10000),
   }).catch(() => undefined);
@@ -47,8 +52,7 @@ async function uploadToSupabase(cfg: { url: string; key: string }, filename: str
     fetch(`${cfg.url}/storage/v1/object/${BUCKET}/${encodeURIComponent(filename)}`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${cfg.key}`,
-        apikey: cfg.key,
+        ...authHeaders(cfg.key),
         'Content-Type': contentType,
         'x-upsert': 'true',
         'Cache-Control': 'max-age=31536000',
@@ -102,7 +106,7 @@ export async function deleteMedia(filename: string): Promise<number> {
     try {
       await fetch(`${cfg.url}/storage/v1/object/${BUCKET}/${encodeURIComponent(filename)}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${cfg.key}`, apikey: cfg.key },
+        headers: authHeaders(cfg.key),
         signal: AbortSignal.timeout(10000),
       });
     } catch {
