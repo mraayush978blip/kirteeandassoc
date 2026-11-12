@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     'Architectural outdoor, submerged, and weatherproof luminaires engineered for extreme environmental durability, facade grazing, and subterranean reveals.',
   openGraph: {
-    title: 'WET GOODS | Kirtee & Associates Architectural Collection',
+    title: 'WET GOODS | Architectural Collection',
     description:
       'Architectural outdoor, submerged, and weatherproof luminaires engineered for extreme environmental durability, facade grazing, and subterranean reveals.',
   },

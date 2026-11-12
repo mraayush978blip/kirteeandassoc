@@ -436,3 +436,49 @@ export function sanitizeTypography(input: unknown): TypographyConfig {
   }
   return out as unknown as TypographyConfig;
 }
+
+// ---------------------------------------------------------------------------
+// Brand (name + logo), editable from the admin console ("Brand & Logo")
+// ---------------------------------------------------------------------------
+export interface BrandConfig {
+  /** Shown in the header, footer, copyright line, page titles and search-engine data */
+  brandName: string;
+  /** Small line under the name in the header, e.g. "Architectural Lighting" (optional) */
+  tagline: string;
+  /** Logo image: "" = text only. A /media/... path or an https:// URL. */
+  logoUrl: string;
+  logoAlt: string;
+  logoSize: 'small' | 'medium' | 'large';
+  /** When a logo is set, also show the brand name next to it */
+  showNameWithLogo: boolean;
+}
+
+export const DEFAULT_BRAND: BrandConfig = {
+  brandName: 'Kirtee & Associates',
+  tagline: 'Architectural Lighting',
+  logoUrl: '',
+  logoAlt: '',
+  logoSize: 'medium',
+  showNameWithLogo: false,
+};
+
+export function isSafeLogoUrl(url: string): boolean {
+  return url === '' || ((/^\/(?!\/)/.test(url) || /^https:\/\//.test(url)) && url.length <= 2048);
+}
+
+/** Clamp every field to a safe shape (used when saving and when reading). */
+export function sanitizeBrand(input: unknown): BrandConfig {
+  const raw = (input && typeof input === 'object' ? input : {}) as Record<string, unknown>;
+  const str = (v: unknown, max: number, fallback: string) =>
+    typeof v === 'string' ? v.replace(/[\u0000-\u001f]/g, '').trim().slice(0, max) : fallback;
+  const name = str(raw.brandName, 80, DEFAULT_BRAND.brandName);
+  const logoUrl = typeof raw.logoUrl === 'string' && isSafeLogoUrl(raw.logoUrl.trim()) ? raw.logoUrl.trim() : '';
+  return {
+    brandName: name || DEFAULT_BRAND.brandName,
+    tagline: str(raw.tagline, 60, DEFAULT_BRAND.tagline),
+    logoUrl,
+    logoAlt: str(raw.logoAlt, 120, ''),
+    logoSize: raw.logoSize === 'small' || raw.logoSize === 'large' ? raw.logoSize : 'medium',
+    showNameWithLogo: raw.showNameWithLogo === true,
+  };
+}

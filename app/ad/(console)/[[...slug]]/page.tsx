@@ -51,6 +51,7 @@ import {
 import { formatBytes } from '@/lib/format';
 import { AdminChrome, AdminTab } from '@/components/admin/AdminChrome';
 import { EnquiriesPanel } from '@/components/admin/EnquiriesPanel';
+import { BrandPanel } from '@/components/admin/BrandPanel';
 import { useAdminUser } from '@/components/admin/AdminUserContext';
 import { Product, ProductSpecification, ProductImage } from '@/types/product';
 import {
@@ -292,6 +293,8 @@ function AdminDashboardContent() {
       setActiveTab('projects');
     } else if (mainSection === 'enquiries') {
       setActiveTab('enquiries');
+    } else if (mainSection === 'brand') {
+      setActiveTab('brand');
     } else if (mainSection === 'contact') {
       setActiveTab('contact');
     } else if (mainSection === 'typography') {
@@ -2511,6 +2514,8 @@ function AdminDashboardContent() {
         )}
 
         {activeTab === 'enquiries' && <EnquiriesPanel onStatsChange={setEnquiryStats} showToast={showToast} />}
+
+        {activeTab === 'brand' && <BrandPanel showToast={showToast} />}
 
         {/* ======================================================== */}
         {/* 5. CONTACT & WHATSAPP REDIRECTION TAB */}

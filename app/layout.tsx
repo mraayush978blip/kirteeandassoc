@@ -5,23 +5,27 @@ import { Footer } from '@/components/layout/Footer';
 import { siteConfig } from '@/config/site';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { DynamicTypography } from '@/components/typography/DynamicTypography';
-import { getSetting, DEFAULT_TYPOGRAPHY, TypographyConfig } from '@/lib/site-settings';
+import { getSetting, getBrand, DEFAULT_TYPOGRAPHY, TypographyConfig } from '@/lib/site-settings';
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
 };
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const brand = await getBrand();
+  const name = brand.brandName;
+  const defaultTitle = `${name} | ${siteConfig.tagline}`;
+  return {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: siteConfig.seo.defaultTitle,
-    template: siteConfig.seo.titleTemplate,
+    default: defaultTitle,
+    template: `%s | ${name}`,
   },
   description: siteConfig.seo.defaultDescription,
-  authors: [{ name: 'Kirtee & Associates' }],
-  creator: 'Kirtee & Associates',
-  publisher: 'Kirtee & Associates',
+  authors: [{ name }],
+  creator: name,
+  publisher: name,
   keywords: [
     'Architectural Lighting',
     'Bespoke Luminaires',
@@ -32,16 +36,16 @@ export const metadata: Metadata = {
     'Lighting Design India',
   ],
   openGraph: {
-    title: siteConfig.seo.defaultTitle,
+    title: defaultTitle,
     description: siteConfig.seo.defaultDescription,
     url: siteConfig.url,
-    siteName: siteConfig.name,
+    siteName: name,
     images: [
       {
         url: siteConfig.seo.ogImage,
         width: 1200,
         height: 630,
-        alt: 'Kirtee & Associates Architectural Luminaires',
+        alt: `${name} Architectural Luminaires`,
       },
     ],
     locale: 'en_IN',
@@ -49,7 +53,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: siteConfig.seo.defaultTitle,
+    title: defaultTitle,
     description: siteConfig.seo.defaultDescription,
     images: [siteConfig.seo.ogImage],
   },
@@ -64,14 +68,18 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-};
+  };
+}
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const typography = await getSetting<TypographyConfig>('site_typography', DEFAULT_TYPOGRAPHY);
+  const [typography, brand] = await Promise.all([
+    getSetting<TypographyConfig>('site_typography', DEFAULT_TYPOGRAPHY),
+    getBrand(),
+  ]);
 
   return (
     <html lang="en">
@@ -84,12 +92,12 @@ export default async function RootLayout({
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
-        <Header />
+        <Header brand={brand} />
         <main id="main-content" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
           {children}
         </main>
-        <Footer />
-        <JsonLd type="organization" />
+        <Footer brand={brand} />
+        <JsonLd type="organization" brandName={brand.brandName} logoUrl={brand.logoUrl} />
       </body>
     </html>
   );

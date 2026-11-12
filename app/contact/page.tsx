@@ -9,11 +9,11 @@ import { getSetting, DEFAULT_CONTACT, ContactConfig } from '@/lib/site-settings'
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Contact us | Kirtee & Associates Architectural Lighting',
+  title: 'Contact us',
   description:
     'Our architectural lighting team will be delighted to assist you. If you would like more information about our products or services, please contact us.',
   openGraph: {
-    title: 'Contact us | Kirtee & Associates Architectural Lighting',
+    title: 'Contact us',
     description: 'Technical and commercial architectural lighting inquiries.',
   },
 };

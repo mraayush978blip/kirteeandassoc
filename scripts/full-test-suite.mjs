@@ -116,7 +116,20 @@ async function main() {
     assert(r2.status === 200, `${p} renders for a signed-in admin`);
   }
 
-  console.log('\n[9] Logout');
+  console.log('\n[9] Brand & logo');
+  const origBrand = (await call('/api/admin/content?key=brand', { cookie })).json?.data;
+  assert(origBrand && typeof origBrand.brandName === 'string' && origBrand.brandName.length > 0, 'brand settings load with a default');
+  const saveBrand = (v) => call('/api/admin/content', { method: 'POST', cookie, body: { key: 'site_brand', value: v } });
+  assert((await saveBrand({ ...origBrand, brandName: '   ' })).status === 400, 'empty brand name rejected');
+  assert((await saveBrand({ ...origBrand, logoUrl: 'javascript:alert(1)' })).status === 400, 'javascript: logo URL rejected');
+  assert((await saveBrand({ ...origBrand, logoUrl: '//evil.example/x.png' })).status === 400, 'protocol-relative logo URL rejected');
+  assert((await saveBrand({ ...origBrand, brandName: 'QA Brand <b>ZZ</b>' })).status === 200, 'valid brand saved');
+  const home = await (await fetch(`${BASE_URL}/contact`)).text();
+  assert(!home.includes('<b>ZZ</b>'), 'brand name is HTML-escaped on the public site');
+  assert((await call('/api/admin/content', { method: 'POST', body: { key: 'site_brand', value: origBrand } })).status === 401, 'brand cannot be changed without login');
+  await saveBrand(origBrand); // restore the real value
+
+  console.log('\n[10] Logout');
   await call('/api/admin/logout', { method: 'POST', cookie });
   console.log(`\n${passed} passed, ${failed} failed`);
   process.exit(failed ? 1 : 0);

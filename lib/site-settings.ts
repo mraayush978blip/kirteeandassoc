@@ -15,6 +15,7 @@ export const ALLOWED_SETTING_KEYS = [
   'home_process',
   'home_project_cta',
   'site_typography',
+  'site_brand',
 ] as const;
 
 export function isAllowedSettingKey(key: unknown): key is (typeof ALLOWED_SETTING_KEYS)[number] {
@@ -138,4 +139,11 @@ export async function saveSetting<T>(
     success: true,
     warning: dbOk ? undefined : `Saved locally only; database sync failed (${dbError || 'not configured'}).`,
   };
+}
+
+import { BrandConfig, DEFAULT_BRAND, sanitizeBrand } from './site-settings-types';
+
+/** Brand name + logo, always returned in a safe, complete shape. */
+export async function getBrand(): Promise<BrandConfig> {
+  return sanitizeBrand({ ...DEFAULT_BRAND, ...(await getSetting<Partial<BrandConfig>>('site_brand', DEFAULT_BRAND)) });
 }

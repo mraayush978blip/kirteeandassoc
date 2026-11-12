@@ -7,6 +7,9 @@ import {
   invalidateSettingsCache,
   isAllowedSettingKey,
   sanitizeTypography,
+  sanitizeBrand,
+  isSafeLogoUrl,
+  getBrand,
   DEFAULT_HERO_SLIDES,
   DEFAULT_PROJECTS,
   DEFAULT_CONTACT,
@@ -84,6 +87,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: true, data: projectCta }, { headers: NO_CACHE_HEADERS });
     }
 
+    if (key === 'brand' || key === 'site_brand') {
+      return NextResponse.json({ success: true, data: await getBrand() }, { headers: NO_CACHE_HEADERS });
+    }
+
     if (key === 'typography' || key === 'site_typography') {
       const typography = await getSetting<TypographyConfig>('site_typography', DEFAULT_TYPOGRAPHY);
       return NextResponse.json({ success: true, data: typography }, { headers: NO_CACHE_HEADERS });
@@ -151,6 +158,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: `Invalid value shape for "${key}"` }, { status: 400 });
     }
     if (key === 'site_typography') value = sanitizeTypography(value);
+    if (key === 'site_brand') {
+      const v = value as Record<string, unknown>;
+      if (typeof v.logoUrl === 'string' && !isSafeLogoUrl(v.logoUrl.trim())) {
+        return NextResponse.json({ success: false, message: 'Logo URL must start with / or https://' }, { status: 400 });
+      }
+      if (typeof v.brandName !== 'string' || !v.brandName.trim()) {
+        return NextResponse.json({ success: false, message: 'Brand name cannot be empty.' }, { status: 400 });
+      }
+      value = sanitizeBrand(value);
+    }
 
     const result = await saveSetting(key, value);
     if (!result.success) {

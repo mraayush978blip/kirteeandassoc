@@ -4,8 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { X, ArrowUpRight } from 'lucide-react';
+import { BrandConfig, DEFAULT_BRAND } from '@/lib/site-settings-types';
+import { BrandMark } from '@/components/layout/BrandMark';
 
-export const Header: React.FC = () => {
+export const Header: React.FC<{ brand?: BrandConfig }> = ({ brand = DEFAULT_BRAND }) => {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -101,41 +103,9 @@ export const Header: React.FC = () => {
             boxSizing: 'border-box',
           }}
         >
-          {/* Brand Logo: ZENVORA (Left Column) */}
+          {/* Brand (logo and/or name) from Admin > Brand & Logo */}
           <div style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
-            <Link
-              href="/"
-              aria-label="ZENVORA Architectural Lighting"
-              style={{ display: 'inline-flex', flexDirection: 'column', textDecoration: 'none' }}
-            >
-              <span
-                className="brand-title"
-                style={{
-                  fontFamily: 'var(--font-brand, var(--font-sans))',
-                  fontSize: 'clamp(1.15rem, 3.8vw, 1.35rem)',
-                  fontWeight: 700,
-                  letterSpacing: 'var(--brand-spacing, 0.14em)',
-                  color: isLightHeader ? '#111827' : '#E9E6DE',
-                  textTransform: 'uppercase',
-                  lineHeight: 1.1,
-                }}
-              >
-                ZENVORA
-              </span>
-              <span
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 'clamp(0.48rem, 1.8vw, 0.5625rem)',
-                  fontWeight: 500,
-                  letterSpacing: 'var(--accent-spacing, 0.22em)',
-                  color: isLightHeader ? '#6b7280' : '#96938C',
-                  textTransform: 'uppercase',
-                  marginTop: '2px',
-                }}
-              >
-                ARCHITECTURAL LIGHTING
-              </span>
-            </Link>
+            <BrandMark brand={brand} variant="header" light={isLightHeader} />
           </div>
 
           {/* Right Navigation Links: HOME, DRY GOODS, WET GOODS, CONTACT (Shifted to Right) */}

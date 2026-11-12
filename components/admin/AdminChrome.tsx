@@ -8,6 +8,7 @@ import {
   Package,
   Layers,
   Inbox,
+  BadgeCheck,
   MessageSquare,
   Type,
   Settings,
@@ -23,6 +24,7 @@ export type AdminTab =
   | 'products'
   | 'projects'
   | 'enquiries'
+  | 'brand'
   | 'contact'
   | 'typography'
   | 'settings';
@@ -34,6 +36,7 @@ export const ADMIN_TABS: { id: AdminTab; label: string; icon: React.ComponentTyp
   { id: 'products', label: 'Products', icon: Package },
   { id: 'projects', label: 'Projects', icon: Layers },
   { id: 'enquiries', label: 'Enquiries', icon: Inbox },
+  { id: 'brand', label: 'Brand & Logo', icon: BadgeCheck },
   { id: 'contact', label: 'Contact & WhatsApp', icon: MessageSquare },
   { id: 'typography', label: 'Typography & Fonts', icon: Type },
   { id: 'settings', label: 'Settings & Storage', icon: Settings },

@@ -6,9 +6,12 @@ export interface JsonLdProps {
   type: 'website' | 'organization' | 'product' | 'breadcrumb';
   product?: Product;
   breadcrumbs?: { name: string; url: string }[];
+  /** Brand name/logo from the admin "Brand & Logo" setting */
+  brandName?: string;
+  logoUrl?: string;
 }
 
-export const JsonLd: React.FC<JsonLdProps> = ({ type, product, breadcrumbs }) => {
+export const JsonLd: React.FC<JsonLdProps> = ({ type, product, breadcrumbs, brandName, logoUrl }) => {
   let schemaData: Record<string, unknown> = {};
 
   if (type === 'organization' || type === 'website') {
@@ -18,9 +21,9 @@ export const JsonLd: React.FC<JsonLdProps> = ({ type, product, breadcrumbs }) =>
         {
           '@type': 'Organization',
           '@id': `${siteConfig.url}/#organization`,
-          name: siteConfig.name,
+          name: brandName || siteConfig.name,
           url: siteConfig.url,
-          logo: `${siteConfig.url}/images/logo.png`,
+          logo: logoUrl ? (logoUrl.startsWith('http') ? logoUrl : `${siteConfig.url}${logoUrl}`) : undefined,
           telephone: siteConfig.formattedPhone,
           email: siteConfig.email,
           contactPoint: {

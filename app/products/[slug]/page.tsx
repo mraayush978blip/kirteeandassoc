@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
     };
   }
 
-  const title = product.seo?.metaTitle || `${product.name} | Kirtee & Associates`;
+  const title = product.name; // the layout's title template appends the brand name
   const description = product.seo?.metaDescription || product.shortDescription;
 
   return {

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Architectural Catalogue | Kirtee & Associates',
+  title: 'Architectural Catalogue',
   description: 'Explore the portfolio of architectural luminaires by Kirtee & Associates.',
 };
 

@@ -5,8 +5,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LinkedinIcon, InstagramIcon } from '@/components/ui/Icons';
 import { MapPin } from 'lucide-react';
+import { BrandConfig, DEFAULT_BRAND } from '@/lib/site-settings-types';
+import { BrandMark } from '@/components/layout/BrandMark';
 
-export const Footer: React.FC = () => {
+export const Footer: React.FC<{ brand?: BrandConfig }> = ({ brand = DEFAULT_BRAND }) => {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
@@ -67,20 +69,9 @@ export const Footer: React.FC = () => {
         >
           {/* Brand Monogram */}
           <div style={{ maxWidth: '380px' }}>
-            <span
-              style={{
-                fontFamily: 'var(--font-brand, var(--font-sans))',
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                letterSpacing: 'var(--brand-spacing, 0.14em)',
-                color: '#111827',
-                textTransform: 'uppercase',
-                display: 'block',
-                marginBottom: '0.4rem',
-              }}
-            >
-              KIRTEE &amp; ASSOCIATES
-            </span>
+            <div style={{ marginBottom: '0.4rem' }}>
+              <BrandMark brand={brand} variant="footer" light />
+            </div>
             <span
               style={{
                 fontFamily: 'var(--font-sans)',
@@ -273,7 +264,7 @@ export const Footer: React.FC = () => {
           }}
         >
           <div>
-            &copy; {currentYear} Kirtee &amp; Associates. All rights reserved.
+            &copy; {currentYear} {brand.brandName}. All rights reserved.
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
