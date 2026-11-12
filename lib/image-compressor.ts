@@ -1,7 +1,7 @@
 import sharp from 'sharp';
-import fs from 'fs/promises';
 import path from 'path';
 import { CompressionResult, formatBytes } from './format';
+import { storeMedia } from './media-storage';
 
 export type { CompressionResult };
 export { formatBytes };
@@ -42,10 +42,6 @@ export async function compressToWebP(
   const webpFilename = `${cleanBaseName}-${timestamp}.webp`;
   const thumbFilename = `${cleanBaseName}-${timestamp}-thumb.webp`;
 
-  // Ensure public/media directory exists
-  const publicMediaDir = path.join(process.cwd(), 'public', 'media');
-  await fs.mkdir(publicMediaDir, { recursive: true });
-
   // 1. Process Main High-Quality WebP
   let pipeline = sharp(buffer).rotate(); // Auto-rotate by EXIF orientation
 
@@ -82,10 +78,8 @@ export async function compressToWebP(
       ? Number(((savingsBytes / originalSizeBytes) * 100).toFixed(1))
       : 0;
 
-  // Save main file to public/media
-  const filePath = path.join(publicMediaDir, webpFilename);
-  await fs.writeFile(filePath, compressedBuffer);
-  const url = `/media/${webpFilename}`;
+  // Save main file (Supabase Storage in production, public/media locally)
+  const url = await storeMedia(compressedBuffer, webpFilename, 'image/webp');
 
   // 2. Generate Responsive Thumbnail
   let thumbnailUrl = url;
@@ -101,9 +95,7 @@ export async function compressToWebP(
         .webp({ quality: 80, effort: 4 })
         .toBuffer();
 
-      const thumbFilePath = path.join(publicMediaDir, thumbFilename);
-      await fs.writeFile(thumbFilePath, thumbBuffer);
-      thumbnailUrl = `/media/${thumbFilename}`;
+      thumbnailUrl = await storeMedia(thumbBuffer, thumbFilename, 'image/webp');
     } catch (thumbError) {
       console.warn('Thumbnail generation warning:', thumbError);
     }

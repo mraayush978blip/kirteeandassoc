@@ -66,28 +66,37 @@ kirteeandassoc/
 
 ## 🚀 Getting Started
 
-### 1. Environment Configuration
-Copy `.env.example` to `.env.local` and configure your credentials:
+### 1. Environment
 ```bash
 cp .env.example .env.local
 ```
+Fill in at least: `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+`ADMIN_SESSION_SECRET` (`openssl rand -hex 32`), `ADMIN_EMAIL`, `ADMIN_PASSWORD`.
+For admin image uploads on Vercel also set `SUPABASE_SERVICE_ROLE_KEY` (server-only), and
+`RESEND_API_KEY` + `CONTACT_NOTIFICATION_EMAIL` for inquiry emails. Set the same variables in Vercel.
 
-### 2. Install Dependencies
+### 2. Install & create the database tables
 ```bash
 npm install
+npm run db:setup      # applies schema.sql to DATABASE_URL (safe to re-run)
+```
+The product catalog and site settings seed themselves from `data/*.json` the first time the app
+reads an empty database.
+
+### 3. Run
+```bash
+npm run dev           # http://localhost:3000   (admin: /ad)
+npm run test:e2e      # API test suite (needs the dev server running)
+npm run test:sync     # admin -> frontend live-sync check
 ```
 
-### 3. Start Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+### Architecture note
+The running app uses **Next.js + Supabase Postgres (`lib/db.ts`) + Supabase Storage**. Payload CMS
+files (`payload/`, `payload.config.ts`) are optional and disabled unless `ENABLE_PAYLOAD=true`.
 
-### 4. Build for Production
-```bash
-npm run build
-npm start
-```
+### Admin security model
+Admin login is verified server-side (`/api/admin/login`) and stored in a signed, HttpOnly,
+SameSite=Strict cookie. Every `/api/admin/*` route calls `requireAdmin()`. Never put credentials in client code.
 
 ---
 

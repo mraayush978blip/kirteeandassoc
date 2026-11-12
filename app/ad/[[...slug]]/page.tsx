@@ -50,7 +50,6 @@ import {
 } from 'lucide-react';
 import { formatBytes } from '@/lib/format';
 import { Product, ProductSpecification, ProductImage } from '@/types/product';
-import { loginWithSupabase } from '@/lib/supabase-auth';
 import {
   HeroSlideConfig,
   ProjectConfig,
@@ -212,29 +211,54 @@ function AdminDashboardContent() {
   // Session Authentication Check & Redirect
   // -------------------------------------------------------------
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('kirtee_admin_auth');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && parsed.email) {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/admin/session', { cache: 'no-store' });
+        const data = await res.json().catch(() => null);
+        if (res.ok && data?.authenticated && !cancelled) {
           setIsAuthenticated(true);
-          setCurrentUser(parsed);
+          setCurrentUser(data.user);
           setIsAuthChecking(false);
           return;
         }
-      }
-    } catch {}
-    setIsAuthChecking(false);
-    const targetUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/ad';
-    router.replace(`/ad/login?redirect=${encodeURIComponent(targetUrl)}`);
+      } catch {}
+      if (cancelled) return;
+      setIsAuthChecking(false);
+      const targetUrl = window.location.pathname + window.location.search;
+      router.replace(`/ad/login?redirect=${encodeURIComponent(targetUrl)}`);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('kirtee_admin_auth');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' });
+    } catch {}
     setIsAuthenticated(false);
     setCurrentUser(null);
     router.replace('/ad/login');
   };
+
+  // If the server session expires mid-use, any 401 from the admin API sends us back to login
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const originalFetch = window.fetch;
+    window.fetch = async (...args: Parameters<typeof fetch>) => {
+      const res = await originalFetch(...args);
+      const url = typeof args[0] === 'string' ? args[0] : args[0] instanceof URL ? args[0].href : args[0].url;
+      if (res.status === 401 && url.includes('/api/admin/') && !url.includes('/api/admin/login')) {
+        setIsAuthenticated(false);
+        router.replace('/ad/login');
+      }
+      return res;
+    };
+    return () => {
+      window.fetch = originalFetch;
+    };
+  }, [isAuthenticated, router]);
 
   const closeProductModal = () => {
     setIsProductModalOpen(false);
@@ -401,7 +425,7 @@ function AdminDashboardContent() {
         showToast(data.message || `Failed to update ${label}`, 'error');
       }
     } catch {
-      showToast(`Could not sync to cloud, saved locally.`, 'error');
+      showToast(`Could not reach the server. ${label} was not saved.`, 'error');
     } finally {
       setIsSavingSection(false);
     }
@@ -422,7 +446,7 @@ function AdminDashboardContent() {
         showToast(data.message || 'Error saving hero slides', 'error');
       }
     } catch {
-      showToast('Could not sync to cloud, saved locally.', 'error');
+      showToast('Could not reach the server. Hero slides were not saved.', 'error');
     }
   };
 
@@ -462,28 +486,32 @@ function AdminDashboardContent() {
     const nextSettings = { ...projectSettings, showOnWebsite: show };
     setProjectSettings(nextSettings);
     try {
-      await fetch('/api/admin/content', {
+      const res = await fetch('/api/admin/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'project_settings', value: nextSettings }),
       });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
       showToast(show ? 'Projects section is now LIVE on website.' : 'Projects section is now HIDDEN on website.');
     } catch {
-      showToast('Error updating project settings.', 'error');
+      showToast('Error updating project settings. Change was not saved.', 'error');
     }
   };
 
   const saveProjects = async (updatedProjects: ProjectConfig[]) => {
     setProjectsList(updatedProjects);
     try {
-      await fetch('/api/admin/content', {
+      const res = await fetch('/api/admin/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'site_projects', value: updatedProjects }),
       });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
       showToast('Projects saved successfully.');
     } catch {
-      showToast('Error syncing projects.', 'error');
+      showToast('Error saving projects. Changes were not saved.', 'error');
     }
   };
 
@@ -491,14 +519,15 @@ function AdminDashboardContent() {
   const fetchContact = async () => {
     setIsLoadingContact(true);
     try {
-      const res = await fetch(`/api/admin/content?key=contact&_t=${Date.now()}`, { cache: 'no-store' });
-      const data = await res.json();
+      // Load contact settings and customer inquiries in parallel
+      const [cfgRes, subRes] = await Promise.all([
+        fetch(`/api/admin/content?key=contact&_t=${Date.now()}`, { cache: 'no-store' }),
+        fetch(`/api/admin/submissions?_t=${Date.now()}`, { cache: 'no-store' }),
+      ]);
+      const data = await cfgRes.json();
       if (data.success && data.data) {
         setContactConfig(data.data);
       }
-
-      // Also fetch contact form submissions
-      const subRes = await fetch(`/api/admin/submissions?_t=${Date.now()}`, { cache: 'no-store' });
       const subData = await subRes.json();
       if (subData.success && Array.isArray(subData.submissions)) {
         setSubmissions(subData.submissions);
@@ -513,14 +542,16 @@ function AdminDashboardContent() {
     e.preventDefault();
     setIsSavingContact(true);
     try {
-      await fetch('/api/admin/content', {
+      const res = await fetch('/api/admin/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'site_contact', value: contactConfig }),
       });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
       showToast('WhatsApp & Contact details updated across entire site.');
-    } catch {
-      showToast('Error saving contact details.', 'error');
+    } catch (err) {
+      showToast(err instanceof Error && err.message ? err.message : 'Error saving contact details.', 'error');
     } finally {
       setIsSavingContact(false);
     }
@@ -710,6 +741,8 @@ function AdminDashboardContent() {
       if (data.success) {
         showToast(`Duplicated product as "${copy.name}".`);
         fetchProducts();
+      } else {
+        showToast(data.message || 'Error duplicating product', 'error');
       }
     } catch {
       showToast('Error duplicating product', 'error');
@@ -724,6 +757,8 @@ function AdminDashboardContent() {
       if (data.success) {
         showToast(`Product "${name}" deleted.`);
         fetchProducts();
+      } else {
+        showToast(data.message || 'Error deleting product', 'error');
       }
     } catch {
       showToast('Error deleting product', 'error');
@@ -3279,6 +3314,47 @@ function AdminDashboardContent() {
                 </button>
               </div>
             </form>
+
+            {/* Customer inquiries received through the public contact form */}
+            <div style={{ marginTop: '2.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <h2 style={{ fontFamily: 'var(--font-sans)', fontSize: '1.25rem', fontWeight: 600, color: '#111827', margin: 0 }}>
+                  Customer Inquiries ({submissions.length})
+                </h2>
+                <button
+                  type="button"
+                  onClick={fetchContact}
+                  style={{ padding: '0.5rem 1rem', border: '1px solid #d1d5db', borderRadius: '4px', background: '#fff', fontSize: '0.8125rem', cursor: 'pointer' }}
+                >
+                  Refresh
+                </button>
+              </div>
+              {submissions.length === 0 ? (
+                <div style={{ padding: '2rem', textAlign: 'center', color: '#6b7280', border: '1px dashed #d1d5db', borderRadius: '8px', fontSize: '0.875rem' }}>
+                  No inquiries received yet.
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gap: '0.75rem' }}>
+                  {submissions.map((sub, idx) => (
+                    <div key={sub.id || idx} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '1rem 1.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+                        <strong style={{ color: '#111827' }}>{sub.name}{sub.company ? ` — ${sub.company}` : ''}</strong>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                          {sub.created_at ? new Date(sub.created_at).toLocaleString() : ''}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.8125rem', color: '#374151', margin: '0.35rem 0' }}>
+                        <a href={`mailto:${sub.email}`} style={{ color: '#2563eb' }}>{sub.email}</a>
+                        {sub.phone ? <> &bull; <a href={`tel:${sub.phone}`} style={{ color: '#2563eb' }}>{sub.phone}</a></> : null}
+                        {sub.topic ? <> &bull; {sub.topic}</> : null}
+                        {sub.product ? <> &bull; Product: {sub.product}</> : null}
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.875rem', color: '#111827', whiteSpace: 'pre-wrap' }}>{sub.message}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -3717,7 +3793,7 @@ function AdminDashboardContent() {
                     </div>
                     <p style={{ margin: 0, fontSize: '0.75rem', color: '#475569', maxWidth: '640px', lineHeight: 1.45 }}>
                       Manage the top full-width slider shown at the very top of the product sub-page.
-                      Click <strong>"📌 Pin this one to show on product page"</strong> on any image to designate it as the primary card image shown on catalog listing pages (<code>/dry-goods</code>, <code>/wet-goods</code>, <code>/products</code>).
+                      Click <strong>&quot;📌 Pin this one to show on product page&quot;</strong> on any image to designate it as the primary card image shown on catalog listing pages (<code>/dry-goods</code>, <code>/wet-goods</code>, <code>/products</code>).
                     </p>
                   </div>
 
@@ -3819,7 +3895,7 @@ function AdminDashboardContent() {
                       No slider showcase images configured yet.
                     </p>
                     <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8' }}>
-                      Click "Upload &amp; Crop (WebP)" or paste an image URL above to add the first image.
+                      Click &quot;Upload &amp; Crop (WebP)&quot; or paste an image URL above to add the first image.
                     </p>
                   </div>
                 ) : (
@@ -4082,7 +4158,7 @@ function AdminDashboardContent() {
                   style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
                 />
                 <span style={{ fontSize: '0.7rem', color: '#6b7280', marginTop: '0.2rem', display: 'block' }}>
-                  Leave empty if you do not want to show the "Download Brochure" button on the product sub-page.
+                  Leave empty if you do not want to show the &quot;Download Brochure&quot; button on the product sub-page.
                 </span>
               </div>
 
@@ -4277,7 +4353,7 @@ function AdminDashboardContent() {
                     Sub-Page Section Headings &amp; Custom Text (Zero-Hardcoding)
                   </h4>
                   <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>
-                    Customize every heading, eyebrow label, and descriptive paragraph appearing on this product's sub-page.
+                    Customize every heading, eyebrow label, and descriptive paragraph appearing on this product&apos;s sub-page.
                   </p>
                 </div>
 

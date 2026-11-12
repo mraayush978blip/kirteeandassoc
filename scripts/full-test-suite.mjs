@@ -1,253 +1,111 @@
 /**
- * Zenvora / Kirtee & Associates — Comprehensive Automated End-to-End Test Suite
- * Tests Auth, Dynamic Home Engine, Products Lifecycle, Projects Lifecycle, Contact Form, and Pages.
+ * Kirtee & Associates — end-to-end API test suite.
+ * Run the app first (`npm run dev` or `npm start`), then:  npm run test:e2e
+ * Admin credentials are read from .env.local (ADMIN_EMAIL / ADMIN_PASSWORD).
  */
-
-const BASE_URL = 'http://localhost:3000';
+import { BASE_URL, loginAdmin } from './_auth.mjs';
 
 let passed = 0;
 let failed = 0;
-const results = [];
-
-function assert(condition, message) {
-  if (condition) {
-    passed++;
-    results.push({ status: 'PASS', message });
-    console.log(`  \x1b[32m✔ PASS\x1b[0m ${message}`);
-  } else {
-    failed++;
-    results.push({ status: 'FAIL', message });
-    console.error(`  \x1b[31m✖ FAIL\x1b[0m ${message}`);
-  }
+function assert(cond, msg) {
+  if (cond) { passed++; console.log(`  \x1b[32m✔\x1b[0m ${msg}`); }
+  else { failed++; console.error(`  \x1b[31m✖ FAIL\x1b[0m ${msg}`); }
+}
+async function call(path, { method = 'GET', body, cookie, headers = {}, raw } = {}) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method,
+    redirect: 'manual',
+    headers: { ...(body && !raw ? { 'Content-Type': 'application/json' } : {}), ...(cookie ? { Cookie: cookie } : {}), ...headers },
+    body: raw ?? (body !== undefined ? JSON.stringify(body) : undefined),
+  });
+  let json = null;
+  try { json = await res.clone().json(); } catch {}
+  return { status: res.status, json, res };
 }
 
-async function fetchJson(url, options = {}) {
-  const res = await fetch(`${BASE_URL}${url}`, options);
-  const data = await res.json().catch(() => null);
-  return { status: res.status, ok: res.ok, data };
-}
+const ADMIN_GETS = ['/api/admin/content', '/api/admin/products', '/api/admin/submissions', '/api/admin/media', '/api/admin/site-images', '/api/admin/clean-images', '/api/admin/db-status'];
 
-async function runTestSuite() {
-  console.log('\n======================================================');
-  console.log(' ZENVORA / KIRTEE & ASSOCIATES — AUTOMATED TEST SUITE');
-  console.log('======================================================\n');
+async function main() {
+  console.log(`\nTesting ${BASE_URL}\n`);
 
-  // -----------------------------------------------------------------
-  // SUITE 1: Frontend Route Availability & Status Codes
-  // -----------------------------------------------------------------
-  console.log('\n[Suite 1]: Public & Administrative Route Health Checks');
-  const routes = [
-    { path: '/', expected: 200, name: 'Home Page' },
-    { path: '/products', expected: 200, name: 'All Products Catalog' },
-    { path: '/dry-goods', expected: 200, name: 'Dry Goods Catalog' },
-    { path: '/wet-goods', expected: 200, name: 'Wet Goods Catalog' },
-    { path: '/contact', expected: 200, name: 'Contact Us Page' },
-    { path: '/ad/login', expected: 200, name: 'Admin Login Page' },
-    { path: '/ad', expected: 200, name: 'Admin Dashboard Page' },
-    { path: '/robots.txt', expected: 200, name: 'Robots.txt' },
-    { path: '/sitemap.xml', expected: 200, name: 'Sitemap.xml' },
-  ];
-
-  for (const r of routes) {
-    const res = await fetch(`${BASE_URL}${r.path}`);
-    assert(res.status === r.expected, `${r.name} (${r.path}) returned HTTP ${res.status}`);
+  console.log('[1] Public routes');
+  for (const [p, ok] of [['/', [200]], ['/products', [200, 307, 308]], ['/dry-goods', [200]], ['/wet-goods', [200]], ['/contact', [200]], ['/ad/login', [200]], ['/robots.txt', [200]], ['/sitemap.xml', [200]], ['/does-not-exist', [404]]]) {
+    const r = await fetch(`${BASE_URL}${p}`, { redirect: 'manual' });
+    assert(ok.includes(r.status), `${p} -> ${r.status}`);
   }
 
-  // -----------------------------------------------------------------
-  // SUITE 2: Admin Authentication & Credential Verification
-  // -----------------------------------------------------------------
-  console.log('\n[Suite 2]: Admin Credentials & Authentication Engine');
-  const validEmail = 'zenvora204@gmail.com';
-  const validPassword = 'ADad@2013';
-  const masterPasswords = ['ADad@2013', 'adad@2013', 'Zenvora@2000', 'zenvora@2000', 'zenvora2026', 'Zenvora2026!', 'kirtee2026'];
-
-  const isMasterAuthorized =
-    validEmail.toLowerCase() === 'zenvora204@gmail.com' &&
-    masterPasswords.includes(validPassword.trim());
-
-  assert(isMasterAuthorized, `Admin credentials ${validEmail} with password ${validPassword} authorized`);
-
-  const isInvalidRejected =
-    validEmail.toLowerCase() === 'zenvora204@gmail.com' &&
-    masterPasswords.includes('wrong-password-xyz');
-  assert(!isInvalidRejected, 'Invalid password properly rejected by master authentication');
-
-  // -----------------------------------------------------------------
-  // SUITE 3: Dynamic Homepage Content Engine (Zero Hardcoded Data)
-  // -----------------------------------------------------------------
-  console.log('\n[Suite 3]: Dynamic Homepage Content (Admin Controlled)');
-  const contentRes = await fetchJson('/api/content?key=all');
-  assert(contentRes.status === 200 && contentRes.data?.success, 'GET /api/content returned success');
-
-  const content = contentRes.data?.data;
-  assert(Array.isArray(content?.heroSlides) && content.heroSlides.length > 0, 'Dynamic hero slides loaded');
-  assert(Boolean(content?.philosophy?.headline), `Dynamic philosophy loaded: "${content?.philosophy?.headline?.slice(0, 30)}..."`);
-  assert(Boolean(content?.whyChooseUs?.headline), `Dynamic why choose us loaded: "${content?.whyChooseUs?.headline?.slice(0, 30)}..."`);
-  assert(Array.isArray(content?.process?.steps) && content.process.steps.length === 4, 'Dynamic bespoke process steps (4 steps) loaded');
-  assert(Boolean(content?.projectCta?.headline), `Dynamic project CTA loaded: "${content?.projectCta?.headline}"`);
-
-  // Test updating a homepage section dynamically
-  const testPhilosophy = {
-    ...content.philosophy,
-    eyebrow: 'TEST ARCHITECTURAL PHILOSOPHY — ' + Date.now(),
-  };
-
-  const updateRes = await fetchJson('/api/admin/content', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key: 'home_philosophy', value: testPhilosophy }),
-  });
-  assert(updateRes.status === 200 && updateRes.data?.success, 'POST /api/admin/content updated home_philosophy');
-
-  const verifyUpdated = await fetchJson('/api/content?key=philosophy');
-  assert(
-    verifyUpdated.data?.data?.eyebrow === testPhilosophy.eyebrow,
-    'Verified dynamic update reflected immediately on public API'
-  );
-
-  // Restore original philosophy
-  await fetchJson('/api/admin/content', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key: 'home_philosophy', value: content.philosophy }),
-  });
-
-  // -----------------------------------------------------------------
-  // SUITE 4: Architectural Products Lifecycle (Add, Read, Update, Delete)
-  // -----------------------------------------------------------------
-  console.log('\n[Suite 4]: Products Management Lifecycle');
-  const testProduct = {
-    id: `prod-test-${Date.now()}`,
-    slug: `zenvora-aurora-test-${Date.now()}`,
-    name: 'Aurora Minimalist Linear Projector',
-    codeLabel: 'AURORA-TEST',
-    sku: 'AUR-001',
-    designer: 'Zenvora Architectural Studio',
-    catalogType: 'dry',
-    categoryId: 'cat-dry',
-    subcategory: 'Linear Projector Systems',
-    tagline: 'Continuous micro-aperture architectural linear projector',
-    shortDescription: 'Precision architectural luminaire for luxury residential and commercial galleries.',
-    fullDescription: 'Manufactured from 6063-T6 architectural grade aluminium with nitrogen sealed optical chamber.',
-    status: 'published',
-    isFeatured: true,
-    orderIndex: 99,
-    heroImageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    heroImageAlt: 'Aurora Minimalist Luminaire in gallery',
-    specifications: [
-      { id: 's1', label: 'Color Temperature', value: '3000K Warm White', group: 'Optical' },
-      { id: 's2', label: 'CRI', value: '95+ (R9 > 80)', group: 'Optical' },
-      { id: 's3', label: 'Dimming Protocol', value: 'DALI-2 / Casambi', group: 'Electrical' },
-      { id: 's4', label: 'IP Rating', value: 'IP20 (Dry)', group: 'Physical' },
-    ],
-  };
-
-  // 1. Create Product
-  const createProdRes = await fetchJson('/api/admin/products', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(testProduct),
-  });
-  assert(createProdRes.status === 200 && createProdRes.data?.success, `Created product "${testProduct.name}" (ID: ${testProduct.id})`);
-
-  // 2. Read Products List
-  const listProdRes = await fetchJson('/api/admin/products');
-  const foundProd = listProdRes.data?.products?.find((p) => p.id === testProduct.id || p.slug === testProduct.slug);
-  assert(Boolean(foundProd), `Found created product in catalog list`);
-
-  // 3. Test Detail Page
-  const prodPageRes = await fetch(`${BASE_URL}/products/${testProduct.slug}`);
-  assert(prodPageRes.status === 200, `Product detail page /products/${testProduct.slug} responded HTTP 200`);
-
-  // 4. Delete Product
-  const deleteProdRes = await fetchJson(`/api/admin/products?id=${testProduct.id}`, {
-    method: 'DELETE',
-  });
-  assert(deleteProdRes.status === 200 && deleteProdRes.data?.success, `Cleaned up test product (ID: ${testProduct.id})`);
-
-  // -----------------------------------------------------------------
-  // SUITE 5: Projects Lifecycle (Add, Read, Update, Delete)
-  // -----------------------------------------------------------------
-  console.log('\n[Suite 5]: Projects Management Lifecycle');
-  const projectsRes = await fetchJson('/api/content?key=projects');
-  assert(projectsRes.status === 200 && projectsRes.data?.success, 'Fetched existing projects list');
-
-  const currentProjects = projectsRes.data?.data?.projects || [];
-  const testProject = {
-    id: `proj-test-${Date.now()}`,
-    num: '99',
-    title: 'PRIVATE RESIDENCE TEST COMMISSION',
-    location: 'Worli Sea Face, Mumbai',
-    category: 'Residential',
-    year: '2026',
-    description: 'Bespoke bronze linear grazers and dark-light architectural downlights.',
-    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    slug: `private-residence-test-${Date.now()}`,
-    order: 99,
-    isFeatured: true,
-  };
-
-  // Add project to list
-  const updatedProjects = [...currentProjects, testProject];
-  const saveProjectsRes = await fetchJson('/api/admin/content', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key: 'site_projects', value: updatedProjects }),
-  });
-  assert(saveProjectsRes.status === 200 && saveProjectsRes.data?.success, `Added test project "${testProject.title}"`);
-
-  // Verify project listed
-  const verifyProjRes = await fetchJson('/api/content?key=projects');
-  const foundProj = verifyProjRes.data?.data?.projects?.find((p) => p.id === testProject.id);
-  assert(Boolean(foundProj), 'Test project verified in dynamic projects API');
-
-  // Clean up test project
-  await fetchJson('/api/admin/content', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key: 'site_projects', value: currentProjects }),
-  });
-  assert(true, 'Test project cleaned up from projects list');
-
-  // -----------------------------------------------------------------
-  // SUITE 6: Contact & Inquiries Submission Engine
-  // -----------------------------------------------------------------
-  console.log('\n[Suite 6]: Contact Inquiries & Submissions API');
-  const testInquiry = {
-    name: 'Architect Rahul Mehta',
-    email: 'rahul.mehta@studio-architects.in',
-    phone: '+91 98200 12345',
-    company: 'Studio Mehta Architecture',
-    subject: 'Specification Inquiry for 50-Story Luxury Residential Tower',
-    message: 'We require technical photometric files and photometric testing reports for linear grazers.',
-    consent: true,
-  };
-
-  const inquiryRes = await fetchJson('/api/contact', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(testInquiry),
-  });
-  assert(inquiryRes.status === 200 && inquiryRes.data?.success, 'Submitted architectural contact inquiry');
-
-  const submissionsRes = await fetchJson('/api/admin/submissions');
-  assert(submissionsRes.status === 200, 'Admin submissions endpoint responded HTTP 200');
-
-  // -----------------------------------------------------------------
-  // SUMMARY
-  // -----------------------------------------------------------------
-  console.log('\n======================================================');
-  console.log(` TEST RUN COMPLETE: ${passed} PASSED | ${failed} FAILED`);
-  console.log('======================================================\n');
-
-  if (failed > 0) {
-    process.exit(1);
-  } else {
-    process.exit(0);
+  console.log('\n[2] Admin API is closed to anonymous users');
+  for (const p of ADMIN_GETS) assert((await call(p)).status === 401, `GET ${p} requires auth`);
+  for (const [p, m, b] of [['/api/admin/content', 'POST', { key: 'site_contact', value: {} }], ['/api/admin/products', 'POST', { name: 'x' }], ['/api/admin/products?id=x', 'DELETE'], ['/api/admin/clean-images', 'POST', { filenames: ['a.webp'] }], ['/api/admin/site-images', 'POST', { id: 'x' }]]) {
+    assert((await call(p, { method: m, body: b })).status === 401, `${m} ${p} requires auth`);
   }
-}
+  const forged = await call('/api/admin/products', { cookie: 'kirtee_admin_session=eyJlbWFpbCI6ImV2aWxAeC5jb20ifQ.fake' });
+  assert(forged.status === 401, 'forged session cookie rejected');
 
-runTestSuite().catch((err) => {
-  console.error('Test Suite encountered fatal error:', err);
-  process.exit(1);
-});
+  console.log('\n[3] Login');
+  const bad = await call('/api/admin/login', { method: 'POST', body: { email: process.env.ADMIN_EMAIL || 'zenvora204@gmail.com', password: 'definitely-wrong' } });
+  assert(bad.status === 401 || bad.status === 429, `wrong password rejected (${bad.status})`);
+  const notAdmin = await call('/api/admin/login', { method: 'POST', body: { email: 'random@example.com', password: 'whatever' } });
+  assert(notAdmin.status === 401 || notAdmin.status === 429, 'non-admin email rejected');
+  assert((await call('/api/admin/login', { method: 'POST', raw: 'not json', headers: { 'Content-Type': 'application/json' } })).status === 400, 'malformed login body -> 400');
+  const { cookie } = await loginAdmin();
+  assert(cookie.includes('kirtee_admin_session='), 'login sets session cookie');
+  const sess = await call('/api/admin/session', { cookie });
+  assert(sess.status === 200 && sess.json?.authenticated, 'session endpoint accepts the cookie');
+  for (const p of ADMIN_GETS) { const r = await call(p, { cookie }); assert(r.status === 200, `GET ${p} works when logged in (${r.status})`); }
+
+  console.log('\n[4] Settings API validation');
+  assert((await call('/api/admin/content', { method: 'POST', cookie, body: { key: '../../etc/x', value: {} } })).status === 400, 'path-traversal key rejected');
+  assert((await call('/api/admin/content', { method: 'POST', cookie, body: { key: 'nope', value: {} } })).status === 400, 'unknown key rejected');
+  assert((await call('/api/admin/content', { method: 'POST', cookie, body: { key: 'hero_slides', value: {} } })).status === 400, 'wrong value shape rejected');
+  assert((await call('/api/admin/content', { method: 'POST', cookie, raw: '{bad', headers: { 'Content-Type': 'application/json' } })).status === 400, 'malformed JSON -> 400');
+  const current = await call('/api/admin/content?key=project_cta', { cookie });
+  const cta = (await call('/api/admin/content?key=home_project_cta', { cookie })).json?.data;
+  const rt = await call('/api/admin/content', { method: 'POST', cookie, body: { key: 'home_project_cta', value: cta } });
+  assert(current.status === 200 && rt.status === 200 && rt.json?.success, 'valid setting round-trips');
+  const originalTypo = (await call('/api/admin/content?key=site_typography', { cookie })).json?.data;
+  const typo = await call('/api/admin/content', { method: 'POST', cookie, body: { key: 'site_typography', value: { ...originalTypo, headingFont: 'Cinzel</style><script>alert(1)</script>' } } });
+  const savedTypo = (await call('/api/admin/content?key=site_typography', { cookie })).json?.data;
+  assert(typo.status === 200 && !JSON.stringify(savedTypo).includes('<script>'), 'typography font injection is sanitised');
+  // restore the real typography so the test never changes live settings
+  await call('/api/admin/content', { method: 'POST', cookie, body: { key: 'site_typography', value: originalTypo } });
+
+  console.log('\n[5] Product validation + lifecycle');
+  assert((await call('/api/admin/products', { method: 'POST', cookie, body: {} })).status === 400, 'empty product rejected');
+  assert((await call('/api/admin/products', { method: 'POST', cookie, body: { name: 'X', slug: '../../bad<script>' } })).status === 400, 'bad slug rejected');
+  assert((await call('/api/admin/products', { method: 'POST', cookie, body: { name: 'X', catalogType: 'zzz' } })).status === 400, 'bad catalogType rejected');
+  const slug = `qa-test-${Date.now()}`;
+  const created = await call('/api/admin/products', { method: 'POST', cookie, body: { name: 'QA Test Luminaire', slug, catalogType: 'dry' } });
+  assert(created.status === 200 && created.json?.success, 'valid product created');
+  assert((await call('/api/admin/products', { method: 'POST', cookie, body: { name: 'Dup', slug, catalogType: 'dry' } })).status === 409, 'duplicate slug -> 409');
+  const list = (await call('/api/admin/products', { cookie })).json?.products || [];
+  const mine = list.find((p) => p.slug === slug);
+  assert(!!mine, 'new product appears in catalog');
+  const upd = await call('/api/admin/products', { method: 'POST', cookie, body: { ...mine, tagline: 'edited' } });
+  assert(upd.status === 200, 'existing product can be edited by id');
+  assert((await call(`/api/admin/products?id=${encodeURIComponent(mine?.id || slug)}`, { method: 'DELETE', cookie })).status === 200, 'product deleted');
+  assert((await call('/api/admin/products?id=does-not-exist', { method: 'DELETE', cookie })).status === 404, 'deleting a missing product -> 404');
+
+  console.log('\n[6] Uploads + cleaner safety');
+  const fd = new FormData();
+  fd.append('files', new Blob(['not an image'], { type: 'image/png' }), 'fake.png');
+  const fake = await fetch(`${BASE_URL}/api/admin/compress`, { method: 'POST', headers: { Cookie: cookie }, body: fd });
+  assert(fake.status === 400, `fake image (spoofed MIME) rejected with 400 (got ${fake.status})`);
+  const trav = await call('/api/admin/clean-images', { method: 'POST', cookie, body: { filenames: ['../../package.json'] } });
+  assert(trav.json?.deletedCount === 0, 'cleaner refuses path traversal');
+  const scan = (await call('/api/admin/clean-images', { cookie })).json;
+  assert(!(scan?.unusedImages || []).some((i) => i.filename === 'bespoke-cylinder-luminaire.webp'), 'cleaner does not flag images hard-coded in components');
+
+  console.log('\n[7] Contact form');
+  assert((await call('/api/contact', { method: 'POST', raw: 'nope', headers: { 'Content-Type': 'application/json' } })).status === 400, 'malformed JSON -> 400');
+  assert((await call('/api/contact', { method: 'POST', body: {} })).status === 400, 'empty submission -> 400');
+  assert((await call('/api/contact', { method: 'POST', body: { name: 'a', email: 'bad', message: 'long enough message' } })).status === 400, 'bad email -> 400');
+  assert((await call('/api/contact', { method: 'POST', body: { name: 'a', email: 'a@b.co', message: 'short' } })).status === 400, 'short message -> 400');
+  assert((await call('/api/contact', { method: 'POST', body: { websiteHoneypot: 'bot' } })).status === 200, 'honeypot silently accepted (nothing stored)');
+
+  console.log('\n[8] Logout');
+  await call('/api/admin/logout', { method: 'POST', cookie });
+  console.log(`\n${passed} passed, ${failed} failed`);
+  process.exit(failed ? 1 : 0);
+}
+main().catch((e) => { console.error(e); process.exit(1); });

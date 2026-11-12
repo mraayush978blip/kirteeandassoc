@@ -407,3 +407,32 @@ export const DEFAULT_TYPOGRAPHY: TypographyConfig = {
   accentLetterSpacing: 'wide',
 };
 
+
+// ---------------------------------------------------------------------------
+// Typography sanitising (font names end up inside a <style> tag and a Google Fonts URL,
+// so only plain font-name characters are allowed)
+// ---------------------------------------------------------------------------
+const FONT_NAME_RE = /^[A-Za-z0-9_-][A-Za-z0-9 _-]{0,59}$/;
+
+export function sanitizeFontName(value: unknown, fallback: string): string {
+  return typeof value === 'string' && FONT_NAME_RE.test(value.trim()) ? value.trim() : fallback;
+}
+
+export function sanitizeTypography(input: unknown): TypographyConfig {
+  const raw = (input && typeof input === 'object' ? input : {}) as Record<string, unknown>;
+  const out: Record<string, unknown> = { ...DEFAULT_TYPOGRAPHY };
+  for (const [k, v] of Object.entries(raw)) {
+    if (!(k in DEFAULT_TYPOGRAPHY) && !k.endsWith('CustomFont')) continue;
+    if (/Font$/.test(k) || /CustomFont$/.test(k)) {
+      const fallback = (DEFAULT_TYPOGRAPHY as unknown as Record<string, unknown>)[k];
+      if (v === '' || v === undefined || v === null) {
+        if (/CustomFont$/.test(k)) out[k] = '';
+        continue;
+      }
+      out[k] = sanitizeFontName(v, typeof fallback === 'string' ? fallback : '');
+    } else if (typeof v === 'string' && /^[A-Za-z0-9.\- ]{1,24}$/.test(v)) {
+      out[k] = v;
+    }
+  }
+  return out as unknown as TypographyConfig;
+}

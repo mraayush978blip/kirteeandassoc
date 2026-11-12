@@ -288,7 +288,8 @@ export const ContactForm: React.FC = () => {
           <div>
             <input
               type="text"
-              placeholder="Name *"
+              name="name" autoComplete="name" aria-label="Full name" aria-required="true"
+            placeholder="Name *"
               value={formData.name}
               onChange={(e) => {
                 setFormData({ ...formData, name: e.target.value });
@@ -311,7 +312,8 @@ export const ContactForm: React.FC = () => {
           <div>
             <input
               type="text"
-              placeholder="Company"
+              name="company" autoComplete="organization" aria-label="Company"
+            placeholder="Company"
               value={formData.company}
               onChange={(e) => setFormData({ ...formData, company: e.target.value })}
               style={inputStyle}
@@ -334,7 +336,8 @@ export const ContactForm: React.FC = () => {
           <div>
             <input
               type="email"
-              placeholder="Email *"
+              name="email" autoComplete="email" aria-label="Email address" aria-required="true"
+            placeholder="Email *"
               value={formData.email}
               onChange={(e) => {
                 setFormData({ ...formData, email: e.target.value });
@@ -357,7 +360,8 @@ export const ContactForm: React.FC = () => {
           <div>
             <input
               type="tel"
-              placeholder="+91"
+              name="phone" autoComplete="tel" aria-label="Phone number"
+            placeholder="+91"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               style={inputStyle}
@@ -371,6 +375,7 @@ export const ContactForm: React.FC = () => {
         <div style={{ marginBottom: '1.25rem' }}>
           <input
             type="text"
+            name="subject" aria-label="Subject" aria-required="true"
             placeholder="Subject *"
             value={formData.subject}
             onChange={(e) => {
@@ -394,6 +399,7 @@ export const ContactForm: React.FC = () => {
         {/* Row 4: Message Textarea */}
         <div style={{ marginBottom: '1.75rem' }}>
           <textarea
+            name="message" aria-label="Your message" aria-required="true"
             placeholder="Tell us how we can help you *"
             value={formData.message}
             onChange={(e) => {

@@ -89,8 +89,8 @@ export const ImageCropperModal: React.FC<ImageCropperModalProps> = ({
 
       // Max dimension cap for fast delivery and memory safety
       const maxDim = 2048;
-      let outWidth = Math.min(targetWidth, maxDim);
-      let outHeight = Math.min(targetHeight, maxDim);
+      const outWidth = Math.min(targetWidth, maxDim);
+      const outHeight = Math.min(targetHeight, maxDim);
 
       canvas.width = outWidth;
       canvas.height = outHeight;

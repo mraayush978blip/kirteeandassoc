@@ -3,7 +3,15 @@
  * Proves that adding a product or hero slide in the admin panel immediately updates the frontend.
  */
 
-const BASE_URL = 'http://localhost:3000';
+import { BASE_URL, loginAdmin } from './_auth.mjs';
+
+// Attach the admin session cookie to every /api/admin/* request
+const realFetch = globalThis.fetch;
+let ADMIN_COOKIE = '';
+globalThis.fetch = (url, opts = {}) =>
+  String(url).includes('/api/admin/')
+    ? realFetch(url, { ...opts, headers: { ...(opts.headers || {}), Cookie: ADMIN_COOKIE } })
+    : realFetch(url, opts);
 
 let passed = 0;
 let failed = 0;
@@ -18,7 +26,20 @@ function assert(condition, message) {
   }
 }
 
+// Public catalog pages use ISR (stale-while-revalidate): the first request after an admin change may
+// still be the old page and triggers regeneration, so poll briefly like a browser refresh would.
+async function pageEventually(path, predicate, tries = 8) {
+  let html = '';
+  for (let i = 0; i < tries; i++) {
+    html = await (await fetch(`${BASE_URL}${path}`, { cache: 'no-store' })).text();
+    if (predicate(html)) return { ok: true, html };
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+  return { ok: false, html };
+}
+
 async function run() {
+  ADMIN_COOKIE = (await loginAdmin()).cookie;
   console.log('\n======================================================');
   console.log(' VERIFYING ADMIN PANEL -> FRONTEND LIVE SYNCHRONIZATION');
   console.log('======================================================\n');
@@ -104,10 +125,8 @@ async function run() {
 
   // 5. Verify Product in Frontend Catalogs (/dry-goods & /products/[slug])
   console.log('\n[Test 5]: Verifying frontend catalog (/dry-goods) reflects the new Product...');
-  const dryGoodsRes = await fetch(`${BASE_URL}/dry-goods`, { cache: 'no-store' });
-  const dryGoodsHtml = await dryGoodsRes.text();
-  const productInDryGoods = dryGoodsHtml.includes(testProductName) || dryGoodsHtml.includes(testProductSlug);
-  assert(productInDryGoods, `Frontend /dry-goods page immediately displays "${testProductName}"`);
+  const added = await pageEventually('/dry-goods', (h) => h.includes(testProductName) || h.includes(testProductSlug));
+  assert(added.ok, `Frontend /dry-goods page displays "${testProductName}"`);
 
   console.log('\n[Test 6]: Verifying product detail page (/products/[slug]) loads with HTTP 200...');
   const detailRes = await fetch(`${BASE_URL}/products/${testProductSlug}`, { cache: 'no-store' });
@@ -123,8 +142,8 @@ async function run() {
   const deleteProductData = await deleteProductRes.json();
   assert(deleteProductData.success === true, 'Admin successfully deleted test product');
 
-  const dryGoodsAfterDelete = await (await fetch(`${BASE_URL}/dry-goods`, { cache: 'no-store' })).text();
-  assert(!dryGoodsAfterDelete.includes(testProductSlug), 'Frontend /dry-goods no longer contains deleted product');
+  const removed = await pageEventually('/dry-goods', (h) => !h.includes(testProductSlug));
+  assert(removed.ok, 'Frontend /dry-goods no longer contains deleted product');
 
   // 7. Cleanup Hero Slide
   console.log('\n[Test 8]: Restoring original Hero Slides via Admin API...');

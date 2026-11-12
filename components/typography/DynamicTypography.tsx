@@ -1,5 +1,5 @@
 import React from 'react';
-import { TypographyConfig, DEFAULT_TYPOGRAPHY } from '@/lib/site-settings-types';
+import { TypographyConfig, DEFAULT_TYPOGRAPHY, sanitizeTypography } from '@/lib/site-settings-types';
 
 interface DynamicTypographyProps {
   typography?: TypographyConfig;
@@ -37,7 +37,8 @@ const headingScaleMap = {
 };
 
 export const DynamicTypography: React.FC<DynamicTypographyProps> = ({ typography = DEFAULT_TYPOGRAPHY }) => {
-  const typo = { ...DEFAULT_TYPOGRAPHY, ...typography };
+  // Everything below is interpolated into a <style> tag, so it is sanitised first.
+  const typo = sanitizeTypography({ ...DEFAULT_TYPOGRAPHY, ...typography });
 
   const getFontName = (font: string, custom?: string) => {
     if (font === 'Custom' && custom && custom.trim()) {

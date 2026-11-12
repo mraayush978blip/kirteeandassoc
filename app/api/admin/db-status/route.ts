@@ -1,7 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { checkDatabaseConnection } from '@/lib/db';
+import { requireAdmin } from '@/lib/admin-auth';
+import { storageMode } from '@/lib/media-storage';
 
-export async function GET() {
+export const dynamic = 'force-dynamic';
+
+export async function GET(req: NextRequest) {
+  const denied = requireAdmin(req);
+  if (denied) return denied;
   const status = await checkDatabaseConnection();
-  return NextResponse.json(status);
+  return NextResponse.json({ ...status, storage: storageMode() });
 }

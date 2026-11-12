@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next';
-import { withPayload } from '@payloadcms/next/withPayload';
 
 const nextConfig: NextConfig = {
   images: {
@@ -15,6 +14,12 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: '**.amazonaws.com',
+      },
+      {
+        // Supabase Storage public bucket (admin image uploads)
+        protocol: 'https',
+        hostname: '**.supabase.co',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
     formats: ['image/avif', 'image/webp'],
@@ -60,21 +65,19 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Payload CMS requires a running PostgreSQL instance. When deployed on Vercel or statically
-// without an external database, enabling withPayload causes the serverless functions to hang
-// attempting to connect to 127.0.0.1:5432.
-// Payload is only wrapped if ENABLE_PAYLOAD is explicitly set to 'true' AND DATABASE_URI is defined.
+// Payload CMS is optional and disabled by default (the live app uses lib/db.ts + Supabase).
+// It is only wrapped when ENABLE_PAYLOAD=true and DATABASE_URI is set.
 const isPayloadEnabled = process.env.ENABLE_PAYLOAD === 'true' && Boolean(process.env.DATABASE_URI);
 
-let finalConfig = nextConfig;
-if (isPayloadEnabled) {
+async function buildConfig(): Promise<NextConfig> {
+  if (!isPayloadEnabled) return nextConfig;
   try {
-    // Dynamic import to avoid bundling Payload during regular frontend builds
-    const { withPayload } = require('@payloadcms/next/withPayload');
-    finalConfig = withPayload(nextConfig);
+    const { withPayload } = await import('@payloadcms/next/withPayload');
+    return withPayload(nextConfig);
   } catch (error) {
     console.warn('[next.config] withPayload failed to initialize:', error);
+    return nextConfig;
   }
 }
 
-export default finalConfig;
+export default buildConfig;

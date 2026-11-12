@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { requireAdmin } from '@/lib/admin-auth';
 import {
   getSetting,
   saveSetting,
   invalidateSettingsCache,
+  isAllowedSettingKey,
+  sanitizeTypography,
   DEFAULT_HERO_SLIDES,
   DEFAULT_PROJECTS,
   DEFAULT_CONTACT,
@@ -34,6 +37,8 @@ const NO_CACHE_HEADERS = {
 };
 
 export async function GET(req: NextRequest) {
+  const denied = requireAdmin(req);
+  if (denied) return denied;
   try {
     const { searchParams } = new URL(req.url);
     const key = searchParams.get('key') || 'all';
@@ -122,25 +127,40 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const denied = requireAdmin(req);
+  if (denied) return denied;
   try {
-    const body = await req.json();
-    const { key, value } = body;
-
-    if (!key || value === undefined) {
-      return NextResponse.json(
-        { success: false, message: 'Missing key or value' },
-        { status: 400 }
-      );
+    let body: { key?: unknown; value?: unknown };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ success: false, message: 'Invalid JSON body' }, { status: 400 });
     }
+    const { key } = body;
+    let { value } = body;
 
-    await saveSetting(key, value);
+    if (!key || value === undefined || value === null) {
+      return NextResponse.json({ success: false, message: 'Missing key or value' }, { status: 400 });
+    }
+    if (!isAllowedSettingKey(key)) {
+      return NextResponse.json({ success: false, message: `Unknown setting key "${String(key)}"` }, { status: 400 });
+    }
+    // Basic shape check: list-type settings must be arrays, the rest objects
+    const arrayKeys = ['hero_slides', 'site_projects'];
+    if (arrayKeys.includes(key) !== Array.isArray(value) || typeof value !== 'object') {
+      return NextResponse.json({ success: false, message: `Invalid value shape for "${key}"` }, { status: 400 });
+    }
+    if (key === 'site_typography') value = sanitizeTypography(value);
+
+    const result = await saveSetting(key, value);
+    if (!result.success) {
+      return NextResponse.json({ success: false, message: result.error || 'Failed to save' }, { status: 500 });
+    }
     invalidateSettingsCache(key);
 
     // Instantly invalidate server cache so that homepage & public routes reflect changes immediately
     try {
       revalidatePath('/', 'layout');
-      revalidatePath('/', 'page');
-      revalidatePath('/');
       revalidatePath('/contact');
       revalidatePath('/dry-goods');
       revalidatePath('/wet-goods');
@@ -148,7 +168,7 @@ export async function POST(req: NextRequest) {
       console.warn('[Cache Revalidation Warning]:', e);
     }
 
-    return NextResponse.json({ success: true, key });
+    return NextResponse.json({ success: true, key, warning: result.warning });
   } catch (error: unknown) {
     return NextResponse.json(
       { success: false, message: error instanceof Error ? error.message : 'Server error' },

@@ -1,19 +1,28 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pool, PoolConfig } from 'pg';
 import fs from 'fs/promises';
 import path from 'path';
-import { Product, ProductCategory } from '@/types/product';
+import { Product } from '@/types/product';
+import { externalizeDataUrl } from '@/lib/media-storage';
+import { writeFileAtomic } from '@/lib/fs-atomic';
 import { products as fallbackProducts, categories as fallbackCategories } from '@/lib/data/products';
-
-// Default Supabase pooled connection string (ensures Vercel & remote deployments persist directly to Supabase)
-const DEFAULT_SUPABASE_DB_URL =
-  'postgresql://postgres.wxxhabblkxszfsogbbju:Zenvora@2000@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require';
 
 // Connection String Resolution
 const connectionString =
   process.env.DATABASE_URL ||
   process.env.DATABASE_URI ||
   process.env.POSTGRES_URL ||
-  DEFAULT_SUPABASE_DB_URL;
+  '';
+
+/**
+ * On serverless hosts (Vercel) the filesystem is read-only/ephemeral, so a save only counts as
+ * successful when the database accepted it. Elsewhere, a local-JSON save is acceptable.
+ */
+export const REQUIRE_DB = Boolean(process.env.VERCEL) || process.env.REQUIRE_DB === 'true';
+
+export function persistenceOk(localOk: boolean, dbOk: boolean): boolean {
+  return REQUIRE_DB ? dbOk : localOk || dbOk;
+}
 
 let pool: Pool | null = null;
 
@@ -183,17 +192,17 @@ async function getLocalProducts(): Promise<Product[]> {
 }
 
 async function saveLocalProducts(products: Product[]): Promise<void> {
-  try {
-    await fs.mkdir(path.dirname(LOCAL_PRODUCTS_FILE), { recursive: true });
-    await fs.writeFile(LOCAL_PRODUCTS_FILE, JSON.stringify(products, null, 2), 'utf-8');
-  } catch (err) {
-    console.warn('[DB Products Local File Error]:', err);
-  }
+  // Throws on failure so callers can report persistence honestly.
+  await writeFileAtomic(LOCAL_PRODUCTS_FILE, JSON.stringify(products, null, 2));
 }
 
 // High-speed in-memory product catalog cache (serves catalogue in <0.5ms)
 let cachedProducts: { data: Product[]; timestamp: number } | null = null;
-const PRODUCTS_CACHE_TTL_MS = 60 * 1000; // 60 seconds
+// Kept very short on purpose: each serverless/route instance has its own copy of this cache, and
+// invalidateProductsCache() only clears the instance that handled the admin edit. A long TTL made
+// other instances regenerate pages from a stale catalog right after an edit/delete.
+// Public pages are ISR-cached anyway, so this only de-duplicates bursts of reads.
+const PRODUCTS_CACHE_TTL_MS = 2 * 1000;
 
 export function invalidateProductsCache(): void {
   cachedProducts = null;
@@ -209,7 +218,7 @@ export async function getProductsFromDb(): Promise<Product[]> {
   }
 
   try {
-    const { rows } = await query<any>(`
+    const { rows } = await query<Record<string, any>>(`
       SELECT 
         p.*,
         c.name as category_name,
@@ -286,10 +295,32 @@ export async function getProductsFromDb(): Promise<Product[]> {
 
       // Cache in memory and locally for offline resilience
       cachedProducts = { data: dbProducts, timestamp: Date.now() };
-      saveLocalProducts(dbProducts).catch(() => {});
+      // Optional offline-fallback mirror of the live catalog into data/products.json.
+      // Off by default: it rewrites tracked repo files on every read.
+      if (process.env.MIRROR_DB_TO_LOCAL === 'true' && !process.env.VERCEL) {
+        saveLocalProducts(dbProducts).catch(() => {});
+      }
       return dbProducts;
     }
-  } catch (error) {
+
+    // DB is reachable but the catalog table is empty.
+    // First time only: seed it from the bundled catalog. If it was seeded before, empty means empty.
+    const seeded = await query(`SELECT 1 FROM site_settings WHERE key = 'catalog_seeded' LIMIT 1`);
+    if (seeded.rows.length > 0) {
+      cachedProducts = { data: [], timestamp: Date.now() };
+      return [];
+    }
+    const seedSource = (await getLocalProducts());
+    const toSeed = seedSource.length > 0 ? seedSource : fallbackProducts;
+    for (const prod of toSeed) {
+      await saveProductToDb(prod);
+    }
+    await query(
+      `INSERT INTO site_settings (key, value) VALUES ('catalog_seeded', 'true'::jsonb) ON CONFLICT (key) DO NOTHING`
+    );
+    cachedProducts = { data: toSeed, timestamp: Date.now() };
+    return toSeed;
+  } catch {
     console.warn('[DB Catalog Warning]: Database unreachable or offline, checking local file fallback.');
   }
 
@@ -313,7 +344,8 @@ export async function getProductBySlugFromDb(slug: string): Promise<Product | un
   return all.find((p) => p.slug === slug && p.status === 'published');
 }
 
-export async function saveProductToDb(product: Partial<Product>): Promise<{ success: boolean; id: string; error?: string }> {
+export async function saveProductToDb(input: Partial<Product>): Promise<{ success: boolean; id: string; error?: string; warning?: string }> {
+  const product = await externalizeProductImages(input);
   const id = product.id || `prod-${product.slug || Date.now()}`;
   const slug = product.slug || id;
   const name = product.name || 'Untitled Luminaire';
@@ -372,7 +404,8 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
     updatedAt: new Date().toISOString(),
   };
 
-  // 1. Save to local JSON first (Zero-Downtime Guarantee)
+  // 1. Save to local JSON (dev / self-hosted fallback)
+  let localOk = false;
   try {
     const existing = await getLocalProducts();
     const list = existing.length > 0 ? existing : [...fallbackProducts];
@@ -383,166 +416,149 @@ export async function saveProductToDb(product: Partial<Product>): Promise<{ succ
       list.push(fullProduct);
     }
     await saveLocalProducts(list);
+    localOk = true;
   } catch (err) {
-    console.warn('[DB Products Local Save Warning]:', err);
+    console.warn('[DB Products Local Save Warning]:', err instanceof Error ? err.message : err);
   }
 
-  // 2. Sync to PostgreSQL if database connection is available
-  try {
-    // Attempt with hero_carousel_images column
+  // 2. Sync to PostgreSQL. Try the full column set first, then the legacy column set
+  //    (for databases that have not run the latest ALTER TABLE migrations yet).
+  const baseCols: [string, unknown][] = [
+    ['id', id],
+    ['slug', slug],
+    ['sku', fullProduct.sku || ''],
+    ['name', name],
+    ['code_label', fullProduct.codeLabel || name.toUpperCase()],
+    ['designer', fullProduct.designer || 'Kirtee & Associates Studio'],
+    ['catalog_type', catalogType],
+    ['category_id', categoryId],
+    ['subcategory', fullProduct.subcategory || ''],
+    ['tagline', fullProduct.tagline || ''],
+    ['short_description', fullProduct.shortDescription || ''],
+    ['full_description', fullProduct.fullDescription || ''],
+    ['editorial_story', fullProduct.editorialStory || fullProduct.fullDescription || ''],
+    ['tags', fullProduct.tags || []],
+    ['status', fullProduct.status || 'published'],
+    ['is_featured', Boolean(fullProduct.isFeatured)],
+    ['order_index', fullProduct.order || 1],
+    ['hero_image_url', fullProduct.heroImage?.url || ''],
+    ['hero_image_alt', fullProduct.heroImage?.alt || name],
+    ['gallery_urls', JSON.stringify(fullProduct.gallery || [])],
+    ['specifications', JSON.stringify(fullProduct.specifications || [])],
+    ['downloads', JSON.stringify(fullProduct.downloads || [])],
+  ];
+  const extendedCols: [string, unknown][] = [
+    ...baseCols,
+    ['hero_carousel_images', JSON.stringify(fullProduct.heroCarouselImages || [])],
+    ['social_links', JSON.stringify(fullProduct.socialLinks || {})],
+    ['brochure_button_text', fullProduct.brochureButtonText || ''],
+    ['specs_eyebrow', fullProduct.specsEyebrow || ''],
+    ['specs_heading', fullProduct.specsHeading || ''],
+    ['specs_description', fullProduct.specsDescription || ''],
+    ['gallery_eyebrow', fullProduct.galleryEyebrow || ''],
+    ['gallery_heading', fullProduct.galleryHeading || ''],
+    ['gallery_description', fullProduct.galleryDescription || ''],
+    ['related_heading', fullProduct.relatedHeading || ''],
+  ];
+
+  const upsert = async (cols: [string, unknown][]) => {
+    const names = cols.map(([c]) => c);
+    const placeholders = cols.map((_, i) => `$${i + 1}`);
+    const updates = names.filter((c) => c !== 'id').map((c) => `${c} = EXCLUDED.${c}`);
     await query(
-      `
-      INSERT INTO products (
-        id, slug, sku, name, code_label, designer, catalog_type, category_id,
-        subcategory, tagline, short_description, full_description, editorial_story,
-        tags, status, is_featured, order_index, hero_image_url, hero_image_alt,
-        gallery_urls, specifications, downloads, hero_carousel_images, updated_at
-      ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8,
-        $9, $10, $11, $12, $13,
-        $14, $15, $16, $17, $18, $19,
-        $20, $21, $22, $23, NOW()
-      )
-      ON CONFLICT (id) DO UPDATE SET
-        slug = EXCLUDED.slug,
-        sku = EXCLUDED.sku,
-        name = EXCLUDED.name,
-        code_label = EXCLUDED.code_label,
-        designer = EXCLUDED.designer,
-        catalog_type = EXCLUDED.catalog_type,
-        category_id = EXCLUDED.category_id,
-        subcategory = EXCLUDED.subcategory,
-        tagline = EXCLUDED.tagline,
-        short_description = EXCLUDED.short_description,
-        full_description = EXCLUDED.full_description,
-        editorial_story = EXCLUDED.editorial_story,
-        tags = EXCLUDED.tags,
-        status = EXCLUDED.status,
-        is_featured = EXCLUDED.is_featured,
-        order_index = EXCLUDED.order_index,
-        hero_image_url = EXCLUDED.hero_image_url,
-        hero_image_alt = EXCLUDED.hero_image_alt,
-        gallery_urls = EXCLUDED.gallery_urls,
-        specifications = EXCLUDED.specifications,
-        downloads = EXCLUDED.downloads,
-        hero_carousel_images = EXCLUDED.hero_carousel_images,
-        updated_at = NOW()
-    `,
-      [
-        id,
-        slug,
-        fullProduct.sku || '',
-        name,
-        fullProduct.codeLabel || name.toUpperCase(),
-        fullProduct.designer || 'Kirtee & Associates Studio',
-        catalogType,
-        categoryId,
-        fullProduct.subcategory || '',
-        fullProduct.tagline || '',
-        fullProduct.shortDescription || '',
-        fullProduct.fullDescription || '',
-        fullProduct.editorialStory || fullProduct.fullDescription || '',
-        fullProduct.tags || [],
-        fullProduct.status || 'published',
-        Boolean(fullProduct.isFeatured),
-        fullProduct.order || 1,
-        fullProduct.heroImage?.url || '',
-        fullProduct.heroImage?.alt || name,
-        JSON.stringify(fullProduct.gallery || []),
-        JSON.stringify(fullProduct.specifications || []),
-        JSON.stringify(fullProduct.downloads || []),
-        JSON.stringify(fullProduct.heroCarouselImages || []),
-      ]
+      `INSERT INTO products (${names.join(', ')}, updated_at) VALUES (${placeholders.join(', ')}, NOW())
+       ON CONFLICT (id) DO UPDATE SET ${updates.join(', ')}, updated_at = NOW()`,
+      cols.map(([, v]) => v)
     );
-  } catch (err: unknown) {
+  };
+
+  let dbOk = false;
+  let dbError = '';
+  try {
+    await upsert(extendedCols);
+    dbOk = true;
+  } catch (err) {
+    dbError = err instanceof Error ? err.message : String(err);
     try {
-      // Fallback query if hero_carousel_images is not yet migrated in PostgreSQL
-      await query(
-        `
-        INSERT INTO products (
-          id, slug, sku, name, code_label, designer, catalog_type, category_id,
-          subcategory, tagline, short_description, full_description, editorial_story,
-          tags, status, is_featured, order_index, hero_image_url, hero_image_alt,
-          gallery_urls, specifications, downloads, updated_at
-        ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8,
-          $9, $10, $11, $12, $13,
-          $14, $15, $16, $17, $18, $19,
-          $20, $21, $22, NOW()
-        )
-        ON CONFLICT (id) DO UPDATE SET
-          slug = EXCLUDED.slug,
-          sku = EXCLUDED.sku,
-          name = EXCLUDED.name,
-          code_label = EXCLUDED.code_label,
-          designer = EXCLUDED.designer,
-          catalog_type = EXCLUDED.catalog_type,
-          category_id = EXCLUDED.category_id,
-          subcategory = EXCLUDED.subcategory,
-          tagline = EXCLUDED.tagline,
-          short_description = EXCLUDED.short_description,
-          full_description = EXCLUDED.full_description,
-          editorial_story = EXCLUDED.editorial_story,
-          tags = EXCLUDED.tags,
-          status = EXCLUDED.status,
-          is_featured = EXCLUDED.is_featured,
-          order_index = EXCLUDED.order_index,
-          hero_image_url = EXCLUDED.hero_image_url,
-          hero_image_alt = EXCLUDED.hero_image_alt,
-          gallery_urls = EXCLUDED.gallery_urls,
-          specifications = EXCLUDED.specifications,
-          downloads = EXCLUDED.downloads,
-          updated_at = NOW()
-      `,
-        [
-          id,
-          slug,
-          fullProduct.sku || '',
-          name,
-          fullProduct.codeLabel || name.toUpperCase(),
-          fullProduct.designer || 'Kirtee & Associates Studio',
-          catalogType,
-          categoryId,
-          fullProduct.subcategory || '',
-          fullProduct.tagline || '',
-          fullProduct.shortDescription || '',
-          fullProduct.fullDescription || '',
-          fullProduct.editorialStory || fullProduct.fullDescription || '',
-          fullProduct.tags || [],
-          fullProduct.status || 'published',
-          Boolean(fullProduct.isFeatured),
-          fullProduct.order || 1,
-          fullProduct.heroImage?.url || '',
-          fullProduct.heroImage?.alt || name,
-          JSON.stringify(fullProduct.gallery || []),
-          JSON.stringify(fullProduct.specifications || []),
-          JSON.stringify(fullProduct.downloads || []),
-        ]
-      );
-    } catch {
-      console.warn('[DB Products Sync Skipped]: Saved locally, DB sync pending valid credentials.');
+      await upsert(baseCols);
+      dbOk = true;
+      dbError = '';
+    } catch (err2) {
+      dbError = err2 instanceof Error ? err2.message : String(err2);
     }
   }
 
   invalidateProductsCache();
-  return { success: true, id };
+
+  if (!persistenceOk(localOk, dbOk)) {
+    return {
+      success: false,
+      id,
+      error: dbError
+        ? `Could not save to the database: ${dbError}`
+        : 'Could not save: no writable storage is available.',
+    };
+  }
+  return {
+    success: true,
+    id,
+    warning: dbOk ? undefined : `Saved locally only; database sync failed (${dbError || 'not configured'}).`,
+  };
 }
 
-export async function deleteProductFromDb(id: string): Promise<{ success: boolean; error?: string }> {
-  // 1. Delete from local JSON
+/** Moves inline base64 images to storage so product rows/pages stay small. */
+async function externalizeProductImages(product: Partial<Product>): Promise<Partial<Product>> {
+  const cache = new Map<string, string>();
+  const fix = async <T extends { url?: string }>(img: T | undefined): Promise<T | undefined> =>
+    img && typeof img.url === 'string' ? { ...img, url: await externalizeDataUrl(img.url, cache) } : img;
+  const fixList = async <T extends { url?: string }>(list: T[] | undefined): Promise<T[] | undefined> =>
+    Array.isArray(list) ? Promise.all(list.map((i) => fix(i) as Promise<T>)) : list;
+
+  const out: Partial<Product> = { ...product };
+  out.heroImage = await fix(product.heroImage);
+  out.heroCarouselImages = await fixList(product.heroCarouselImages);
+  out.gallery = await fixList(product.gallery);
+  if (product.seo?.ogImage) {
+    out.seo = { ...product.seo, ogImage: await externalizeDataUrl(product.seo.ogImage, cache) };
+  }
+  return out;
+}
+
+export async function productExists(idOrSlug: string): Promise<boolean> {
+  const all = await getProductsFromDb();
+  return all.some((p) => p.id === idOrSlug || p.slug === idOrSlug);
+}
+
+export async function deleteProductFromDb(
+  id: string
+): Promise<{ success: boolean; error?: string; slug?: string; notFound?: boolean }> {
+  const all = await getProductsFromDb();
+  const target = all.find((p) => p.id === id || p.slug === id);
+  if (!target) return { success: false, notFound: true, error: 'Product not found.' };
+
+  let localOk = false;
   try {
     const existing = await getLocalProducts();
-    const filtered = existing.filter((p) => p.id !== id && p.slug !== id);
-    await saveLocalProducts(filtered);
-  } catch {}
+    await saveLocalProducts(existing.filter((p) => p.id !== target.id && p.slug !== target.slug));
+    localOk = true;
+  } catch {
+    /* read-only filesystem */
+  }
 
-  // 2. Delete from PostgreSQL
+  let dbOk = false;
+  let dbError = '';
   try {
-    await query('DELETE FROM products WHERE id = $1', [id]);
-  } catch {}
+    await query('DELETE FROM products WHERE id = $1', [target.id]);
+    dbOk = true;
+  } catch (err) {
+    dbError = err instanceof Error ? err.message : String(err);
+  }
 
   invalidateProductsCache();
-  return { success: true };
+  if (!persistenceOk(localOk, dbOk)) {
+    return { success: false, error: dbError ? `Could not delete from the database: ${dbError}` : 'Could not delete: no writable storage.' };
+  }
+  return { success: true, slug: target.slug };
 }
 
 // -------------------------------------------------------------
@@ -608,7 +624,7 @@ export async function saveMediaRecord(media: Omit<MediaRecord, 'id' | 'createdAt
 
 export async function getMediaRecords(): Promise<MediaRecord[]> {
   try {
-    const { rows } = await query<any>(`
+    const { rows } = await query<Record<string, any>>(`
       SELECT * FROM media ORDER BY created_at DESC LIMIT 100
     `);
 

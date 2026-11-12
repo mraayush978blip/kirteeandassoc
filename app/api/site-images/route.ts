@@ -23,9 +23,9 @@ export async function GET() {
         },
       }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { success: false, message: error.message || 'Failed to read site images' },
+      { success: false, message: error instanceof Error ? error.message : 'Failed to read site images' },
       { status: 500 }
     );
   }

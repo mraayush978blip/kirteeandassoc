@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { query } from '@/lib/db';
+import { query, persistenceOk } from '@/lib/db';
+import { writeFileAtomic } from '@/lib/fs-atomic';
 
 export interface SiteImageSlot {
   id: string;
@@ -228,7 +229,7 @@ export async function getAllSiteImages(): Promise<SiteImageSlot[]> {
       cachedSiteImagesList = { data: result, timestamp: Date.now() };
       return result;
     }
-  } catch (dbErr) {
+  } catch {
     // Database might be unconfigured or offline - proceed to file check
   }
 
@@ -293,15 +294,16 @@ export async function updateSiteImageSlot(
   }
 
   // 1. Save to local data JSON file
+  let localOk = false;
   try {
-    const dir = path.dirname(LOCAL_STORAGE_FILE);
-    await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(overridesDict, null, 2), 'utf-8');
+    await writeFileAtomic(LOCAL_STORAGE_FILE, JSON.stringify(overridesDict, null, 2));
+    localOk = true;
   } catch (fsErr) {
-    console.warn('[Site Images] Could not write to local JSON fallback', fsErr);
+    console.warn('[Site Images] Could not write to local JSON fallback', fsErr instanceof Error ? fsErr.message : fsErr);
   }
 
   // 2. Save to PostgreSQL site_settings if available
+  let dbOk = false;
   try {
     await query(
       `
@@ -312,8 +314,13 @@ export async function updateSiteImageSlot(
     `,
       [JSON.stringify(overridesDict)]
     );
+    dbOk = true;
   } catch (dbErr) {
-    console.warn('[Site Images] DB update skipped or offline', dbErr);
+    console.warn('[Site Images] DB update failed', dbErr instanceof Error ? dbErr.message : dbErr);
+  }
+
+  if (!persistenceOk(localOk, dbOk)) {
+    return { success: false, error: 'Could not save the image change: database unavailable.' };
   }
 
   invalidateSiteImagesCache();
@@ -323,10 +330,10 @@ export async function updateSiteImageSlot(
 /**
  * Resets a site image slot back to its original studio default.
  */
-export async function resetSiteImageSlot(id: string): Promise<{ success: boolean; slot?: SiteImageSlot }> {
+export async function resetSiteImageSlot(id: string): Promise<{ success: boolean; slot?: SiteImageSlot; error?: string }> {
   const defaultSlot = DEFAULT_SITE_IMAGES.find((s) => s.id === id);
   if (!defaultSlot) {
-    return { success: false };
+    return { success: false, error: `Image slot with ID "${id}" does not exist` };
   }
 
   return updateSiteImageSlot(id, {
