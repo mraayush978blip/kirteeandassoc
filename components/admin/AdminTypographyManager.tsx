@@ -1,31 +1,32 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Type, Sparkles, Check, RefreshCw, Undo2, Sliders, ExternalLink } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Check, RefreshCw, Undo2, Sparkles } from 'lucide-react';
 import { TypographyConfig, DEFAULT_TYPOGRAPHY } from '@/lib/site-settings-types';
 
-const CURATED_FONTS = [
-  { value: 'Cinzel', label: 'Cinzel (Classical Architectural Inscription, Roman Serif)' },
-  { value: 'Inter', label: 'Inter (Modern Swiss Grotesque, Ultra Clean Sans)' },
-  { value: 'Plus Jakarta Sans', label: 'Plus Jakarta Sans (Warm Geometric Architectural)' },
-  { value: 'Outfit', label: 'Outfit (Refined Geometric Sans)' },
-  { value: 'DM Sans', label: 'DM Sans (Contemporary Low-Contrast Sans)' },
-  { value: 'Syne', label: 'Syne (Avant-Garde High-Fashion Architectural)' },
-  { value: 'Playfair Display', label: 'Playfair Display (Luxury Editorial High-Contrast Serif)' },
-  { value: 'Cormorant Garamond', label: 'Cormorant Garamond (Haute Couture Museum-Grade Serif)' },
-  { value: 'Space Grotesk', label: 'Space Grotesk (Technical Brutalist Sans)' },
-  { value: 'Montserrat', label: 'Montserrat (Classic Geometric Architectural Sans)' },
-  { value: 'Bodoni Moda', label: 'Bodoni Moda (Ultra Luxury Vogue / Architectural Digest)' },
-  { value: 'Manrope', label: 'Manrope (Modern Balanced Geometric)' },
-  { value: 'JetBrains Mono', label: 'JetBrains Mono (Engineered High-Precision Monospace)' },
-  { value: 'Space Mono', label: 'Space Mono (Editorial Technical Monospace)' },
-  { value: 'Roboto Mono', label: 'Roboto Mono (Clean Technical Monospace)' },
-  { value: 'Custom', label: 'Custom Google Font (Enter any font name)' },
+// Plain-language font list: name + how it looks
+const FONTS: { value: string; label: string }[] = [
+  { value: 'Cinzel', label: 'Cinzel — classic Roman serif' },
+  { value: 'Playfair Display', label: 'Playfair Display — elegant serif' },
+  { value: 'Cormorant Garamond', label: 'Cormorant Garamond — refined editorial serif' },
+  { value: 'Bodoni Moda', label: 'Bodoni Moda — luxury fashion serif' },
+  { value: 'Inter', label: 'Inter — clean modern sans' },
+  { value: 'Manrope', label: 'Manrope — balanced modern sans' },
+  { value: 'DM Sans', label: 'DM Sans — soft modern sans' },
+  { value: 'Outfit', label: 'Outfit — rounded geometric sans' },
+  { value: 'Plus Jakarta Sans', label: 'Plus Jakarta Sans — friendly geometric sans' },
+  { value: 'Montserrat', label: 'Montserrat — classic geometric sans' },
+  { value: 'Syne', label: 'Syne — bold, fashion style' },
+  { value: 'Space Grotesk', label: 'Space Grotesk — technical sans' },
+  { value: 'JetBrains Mono', label: 'JetBrains Mono — technical monospace' },
+  { value: 'Space Mono', label: 'Space Mono — editorial monospace' },
+  { value: 'Roboto Mono', label: 'Roboto Mono — clean monospace' },
+  { value: 'Custom', label: 'Other Google Font… (type its name)' },
 ];
 
 const PRESETS: { name: string; description: string; config: TypographyConfig }[] = [
   {
-    name: 'Bespoke Classical (Default)',
+    name: 'Classic (Default)',
     description: 'Cinzel Roman Display + Inter Body + JetBrains Mono Specs',
     config: {
       headingFont: 'Cinzel',
@@ -146,941 +147,314 @@ const PRESETS: { name: string; description: string; config: TypographyConfig }[]
   },
 ];
 
+
+type Opt = { value: string; label: string };
+type Extra = { key: keyof TypographyConfig; label: string; options: Opt[] };
+
+const WEIGHTS: Opt[] = [
+  { value: '300', label: 'Light' },
+  { value: '400', label: 'Regular' },
+  { value: '500', label: 'Medium' },
+  { value: '600', label: 'Semi-bold' },
+  { value: '700', label: 'Bold' },
+];
+const SPACING4: Opt[] = [
+  { value: 'tight', label: 'Tight' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'wide', label: 'Wide' },
+  { value: 'ultra-wide', label: 'Extra wide' },
+];
+const SPACING3: Opt[] = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'wide', label: 'Wide' },
+  { value: 'extra-wide', label: 'Extra wide' },
+];
+
+interface SectionDef {
+  title: string;
+  where: string;
+  fontKey: keyof TypographyConfig;
+  customKey: keyof TypographyConfig;
+  extras: Extra[];
+}
+
+// One entry per part of the website: what it is, where it appears, and which options it has.
+const SECTIONS: SectionDef[] = [
+  {
+    title: 'Main headlines',
+    where: "The big titles: the home page banner (\"LIGHT, REFINED.\") and page titles like \"DRY GOODS\" or \"Contact us\".",
+    fontKey: 'headingFont', customKey: 'headingCustomFont',
+    extras: [
+      { key: 'headingWeight', label: 'Boldness', options: WEIGHTS },
+      { key: 'headingScale', label: 'Size', options: [
+        { value: 'compact', label: 'Smaller' }, { value: 'normal', label: 'Normal' },
+        { value: 'large', label: 'Larger' }, { value: 'grand', label: 'Extra large' } ] },
+      { key: 'headingLetterSpacing', label: 'Letter spacing', options: SPACING4 },
+      { key: 'headingTransform', label: 'Capitals', options: [
+        { value: 'none', label: 'As typed' }, { value: 'uppercase', label: 'ALL CAPITALS' }, { value: 'capitalize', label: 'Each Word Capitalised' } ] },
+    ],
+  },
+  {
+    title: 'Sub-headings & product names',
+    where: 'Product names on cards, section sub-titles and smaller headings.',
+    fontKey: 'subheadingFont', customKey: 'subheadingCustomFont',
+    extras: [
+      { key: 'subheadingWeight', label: 'Boldness', options: WEIGHTS.filter((w) => w.value !== '300') },
+      { key: 'subheadingLetterSpacing', label: 'Letter spacing', options: SPACING4.filter((o) => o.value !== 'ultra-wide') },
+    ],
+  },
+  {
+    title: 'Paragraph text',
+    where: 'Descriptions, product details, the contact form: all normal reading text.',
+    fontKey: 'bodyFont', customKey: 'bodyCustomFont',
+    extras: [
+      { key: 'bodyBaseSize', label: 'Text size', options: [
+        { value: '14px', label: 'Small' }, { value: '15px', label: 'Compact' }, { value: '16px', label: 'Normal' },
+        { value: '17px', label: 'Large' }, { value: '18px', label: 'Extra large' } ] },
+      { key: 'bodyLineHeight', label: 'Line spacing', options: [
+        { value: '1.4', label: 'Tight' }, { value: '1.5', label: 'Normal' }, { value: '1.6', label: 'Relaxed' }, { value: '1.7', label: 'Airy' } ] },
+    ],
+  },
+  {
+    title: 'Logo / brand name',
+    where: 'The "KIRTEE & ASSOCIATES" name in the top bar and the footer.',
+    fontKey: 'brandFont', customKey: 'brandCustomFont',
+    extras: [{ key: 'brandLetterSpacing', label: 'Letter spacing', options: SPACING3 }],
+  },
+  {
+    title: 'Menu links',
+    where: 'The links in the top menu (Products, Contact and so on).',
+    fontKey: 'navFont', customKey: 'navCustomFont',
+    extras: [
+      { key: 'navSize', label: 'Text size', options: [
+        { value: '11px', label: 'Small' }, { value: '12px', label: 'Normal' }, { value: '13px', label: 'Large' }, { value: '14px', label: 'Extra large' } ] },
+      { key: 'navLetterSpacing', label: 'Letter spacing', options: SPACING3 },
+    ],
+  },
+  {
+    title: 'Small labels & specs',
+    where: 'Tiny uppercase labels above headings (e.g. "ARCHITECTURAL LIGHTING SYSTEMS") and technical details.',
+    fontKey: 'accentFont', customKey: 'accentCustomFont',
+    extras: [{ key: 'accentLetterSpacing', label: 'Letter spacing', options: SPACING3 }],
+  },
+];
+
+const EM: Record<string, string> = {
+  tight: '-0.025em', normal: '0em', wide: '0.06em', 'ultra-wide': '0.14em', 'extra-wide': '0.22em',
+};
+const SCALE: Record<string, number> = { compact: 0.9, normal: 1, large: 1.12, grand: 1.25 };
+
+const effective = (font: string, custom?: string) => (font === 'Custom' && custom?.trim() ? custom.trim() : font || 'Inter');
+
+// Live sample in the chosen style, so the admin sees exactly what the setting changes
+function sampleStyle(title: string, c: TypographyConfig): { text: string; style: React.CSSProperties } {
+  const fam = (f: string, cu?: string) => `"${effective(f, cu)}", Georgia, serif`;
+  switch (title) {
+    case 'Main headlines':
+      return { text: 'Light, Refined.', style: {
+        fontFamily: fam(c.headingFont, c.headingCustomFont), fontWeight: Number(c.headingWeight),
+        fontSize: `${1.9 * (SCALE[c.headingScale] || 1)}rem`, letterSpacing: EM[c.headingLetterSpacing],
+        textTransform: c.headingTransform } };
+    case 'Sub-headings & product names':
+      return { text: 'Calipso Honeycomb System', style: {
+        fontFamily: fam(c.subheadingFont, c.subheadingCustomFont), fontWeight: Number(c.subheadingWeight),
+        fontSize: '1.2rem', letterSpacing: EM[c.subheadingLetterSpacing] } };
+    case 'Paragraph text':
+      return { text: 'Bespoke architectural lighting systems engineered for exceptional spaces, crafted with precision.', style: {
+        fontFamily: fam(c.bodyFont, c.bodyCustomFont), fontSize: c.bodyBaseSize, lineHeight: c.bodyLineHeight } };
+    case 'Logo / brand name':
+      return { text: 'KIRTEE & ASSOCIATES', style: {
+        fontFamily: fam(c.brandFont, c.brandCustomFont), fontWeight: 600, fontSize: '1.1rem', letterSpacing: EM[c.brandLetterSpacing] } };
+    case 'Menu links':
+      return { text: 'PRODUCTS   DRY GOODS   WET GOODS   CONTACT', style: {
+        fontFamily: fam(c.navFont, c.navCustomFont), fontSize: c.navSize, letterSpacing: EM[c.navLetterSpacing], fontWeight: 500 } };
+    default:
+      return { text: 'ARCHITECTURAL LIGHTING SYSTEMS  ·  2,884 lm  ·  IP68', style: {
+        fontFamily: fam(c.accentFont, c.accentCustomFont), fontSize: '0.75rem', letterSpacing: EM[c.accentLetterSpacing] } };
+  }
+}
+
+const selectStyle: React.CSSProperties = {
+  width: '100%', padding: '0.55rem 0.65rem', border: '1px solid #d1d5db', borderRadius: '6px',
+  fontSize: '0.875rem', backgroundColor: '#fff', color: '#111827',
+};
+
 export const AdminTypographyManager: React.FC = () => {
   const [config, setConfig] = useState<TypographyConfig>(DEFAULT_TYPOGRAPHY);
+  const [saved, setSaved] = useState<TypographyConfig>(DEFAULT_TYPOGRAPHY);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
 
-  // Fetch current typography setting
   useEffect(() => {
     fetch('/api/admin/content?key=site_typography')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.data) {
-          setConfig({ ...DEFAULT_TYPOGRAPHY, ...data.data });
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.data) {
+          const cfg = { ...DEFAULT_TYPOGRAPHY, ...d.data };
+          setConfig(cfg);
+          setSaved(cfg);
         }
       })
-      .catch((err) => console.warn('Could not load typography settings:', err))
+      .catch(() => setMessage({ ok: false, text: 'Could not load the current typography.' }))
       .finally(() => setIsLoading(false));
   }, []);
 
-  const getEffectiveFont = (font: string, custom?: string) => {
-    if (font === 'Custom' && custom && custom.trim()) return custom.trim();
-    return font || 'Inter';
-  };
-
-  // Dynamically load Google Font for the preview
+  // Load the chosen Google Fonts so the samples render in the real font
   useEffect(() => {
-    const fonts = new Set<string>();
-    [
-      getEffectiveFont(config.headingFont, config.headingCustomFont),
-      getEffectiveFont(config.subheadingFont, config.subheadingCustomFont),
-      getEffectiveFont(config.bodyFont, config.bodyCustomFont),
-      getEffectiveFont(config.brandFont, config.brandCustomFont),
-      getEffectiveFont(config.navFont, config.navCustomFont),
-      getEffectiveFont(config.accentFont, config.accentCustomFont),
-    ].forEach((f) => {
-      if (f && !['system-ui', '-apple-system', 'sans-serif', 'serif', 'monospace'].includes(f.toLowerCase())) {
-        fonts.add(f);
-      }
-    });
-
-    if (fonts.size === 0) return;
-
-    const query = Array.from(fonts)
-      .map((f) => `family=${encodeURIComponent(f)}:wght@300;400;500;600;700`)
-      .join('&');
-
-    const linkId = 'admin-preview-dynamic-fonts';
-    let link = document.getElementById(linkId) as HTMLLinkElement | null;
+    const fonts = new Set(SECTIONS.map((s) => effective(config[s.fontKey] as string, config[s.customKey] as string | undefined)));
+    const query = [...fonts].map((f) => `family=${encodeURIComponent(f)}:wght@300;400;500;600;700`).join('&');
+    let link = document.getElementById('admin-preview-dynamic-fonts') as HTMLLinkElement | null;
     if (!link) {
       link = document.createElement('link');
-      link.id = linkId;
+      link.id = 'admin-preview-dynamic-fonts';
       link.rel = 'stylesheet';
       document.head.appendChild(link);
     }
     link.href = `https://fonts.googleapis.com/css2?${query}&display=swap`;
   }, [config]);
 
-  const handleSave = async () => {
+  const dirty = useMemo(() => JSON.stringify(config) !== JSON.stringify(saved), [config, saved]);
+  const set = (key: keyof TypographyConfig, value: string) => {
+    setMessage(null);
+    setConfig((c) => ({ ...c, [key]: value }));
+  };
+
+  const save = async () => {
     setIsSaving(true);
-    setSaveSuccess(false);
+    setMessage(null);
     try {
       const res = await fetch('/api/admin/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          key: 'site_typography',
-          value: config,
-        }),
+        body: JSON.stringify({ key: 'site_typography', value: config }),
       });
       const data = await res.json();
       if (data.success) {
-        setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 4000);
+        setSaved(config);
+        setMessage({ ok: true, text: 'Saved. The new fonts are live on the website.' });
       } else {
-        alert('Failed to save typography: ' + (data.message || 'Unknown error'));
+        setMessage({ ok: false, text: data.message || 'Could not save.' });
       }
-    } catch (e: any) {
-      alert('Error saving typography: ' + e.message);
+    } catch {
+      setMessage({ ok: false, text: 'Could not reach the server. Nothing was saved.' });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleReset = () => {
-    if (confirm('Reset typography to default studio architectural standards?')) {
-      setConfig(DEFAULT_TYPOGRAPHY);
-    }
-  };
-
-  const effectiveHeading = getEffectiveFont(config.headingFont, config.headingCustomFont);
-  const effectiveSubheading = getEffectiveFont(config.subheadingFont, config.subheadingCustomFont);
-  const effectiveBody = getEffectiveFont(config.bodyFont, config.bodyCustomFont);
-  const effectiveBrand = getEffectiveFont(config.brandFont, config.brandCustomFont);
-  const effectiveNav = getEffectiveFont(config.navFont, config.navCustomFont);
-  const effectiveAccent = getEffectiveFont(config.accentFont, config.accentCustomFont);
-
   if (isLoading) {
     return (
       <div style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
-        <RefreshCw className="animate-spin" size={24} style={{ margin: '0 auto 1rem auto' }} />
-        <p>Loading typography controls...</p>
+        <RefreshCw className="animate-spin" size={22} style={{ margin: '0 auto 0.75rem' }} />
+        Loading fonts…
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-      {/* Header Banner */}
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1rem',
-          marginBottom: '2rem',
-          paddingBottom: '1.25rem',
-          borderBottom: '1px solid #e5e7eb',
-        }}
-      >
-        <div>
-          <span
-            style={{
-              fontFamily: 'var(--font-mono, monospace)',
-              fontSize: '0.6875rem',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              color: '#6b7280',
-              letterSpacing: '0.14em',
-            }}
-          >
-            GLOBAL DESIGN SYSTEM &amp; TYPOGRAPHY
-          </span>
-          <h1
-            style={{
-              fontSize: '1.75rem',
-              fontWeight: 700,
-              color: '#111827',
-              margin: '0.25rem 0 0.5rem 0',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.6rem',
-            }}
-          >
-            <Type size={26} style={{ color: '#111827' }} />
-            <span>Typography &amp; Font Control</span>
-          </h1>
-          <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
-            Change fonts, sizes, weights, and letter-spacing for every single element across the entire website in real-time.
-          </p>
+    <div style={{ maxWidth: '860px' }}>
+      <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', color: '#6b7280', letterSpacing: '0.14em' }}>
+        WEBSITE FONTS
+      </span>
+      <h1 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#111827', margin: '0.25rem 0 0.5rem' }}>Typography &amp; Fonts</h1>
+      <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0 0 1.5rem' }}>
+        Pick a font for each part of the website. The sample under each title shows how it will look.
+      </p>
+
+      {/* Quick styles */}
+      <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '1rem 1.25rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', fontSize: '0.875rem', fontWeight: 600, color: '#111827' }}>
+          <Sparkles size={16} style={{ color: '#4f46e5' }} /> Start from a ready-made style
+          <span style={{ fontWeight: 400, color: '#6b7280', fontSize: '0.75rem' }}>(then adjust any part below)</span>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <button
-            type="button"
-            onClick={handleReset}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.55rem 1rem',
-              backgroundColor: '#f3f4f6',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              color: '#374151',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s ease',
-            }}
-          >
-            <Undo2 size={14} />
-            <span>Reset Defaults</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={isSaving}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.45rem',
-              padding: '0.55rem 1.4rem',
-              backgroundColor: saveSuccess ? '#059669' : '#111827',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              color: '#ffffff',
-              cursor: isSaving ? 'not-allowed' : 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            {isSaving ? (
-              <>
-                <RefreshCw size={14} className="animate-spin" />
-                <span>Saving...</span>
-              </>
-            ) : saveSuccess ? (
-              <>
-                <Check size={14} />
-                <span>Saved &amp; Synced!</span>
-              </>
-            ) : (
-              <>
-                <Sparkles size={14} />
-                <span>Save All Changes</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* 1-Click Architectural Presets */}
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '8px',
-          border: '1px solid #e5e7eb',
-          padding: '1.5rem',
-          marginBottom: '2rem',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-          <Sparkles size={18} style={{ color: '#4f46e5' }} />
-          <h2 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#111827', margin: 0 }}>
-            1-Click Architectural Presets
-          </h2>
-          <span style={{ fontSize: '0.75rem', color: '#6b7280', marginLeft: 'auto' }}>
-            Click to apply a cohesive, professionally paired typography system
-          </span>
-        </div>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-            gap: '0.75rem',
-          }}
-        >
-          {PRESETS.map((preset) => (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          {PRESETS.map((p) => (
             <button
-              key={preset.name}
+              key={p.name}
               type="button"
-              onClick={() => setConfig(preset.config)}
-              style={{
-                textAlign: 'left',
-                padding: '0.85rem 1rem',
-                borderRadius: '6px',
-                border: '1px solid #e5e7eb',
-                backgroundColor: '#fafafa',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#111827';
-                e.currentTarget.style.backgroundColor = '#ffffff';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#e5e7eb';
-                e.currentTarget.style.backgroundColor = '#fafafa';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
+              title={p.description}
+              onClick={() => { setMessage(null); setConfig(p.config); }}
+              style={{ padding: '0.45rem 0.9rem', border: '1px solid #d1d5db', borderRadius: '9999px', background: '#fafafa', fontSize: '0.8125rem', fontWeight: 600, color: '#111827', cursor: 'pointer' }}
             >
-              <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#111827', marginBottom: '0.2rem' }}>
-                {preset.name}
-              </div>
-              <div style={{ fontSize: '0.6875rem', color: '#6b7280', lineHeight: 1.3 }}>
-                {preset.description}
-              </div>
+              {p.name}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Grid: Controls (Left) & Real-time Live Preview (Right) */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(340px, 1.25fr) minmax(340px, 1fr)',
-          gap: '2rem',
-          alignItems: 'start',
-        }}
-      >
-        {/* Left Column: Granular Controls for Every Element */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-          {/* Card 1: Main Headings (H1, H2, Hero Titles) */}
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
-                1. Main Headings (H1, H2, Hero &amp; Display Titles)
-              </span>
-            </div>
+      {/* One card per part of the website */}
+      <div style={{ display: 'grid', gap: '1rem' }}>
+        {SECTIONS.map((sec, i) => {
+          const sample = sampleStyle(sec.title, config);
+          const isCustom = config[sec.fontKey] === 'Custom';
+          return (
+            <section key={sec.title} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '1.25rem' }}>
+              <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#111827', margin: 0 }}>{i + 1}. {sec.title}</h2>
+              <p style={{ fontSize: '0.8125rem', color: '#6b7280', margin: '0.25rem 0 0.9rem' }}>{sec.where}</p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                  Heading Font Family
-                </label>
-                <select
-                  value={config.headingFont}
-                  onChange={(e) => setConfig({ ...config, headingFont: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                >
-                  {CURATED_FONTS.map((f) => (
-                    <option key={f.value} value={f.value}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
-                {config.headingFont === 'Custom' && (
-                  <input
-                    type="text"
-                    placeholder="Enter Google Font name (e.g. Clash Display, Bodoni, Italiana)"
-                    value={config.headingCustomFont || ''}
-                    onChange={(e) => setConfig({ ...config, headingCustomFont: e.target.value })}
-                    style={{ width: '100%', marginTop: '0.45rem', padding: '0.5rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
-                  />
-                )}
+              <div
+                aria-label={`Preview of ${sec.title}`}
+                style={{ background: '#f9fafb', border: '1px dashed #d1d5db', borderRadius: '6px', padding: '1rem', marginBottom: '0.9rem', color: '#111827', overflowWrap: 'anywhere', ...sample.style }}
+              >
+                {sample.text}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                    Font Weight
-                  </label>
-                  <select
-                    value={config.headingWeight}
-                    onChange={(e) => setConfig({ ...config, headingWeight: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="300">Light (300)</option>
-                    <option value="400">Regular (400)</option>
-                    <option value="500">Medium (500)</option>
-                    <option value="600">Semi-Bold (600)</option>
-                    <option value="700">Bold (700)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                    Scale / Size
-                  </label>
-                  <select
-                    value={config.headingScale}
-                    onChange={(e) => setConfig({ ...config, headingScale: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="compact">Compact (90%)</option>
-                    <option value="normal">Default (100%)</option>
-                    <option value="large">Large (112%)</option>
-                    <option value="grand">Grand Display (125%)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                    Letter Spacing
-                  </label>
-                  <select
-                    value={config.headingLetterSpacing}
-                    onChange={(e) => setConfig({ ...config, headingLetterSpacing: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="tight">Tight (-0.025em)</option>
-                    <option value="normal">Normal (0em)</option>
-                    <option value="wide">Wide (+0.06em)</option>
-                    <option value="ultra-wide">Ultra-Wide (+0.14em)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                    Text Transform
-                  </label>
-                  <select
-                    value={config.headingTransform}
-                    onChange={(e) => setConfig({ ...config, headingTransform: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="none">As Typed (Normal)</option>
-                    <option value="uppercase">ALL UPPERCASE</option>
-                    <option value="capitalize">Capitalize Words</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Subheadings & Product Cards (H3, H4) */}
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
-                2. Subheadings &amp; Product Titles (H3, H4, Feature Cards)
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                  Subheading Font Family
-                </label>
-                <select
-                  value={config.subheadingFont}
-                  onChange={(e) => setConfig({ ...config, subheadingFont: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                >
-                  {CURATED_FONTS.map((f) => (
-                    <option key={f.value} value={f.value}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
-                {config.subheadingFont === 'Custom' && (
-                  <input
-                    type="text"
-                    placeholder="Enter Google Font name"
-                    value={config.subheadingCustomFont || ''}
-                    onChange={(e) => setConfig({ ...config, subheadingCustomFont: e.target.value })}
-                    style={{ width: '100%', marginTop: '0.45rem', padding: '0.5rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
-                  />
-                )}
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                    Font Weight
-                  </label>
-                  <select
-                    value={config.subheadingWeight}
-                    onChange={(e) => setConfig({ ...config, subheadingWeight: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="400">Regular (400)</option>
-                    <option value="500">Medium (500)</option>
-                    <option value="600">Semi-Bold (600)</option>
-                    <option value="700">Bold (700)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                    Letter Spacing
-                  </label>
-                  <select
-                    value={config.subheadingLetterSpacing}
-                    onChange={(e) => setConfig({ ...config, subheadingLetterSpacing: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="tight">Tight (-0.025em)</option>
-                    <option value="normal">Normal (0em)</option>
-                    <option value="wide">Wide (+0.06em)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Body & Paragraphs */}
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
-                3. Body &amp; Content Text (Paragraphs, Descriptions, Specs, Forms)
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                  Body Font Family
-                </label>
-                <select
-                  value={config.bodyFont}
-                  onChange={(e) => setConfig({ ...config, bodyFont: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                >
-                  {CURATED_FONTS.map((f) => (
-                    <option key={f.value} value={f.value}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
-                {config.bodyFont === 'Custom' && (
-                  <input
-                    type="text"
-                    placeholder="Enter Google Font name"
-                    value={config.bodyCustomFont || ''}
-                    onChange={(e) => setConfig({ ...config, bodyCustomFont: e.target.value })}
-                    style={{ width: '100%', marginTop: '0.45rem', padding: '0.5rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
-                  />
-                )}
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                    Base Body Size
-                  </label>
-                  <select
-                    value={config.bodyBaseSize}
-                    onChange={(e) => setConfig({ ...config, bodyBaseSize: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="14px">Small (14px)</option>
-                    <option value="15px">Refined Compact (15px)</option>
-                    <option value="16px">Standard (16px)</option>
-                    <option value="17px">Large (17px)</option>
-                    <option value="18px">Extra Large (18px)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                    Line Height (Spacing)
-                  </label>
-                  <select
-                    value={config.bodyLineHeight}
-                    onChange={(e) => setConfig({ ...config, bodyLineHeight: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="1.4">Compact (1.4)</option>
-                    <option value="1.5">Standard (1.5)</option>
-                    <option value="1.6">Relaxed (1.6)</option>
-                    <option value="1.7">Spacious (1.7)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 4: Brand Logo & Navigation */}
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
-                4. Brand Logo &amp; Header Navigation
-              </span>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                  Brand Logo Font (ZENVORA)
-                </label>
-                <select
-                  value={config.brandFont}
-                  onChange={(e) => setConfig({ ...config, brandFont: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                >
-                  {CURATED_FONTS.map((f) => (
-                    <option key={f.value} value={f.value}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
-                {config.brandFont === 'Custom' && (
-                  <input
-                    type="text"
-                    placeholder="Enter Google Font name"
-                    value={config.brandCustomFont || ''}
-                    onChange={(e) => setConfig({ ...config, brandCustomFont: e.target.value })}
-                    style={{ width: '100%', marginTop: '0.45rem', padding: '0.5rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
-                  />
-                )}
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.3rem' }} htmlFor={`font-${sec.fontKey}`}>
+                Font
+              </label>
+              <select id={`font-${sec.fontKey}`} value={config[sec.fontKey] as string} onChange={(e) => set(sec.fontKey, e.target.value)} style={selectStyle}>
+                {FONTS.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
+              </select>
+              {isCustom && (
                 <div style={{ marginTop: '0.5rem' }}>
-                  <label style={{ display: 'block', fontSize: '0.7rem', color: '#6b7280', marginBottom: '0.2rem' }}>
-                    Brand Letter Spacing
-                  </label>
-                  <select
-                    value={config.brandLetterSpacing}
-                    onChange={(e) => setConfig({ ...config, brandLetterSpacing: e.target.value as any })}
-                    style={{ width: '100%', padding: '0.45rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.75rem', backgroundColor: '#ffffff' }}
-                  >
-                    <option value="normal">Normal (0.08em)</option>
-                    <option value="wide">Wide (0.14em)</option>
-                    <option value="extra-wide">Extra-Wide (0.22em)</option>
-                  </select>
+                  <input
+                    value={(config[sec.customKey] as string) || ''}
+                    onChange={(e) => set(sec.customKey, e.target.value)}
+                    placeholder="Exact name from fonts.google.com, e.g. Lora"
+                    aria-label={`Custom Google font for ${sec.title}`}
+                    style={selectStyle}
+                  />
                 </div>
-              </div>
+              )}
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                  Header Nav Links Font
-                </label>
-                <select
-                  value={config.navFont}
-                  onChange={(e) => setConfig({ ...config, navFont: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                >
-                  {CURATED_FONTS.map((f) => (
-                    <option key={f.value} value={f.value}>
-                      {f.label}
-                    </option>
+              <details style={{ marginTop: '0.9rem' }}>
+                <summary style={{ cursor: 'pointer', fontSize: '0.8125rem', fontWeight: 600, color: '#4b5563' }}>Fine-tune (size, boldness, spacing)</summary>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.75rem', marginTop: '0.75rem' }}>
+                  {sec.extras.map((ex) => (
+                    <div key={ex.key}>
+                      <label style={{ display: 'block', fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }} htmlFor={`opt-${ex.key}`}>{ex.label}</label>
+                      <select id={`opt-${ex.key}`} value={config[ex.key] as string} onChange={(e) => set(ex.key, e.target.value)} style={selectStyle}>
+                        {ex.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                      </select>
+                    </div>
                   ))}
-                </select>
-                {config.navFont === 'Custom' && (
-                  <input
-                    type="text"
-                    placeholder="Enter Google Font name"
-                    value={config.navCustomFont || ''}
-                    onChange={(e) => setConfig({ ...config, navCustomFont: e.target.value })}
-                    style={{ width: '100%', marginTop: '0.45rem', padding: '0.5rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
-                  />
-                )}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', marginTop: '0.5rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.7rem', color: '#6b7280', marginBottom: '0.2rem' }}>
-                      Nav Size
-                    </label>
-                    <select
-                      value={config.navSize}
-                      onChange={(e) => setConfig({ ...config, navSize: e.target.value as any })}
-                      style={{ width: '100%', padding: '0.45rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.75rem', backgroundColor: '#ffffff' }}
-                    >
-                      <option value="11px">11px</option>
-                      <option value="12px">12px</option>
-                      <option value="13px">13px</option>
-                      <option value="14px">14px</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.7rem', color: '#6b7280', marginBottom: '0.2rem' }}>
-                      Nav Spacing
-                    </label>
-                    <select
-                      value={config.navLetterSpacing}
-                      onChange={(e) => setConfig({ ...config, navLetterSpacing: e.target.value as any })}
-                      style={{ width: '100%', padding: '0.45rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.75rem', backgroundColor: '#ffffff' }}
-                    >
-                      <option value="normal">Normal</option>
-                      <option value="wide">Wide (0.14em)</option>
-                      <option value="extra-wide">Ultra (0.2em)</option>
-                    </select>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
+              </details>
+            </section>
+          );
+        })}
+      </div>
 
-          {/* Card 5: Technical Badges, Eyebrows & Specs */}
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              padding: '1.5rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
-                5. Eyebrows, Technical Badges &amp; Monospace Specs
-              </span>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                  Technical / Accent Font
-                </label>
-                <select
-                  value={config.accentFont}
-                  onChange={(e) => setConfig({ ...config, accentFont: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                >
-                  <option value="JetBrains Mono">JetBrains Mono (Precision Monospace)</option>
-                  <option value="Space Mono">Space Mono (Editorial Monospace)</option>
-                  <option value="Roboto Mono">Roboto Mono (Clean Technical)</option>
-                  <option value="Inter">Inter (Sans-Serif Mono Match)</option>
-                  <option value="Custom">Custom Font</option>
-                </select>
-                {config.accentFont === 'Custom' && (
-                  <input
-                    type="text"
-                    placeholder="Enter Google Font name"
-                    value={config.accentCustomFont || ''}
-                    onChange={(e) => setConfig({ ...config, accentCustomFont: e.target.value })}
-                    style={{ width: '100%', marginTop: '0.45rem', padding: '0.5rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
-                  />
-                )}
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
-                  Accent Letter Spacing
-                </label>
-                <select
-                  value={config.accentLetterSpacing}
-                  onChange={(e) => setConfig({ ...config, accentLetterSpacing: e.target.value as any })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', backgroundColor: '#ffffff' }}
-                >
-                  <option value="normal">Normal (0.14em)</option>
-                  <option value="wide">Wide (0.22em)</option>
-                  <option value="extra-wide">Ultra-Wide (0.3em)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Live Interactive Preview */}
-        <div style={{ position: 'sticky', top: '90px' }}>
-          <div
-            style={{
-              backgroundColor: '#0a0a09',
-              color: '#ffffff',
-              borderRadius: '12px',
-              border: '1px solid #302f2b',
-              padding: '2rem',
-              boxShadow: '0 12px 36px rgba(0,0,0,0.4)',
-              overflow: 'hidden',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.85rem' }}>
-              <span style={{ fontSize: '0.6875rem', fontWeight: 700, letterSpacing: '0.18em', color: '#96938c', textTransform: 'uppercase' }}>
-                LIVE STUDIO PREVIEW
-              </span>
-              <span style={{ fontSize: '0.6875rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block' }} />
-                Instant Visual Feedback
-              </span>
-            </div>
-
-            {/* Preview: Header Brand & Nav */}
-            <div style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: `"${effectiveBrand}", sans-serif`,
-                      fontSize: '1.25rem',
-                      fontWeight: 700,
-                      letterSpacing: config.brandLetterSpacing === 'extra-wide' ? '0.22em' : config.brandLetterSpacing === 'wide' ? '0.14em' : '0.08em',
-                      textTransform: 'uppercase',
-                      color: '#ffffff',
-                    }}
-                  >
-                    ZENVORA
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: `"${effectiveAccent}", monospace`,
-                      fontSize: '0.55rem',
-                      letterSpacing: '0.2em',
-                      color: '#96938c',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    ARCHITECTURAL LIGHTING
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    fontFamily: `"${effectiveNav}", sans-serif`,
-                    fontSize: config.navSize,
-                    letterSpacing: config.navLetterSpacing === 'extra-wide' ? '0.2em' : config.navLetterSpacing === 'wide' ? '0.14em' : '0.08em',
-                    textTransform: 'uppercase',
-                    color: '#c8c2b7',
-                  }}
-                >
-                  <span style={{ color: '#ffffff', borderBottom: '1px solid #ffffff', paddingBottom: '2px' }}>HOME</span>
-                  <span>DRY GOODS</span>
-                  <span>WET GOODS</span>
-                  <span>CONTACT</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Preview: Eyebrow Tag */}
-            <div
-              style={{
-                fontFamily: `"${effectiveAccent}", monospace`,
-                fontSize: '0.6875rem',
-                letterSpacing: config.accentLetterSpacing === 'extra-wide' ? '0.3em' : config.accentLetterSpacing === 'wide' ? '0.22em' : '0.14em',
-                color: '#c5a880',
-                textTransform: 'uppercase',
-                marginBottom: '0.75rem',
-              }}
-            >
-              IP68 SUBMERSIBLE SYSTEMS .01
-            </div>
-
-            {/* Preview: Main Heading */}
-            <h1
-              style={{
-                fontFamily: `"${effectiveHeading}", Georgia, serif`,
-                fontSize:
-                  config.headingScale === 'grand'
-                    ? '2.75rem'
-                    : config.headingScale === 'large'
-                    ? '2.4rem'
-                    : config.headingScale === 'compact'
-                    ? '1.85rem'
-                    : '2.1rem',
-                fontWeight: Number(config.headingWeight),
-                letterSpacing:
-                  config.headingLetterSpacing === 'ultra-wide'
-                    ? '0.14em'
-                    : config.headingLetterSpacing === 'wide'
-                    ? '0.06em'
-                    : config.headingLetterSpacing === 'tight'
-                    ? '-0.025em'
-                    : '0em',
-                textTransform: config.headingTransform,
-                lineHeight: 1.1,
-                color: '#ffffff',
-                marginBottom: '1rem',
-              }}
-            >
-              Light, Refined.
-            </h1>
-
-            {/* Preview: Subheading */}
-            <h3
-              style={{
-                fontFamily: `"${effectiveSubheading}", sans-serif`,
-                fontSize: '1.15rem',
-                fontWeight: Number(config.subheadingWeight),
-                letterSpacing: config.subheadingLetterSpacing === 'wide' ? '0.06em' : config.subheadingLetterSpacing === 'tight' ? '-0.025em' : '0em',
-                color: '#e9e6de',
-                marginBottom: '0.85rem',
-              }}
-            >
-              Calipso Monolithic Architectural System
-            </h3>
-
-            {/* Preview: Body Paragraph */}
-            <p
-              style={{
-                fontFamily: `"${effectiveBody}", sans-serif`,
-                fontSize: config.bodyBaseSize,
-                lineHeight: Number(config.bodyLineHeight),
-                color: '#96938c',
-                marginBottom: '1.5rem',
-              }}
-            >
-              Micro-aperture wall grazers engineered for subterranean facade resilience and continuous glare-free illumination across raw architectural stone.
-            </p>
-
-            {/* Preview: Button */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  padding: '0.65rem 1.25rem',
-                  backgroundColor: '#ffffff',
-                  color: '#0a0a09',
-                  borderRadius: '9999px',
-                  fontFamily: `"${effectiveBody}", sans-serif`,
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                <span>EXPLORE LUMINAIRES</span>
-                <span>↗</span>
-              </div>
-
-              <div
-                style={{
-                  fontFamily: `"${effectiveAccent}", monospace`,
-                  fontSize: '0.7rem',
-                  color: '#c8c2b7',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  padding: '0.55rem 0.85rem',
-                  borderRadius: '4px',
-                }}
-              >
-                CRI &gt;95 | 3000K | 24V
-              </div>
-            </div>
-
-            {/* Summary Tag */}
-            <div
-              style={{
-                marginTop: '1.75rem',
-                paddingTop: '1rem',
-                borderTop: '1px solid rgba(255,255,255,0.08)',
-                fontSize: '0.6875rem',
-                color: '#6b7280',
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '0.5rem 1rem',
-              }}
-            >
-              <span>Heading: <strong style={{ color: '#ffffff' }}>{effectiveHeading}</strong></span>
-              <span>Body: <strong style={{ color: '#ffffff' }}>{effectiveBody}</strong></span>
-              <span>Brand: <strong style={{ color: '#ffffff' }}>{effectiveBrand}</strong></span>
-              <span>Accent: <strong style={{ color: '#ffffff' }}>{effectiveAccent}</strong></span>
-            </div>
-          </div>
-        </div>
+      {/* Save bar stays visible while scrolling */}
+      <div style={{ position: 'sticky', bottom: 0, marginTop: '1.25rem', background: '#fff', borderTop: '1px solid #e5e7eb', padding: '0.85rem 0', display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+        <button
+          type="button"
+          onClick={save}
+          disabled={isSaving || !dirty}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.6rem 1.4rem', background: dirty ? '#111827' : '#9ca3af', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.875rem', fontWeight: 600, cursor: isSaving || !dirty ? 'not-allowed' : 'pointer' }}
+        >
+          {isSaving ? <><RefreshCw size={14} className="animate-spin" /> Saving…</> : <><Check size={14} /> Save changes</>}
+        </button>
+        <button
+          type="button"
+          onClick={() => { if (confirm('Go back to the original fonts?')) { setMessage(null); setConfig(DEFAULT_TYPOGRAPHY); } }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.6rem 1rem', background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.8125rem', fontWeight: 600, color: '#374151', cursor: 'pointer' }}
+        >
+          <Undo2 size={14} /> Reset to original
+        </button>
+        {dirty && !message && <span style={{ fontSize: '0.8125rem', color: '#b45309' }}>You have unsaved changes</span>}
+        {message && <span role="status" style={{ fontSize: '0.8125rem', color: message.ok ? '#059669' : '#dc2626' }}>{message.text}</span>}
       </div>
     </div>
   );

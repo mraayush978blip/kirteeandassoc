@@ -14,7 +14,7 @@ html {
   text-rendering: optimizeLegibility;
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
   width: 100%;
 }
@@ -27,7 +27,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
   width: 100%;
   -webkit-font-smoothing: antialiased;
@@ -375,7 +375,9 @@ a {
   background-color: #f9fafb;
   color: #111827;
   width: 100%;
-  overflow-x: hidden;
+  /* `clip` (not `hidden`): hidden makes this element a scroll container, which breaks the
+     sticky sidebar and sticky mobile header so they scroll away with the page. */
+  overflow-x: clip;
 }
 
 .admin-sidebar-desktop {
@@ -417,7 +419,6 @@ a {
   width: 100% !important;
   flex: 1;
   min-width: 0;
-  overflow-y: auto;
 }
 
 /* Responsive Grids & Form Layouts */
@@ -557,6 +558,11 @@ a {
 
   .admin-sidebar-desktop {
     display: flex !important;
+    align-self: flex-start;
+    position: sticky !important;
+    top: 0 !important;
+    height: 100vh !important;
+    overflow-y: auto;
   }
 
   .admin-mobile-header {

@@ -989,7 +989,7 @@ function AdminDashboardContent() {
       {/* ======================================================== */}
       {/* MAIN CONTENT AREA */}
       {/* ======================================================== */}
-      <div className="admin-main-content" style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
+      <div className="admin-main-content" style={{ flex: 1, minWidth: 0 }}>
         {/* ======================================================== */}
         {/* 1. DASHBOARD OVERVIEW TAB */}
         {/* ======================================================== */}
