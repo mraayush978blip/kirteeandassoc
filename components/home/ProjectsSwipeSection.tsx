@@ -130,8 +130,9 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
     <section
       id="projects"
       style={{
-        backgroundColor: '#282b32',
-        color: '#ffffff',
+        backgroundColor: '#ffffff',
+        color: '#111827',
+        borderTop: '1px solid #e5e7eb',
         paddingTop: 'clamp(3.5rem, 6vw, 6.5rem)',
         paddingBottom: 'clamp(3.5rem, 6vw, 6.5rem)',
         overflow: 'hidden',
@@ -157,7 +158,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.2em',
-                color: 'rgba(255, 255, 255, 0.65)',
+                color: '#6b7280',
                 display: 'block',
                 marginBottom: '1rem',
               }}
@@ -171,7 +172,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                 lineHeight: 1.08,
                 letterSpacing: '-0.02em',
                 fontWeight: 500,
-                color: '#ffffff',
+                color: '#111827',
               }}
             >
               SPACES THAT INSPIRE
@@ -187,16 +188,16 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                 fontWeight: 600,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: '#ffffff',
+                color: '#111827',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.75rem',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
+                borderBottom: '1px solid rgba(17, 24, 39, 0.3)',
                 paddingBottom: '0.4rem',
                 transition: 'border-color 0.2s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#ffffff')}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)')}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#111827')}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(17, 24, 39, 0.3)')}
             >
               <span>VIEW ALL PROJECTS</span>
               <ArrowRight size={15} />
@@ -213,9 +214,9 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                   width: '40px',
                   height: '40px',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #d1d5db',
+                  color: '#111827',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -236,9 +237,9 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                   width: '40px',
                   height: '40px',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #d1d5db',
+                  color: '#111827',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -295,7 +296,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                     aspectRatio: '16 / 11',
                     borderRadius: '2px',
                     overflow: 'hidden',
-                    backgroundColor: '#353943',
+                    backgroundColor: '#f3f4f6',
                     marginBottom: '1.25rem',
                   }}
                 >
@@ -310,13 +311,6 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                     }}
                     className="project-img"
                   />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(180deg, transparent 60%, rgba(10, 10, 10, 0.65) 100%)',
-                    }}
-                  />
                 </div>
 
                 {/* Project Info */}
@@ -326,7 +320,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                       style={{
                         fontFamily: 'var(--font-mono)',
                         fontSize: '0.75rem',
-                        color: 'rgba(255, 255, 255, 0.5)',
+                        color: '#9ca3af',
                         display: 'block',
                         marginBottom: '0.35rem',
                       }}
@@ -340,7 +334,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                         fontWeight: 600,
                         letterSpacing: '0.1em',
                         textTransform: 'uppercase',
-                        color: '#ffffff',
+                        color: '#111827',
                         marginBottom: '0.25rem',
                         overflowWrap: 'break-word',
                         wordBreak: 'break-word',
@@ -351,7 +345,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                     <p
                       style={{
                         fontSize: '0.8125rem',
-                        color: 'rgba(255, 255, 255, 0.65)',
+                        color: '#4b5563',
                         overflowWrap: 'break-word',
                         wordBreak: 'break-word',
                       }}
@@ -360,7 +354,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                     </p>
                   </div>
 
-                  <ArrowRight size={16} color="rgba(255, 255, 255, 0.7)" style={{ marginTop: '0.5rem', flexShrink: 0 }} />
+                  <ArrowRight size={16} color="#6b7280" style={{ marginTop: '0.5rem', flexShrink: 0 }} />
                 </div>
               </Link>
             </div>

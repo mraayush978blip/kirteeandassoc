@@ -74,6 +74,7 @@ import {
 } from '@/lib/site-settings-types';
 import { ProductGridBuilder, GridPhotoItem } from '@/components/admin/ProductGridBuilder';
 import { ImageCropperModal } from '@/components/admin/ImageCropperModal';
+import { ImageField } from '@/components/admin/ImageField';
 import { AdminTypographyManager } from '@/components/admin/AdminTypographyManager';
 
 
@@ -2002,15 +2003,12 @@ function AdminDashboardContent() {
                   </div>
                 </div>
 
-                <div>
-                  <label style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Right-Edge Image URL</label>
-                  <input
-                    type="text"
-                    value={projectCtaConfig.imageUrl}
-                    onChange={(e) => setProjectCtaConfig({ ...projectCtaConfig, imageUrl: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
-                  />
-                </div>
+                <ImageField
+                  label="Right-edge photo"
+                  value={projectCtaConfig.imageUrl}
+                  onChange={(url) => setProjectCtaConfig({ ...projectCtaConfig, imageUrl: url })}
+                  ratio="16:10"
+                />
               </div>
             )}
           </div>
@@ -4081,25 +4079,32 @@ function AdminDashboardContent() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>Category &amp; Year</label>
-                  <input
-                    type="text"
-                    value={`${editingProject.category || 'Hospitality'} (${editingProject.year || '2025'})`}
-                    onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
-                    style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
-                  />
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>Category (e.g. Hospitality) and Year</label>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input
+                      type="text"
+                      aria-label="Category"
+                      value={editingProject.category || ''}
+                      onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
+                      style={{ flex: 1, minWidth: 0, padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                    <input
+                      type="text"
+                      aria-label="Year"
+                      value={editingProject.year || ''}
+                      onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })}
+                      style={{ width: '5.5rem', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>Project Showcase Image URL</label>
-                <input
-                  type="text"
-                  value={editingProject.imageUrl}
-                  onChange={(e) => setEditingProject({ ...editingProject, imageUrl: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem' }}
-                />
-              </div>
+              <ImageField
+                label="Project photo"
+                value={editingProject.imageUrl}
+                onChange={(url) => setEditingProject({ ...editingProject, imageUrl: url })}
+                ratio="16:11"
+              />
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>Narrative Description</label>
