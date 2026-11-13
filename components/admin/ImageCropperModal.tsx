@@ -1,372 +1,326 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { X, Check, Crop, RotateCw, ZoomIn, ZoomOut, Image as ImageIcon, Sparkles } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { X, Check, Crop, ZoomIn, ZoomOut, Move } from 'lucide-react';
+import { ratioValue } from '@/lib/photo-grid';
 
 interface ImageCropperModalProps {
   isOpen: boolean;
   onClose: () => void;
   imageUrl: string | null;
   imageFile?: File | null;
-  aspectRatioPreset?: '16:9' | '4:3' | '1:1' | '3:2' | 'free';
+  /** The exact shape the photo must be cropped to, e.g. "16:9". The admin cannot change it. */
+  aspectRatioPreset?: string;
+  /** Plain-language hint shown to the admin, e.g. "Top slider photo". */
+  purpose?: string;
   title?: string;
   onCropComplete: (result: { blob: Blob; dataUrl: string; width: number; height: number; filename: string }) => void;
 }
 
+const MAX_OUTPUT_WIDTH = 2048;
+const MAX_ZOOM = 4;
+
+/**
+ * Fixed-ratio cropper. The frame shape is decided by the website (never by the admin):
+ * the admin only drags the photo to choose which part shows, and zooms if needed.
+ * The exported file has EXACTLY the frame's ratio, so the website shows it without zoom/cropping.
+ */
 export const ImageCropperModal: React.FC<ImageCropperModalProps> = ({
   isOpen,
   onClose,
   imageUrl,
   imageFile,
   aspectRatioPreset = '16:9',
-  title = 'Crop & Optimize Photo',
+  purpose,
+  title = 'Crop photo',
   onCropComplete,
 }) => {
-  const [selectedAspect, setSelectedAspect] = useState<'16:9' | '4:3' | '1:1' | '3:2' | 'free'>(aspectRatioPreset);
-  const [zoom, setZoom] = useState<number>(1);
-  const [rotation, setRotation] = useState<number>(0);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [previewSrc, setPreviewSrc] = useState<string>('');
-  const imgRef = useRef<HTMLImageElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ratioText = /^\d+:\d+$/.test(aspectRatioPreset) ? aspectRatioPreset : '16:9';
+  const ratio = ratioValue(ratioText);
 
+  const [src, setSrc] = useState('');
+  const [nat, setNat] = useState<{ w: number; h: number } | null>(null);
+  const [frame, setFrame] = useState({ w: 560, h: 315 });
+  const [zoom, setZoom] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [dragging, setDragging] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const drag = useRef<{ px: number; py: number; ox: number; oy: number } | null>(null);
+
+  // Source of the photo (existing URL or a file picked by the admin)
   useEffect(() => {
+    setNat(null);
+    setError('');
+    setZoom(1);
     if (imageUrl) {
-      setPreviewSrc(imageUrl);
+      setSrc(imageUrl);
     } else if (imageFile) {
       const url = URL.createObjectURL(imageFile);
-      setPreviewSrc(url);
+      setSrc(url);
       return () => URL.revokeObjectURL(url);
+    } else {
+      setSrc('');
     }
   }, [imageUrl, imageFile]);
 
+  // Size the frame to the screen while keeping the exact ratio
   useEffect(() => {
-    setSelectedAspect(aspectRatioPreset);
-  }, [aspectRatioPreset]);
+    if (!isOpen) return;
+    const fit = () => {
+      const maxW = Math.min(640, window.innerWidth - 72);
+      const maxH = Math.max(180, Math.min(420, window.innerHeight - 360));
+      let w = maxW;
+      let h = w / ratio;
+      if (h > maxH) {
+        h = maxH;
+        w = h * ratio;
+      }
+      setFrame({ w: Math.round(w), h: Math.round(h) });
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [isOpen, ratio]);
 
-  if (!isOpen || !previewSrc) return null;
+  const baseScale = nat ? Math.max(frame.w / nat.w, frame.h / nat.h) : 1;
+  const scale = baseScale * zoom;
+
+  const clamp = useCallback(
+    (o: { x: number; y: number }, z = zoom) => {
+      if (!nat) return o;
+      const s = Math.max(frame.w / nat.w, frame.h / nat.h) * z;
+      return {
+        x: Math.min(0, Math.max(frame.w - nat.w * s, o.x)),
+        y: Math.min(0, Math.max(frame.h - nat.h * s, o.y)),
+      };
+    },
+    [nat, frame, zoom]
+  );
+
+  // Centre the photo whenever the photo or frame size changes
+  useEffect(() => {
+    if (!nat) return;
+    const s = Math.max(frame.w / nat.w, frame.h / nat.h) * zoom;
+    setOffset(clamp({ x: (frame.w - nat.w * s) / 2, y: (frame.h - nat.h * s) / 2 }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nat, frame.w, frame.h]);
+
+  const changeZoom = (next: number) => {
+    const z = Math.min(MAX_ZOOM, Math.max(1, next));
+    if (!nat) return setZoom(z);
+    // Zoom around the centre of the frame
+    const cx = (frame.w / 2 - offset.x) / scale;
+    const cy = (frame.h / 2 - offset.y) / scale;
+    const s = baseScale * z;
+    setZoom(z);
+    setOffset(clamp({ x: frame.w / 2 - cx * s, y: frame.h / 2 - cy * s }, z));
+  };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    drag.current = { px: e.clientX, py: e.clientY, ox: offset.x, oy: offset.y };
+    setDragging(true);
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    if (!d) return;
+    setOffset(clamp({ x: d.ox + (e.clientX - d.px), y: d.oy + (e.clientY - d.py) }));
+  };
+  const onPointerUp = () => {
+    drag.current = null;
+    setDragging(false);
+  };
+
+  if (!isOpen || !src) return null;
 
   const handleApply = async () => {
-    if (!imgRef.current) return;
-    setIsProcessing(true);
-
+    const img = imgRef.current;
+    if (!img || !nat) return;
+    setBusy(true);
+    setError('');
     try {
-      const img = imgRef.current;
+      const sw = frame.w / scale;
+      const sh = frame.h / scale;
+      const sx = -offset.x / scale;
+      const sy = -offset.y / scale;
+
+      const outW = Math.round(Math.min(sw, MAX_OUTPUT_WIDTH));
+      const outH = Math.round(outW / ratio);
       const canvas = document.createElement('canvas');
+      canvas.width = outW;
+      canvas.height = outH;
       const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Could not get canvas context');
-
-      // Calculate target dimensions based on selected aspect ratio
-      let targetWidth = img.naturalWidth;
-      let targetHeight = img.naturalHeight;
-
-      if (selectedAspect === '16:9') {
-        const aspect = 16 / 9;
-        if (targetWidth / targetHeight > aspect) {
-          targetWidth = targetHeight * aspect;
-        } else {
-          targetHeight = targetWidth / aspect;
-        }
-      } else if (selectedAspect === '4:3') {
-        const aspect = 4 / 3;
-        if (targetWidth / targetHeight > aspect) {
-          targetWidth = targetHeight * aspect;
-        } else {
-          targetHeight = targetWidth / aspect;
-        }
-      } else if (selectedAspect === '1:1') {
-        const min = Math.min(targetWidth, targetHeight);
-        targetWidth = min;
-        targetHeight = min;
-      } else if (selectedAspect === '3:2') {
-        const aspect = 3 / 2;
-        if (targetWidth / targetHeight > aspect) {
-          targetWidth = targetHeight * aspect;
-        } else {
-          targetHeight = targetWidth / aspect;
-        }
-      }
-
-      // Max dimension cap for fast delivery and memory safety
-      const maxDim = 2048;
-      const outWidth = Math.min(targetWidth, maxDim);
-      const outHeight = Math.min(targetHeight, maxDim);
-
-      canvas.width = outWidth;
-      canvas.height = outHeight;
-
-      ctx.save();
+      if (!ctx) throw new Error('canvas');
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
 
-      // Source center crop offsets
-      const sx = (img.naturalWidth - targetWidth) / 2;
-      const sy = (img.naturalHeight - targetHeight) / 2;
-
-      ctx.drawImage(img, sx, sy, targetWidth, targetHeight, 0, 0, outWidth, outHeight);
-      ctx.restore();
-
-      // Convert directly to high-fidelity WebP
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            const dataUrl = canvas.toDataURL('image/webp', 0.88);
-            const baseName = (imageFile?.name || 'photo').replace(/\.[^/.]+$/, '');
-            onCropComplete({
-              blob,
-              dataUrl,
-              width: outWidth,
-              height: outHeight,
-              filename: `${baseName}.webp`,
-            });
-            setIsProcessing(false);
-            onClose();
-          }
-        },
-        'image/webp',
-        0.88
-      );
-    } catch (err) {
-      console.error('Crop export failed', err);
-      setIsProcessing(false);
+      const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.88));
+      if (!blob) throw new Error('blob');
+      const baseName = (imageFile?.name || 'photo').replace(/\.[^/.]+$/, '');
+      onCropComplete({
+        blob,
+        dataUrl: canvas.toDataURL('image/webp', 0.88),
+        width: outW,
+        height: outH,
+        filename: `${baseName}.webp`,
+      });
+      onClose();
+    } catch {
+      setError('Could not crop this photo. Please try a different photo (JPG, PNG or WebP).');
+    } finally {
+      setBusy(false);
     }
   };
 
+  const crossOrigin = src.startsWith('blob:') || src.startsWith('data:') || src.startsWith('/') ? undefined : 'anonymous';
+
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="admin-modal-overlay"
-    >
-      <div
-        className="admin-modal-container"
-        style={{
-          maxWidth: '720px',
-        }}
-      >
-        {/* Header */}
+    <div role="dialog" aria-modal="true" aria-label={title} className="admin-modal-overlay">
+      <div className="admin-modal-container" style={{ maxWidth: '720px' }}>
         <div className="admin-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <Crop size={18} style={{ color: '#111827' }} />
-            <h3
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '1rem',
-                fontWeight: 600,
-                color: '#111827',
-                margin: 0,
-              }}
-            >
-              {title}
-            </h3>
+            <h3 style={{ fontFamily: 'var(--font-sans)', fontSize: '1rem', fontWeight: 600, color: '#111827', margin: 0 }}>{title}</h3>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#6b7280',
-              cursor: 'pointer',
-              padding: '0.25rem',
-            }}
-          >
+          <button type="button" onClick={onClose} aria-label="Close" style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '0.25rem' }}>
             <X size={20} />
           </button>
         </div>
 
-        {/* Viewport & Controls */}
-        <div style={{ padding: '1.5rem', overflowY: 'auto' }}>
-          {/* Aspect Ratio Buttons */}
-          <div style={{ marginBottom: '1.25rem' }}>
-            <label
+        <div style={{ padding: '1.25rem 1.5rem', overflowY: 'auto' }}>
+          <p style={{ margin: '0 0 0.9rem', fontSize: '0.875rem', color: '#374151', lineHeight: 1.5 }}>
+            {purpose ? <strong>{purpose}. </strong> : null}
+            This spot needs a <strong>{ratioText}</strong> shaped photo. <strong>Drag the photo</strong> to choose what shows inside the frame.
+            Use the slider to zoom in if needed.
+          </p>
+
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerUp}
               style={{
-                display: 'block',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.6875rem',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                color: '#4b5563',
-                marginBottom: '0.5rem',
+                position: 'relative',
+                width: frame.w,
+                height: frame.h,
+                overflow: 'hidden',
+                backgroundColor: '#111827',
+                borderRadius: '6px',
+                cursor: dragging ? 'grabbing' : 'grab',
+                touchAction: 'none',
+                userSelect: 'none',
+                outline: '2px solid #111827',
               }}
             >
-              Standard Proportions
-            </label>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              {(['16:9', '4:3', '1:1', '3:2', 'free'] as const).map((aspect) => (
-                <button
-                  key={aspect}
-                  type="button"
-                  onClick={() => setSelectedAspect(aspect)}
-                  style={{
-                    padding: '0.45rem 0.85rem',
-                    borderRadius: '4px',
-                    border: selectedAspect === aspect ? '1.5px solid #111827' : '1px solid #d1d5db',
-                    backgroundColor: selectedAspect === aspect ? '#111827' : '#ffffff',
-                    color: selectedAspect === aspect ? '#ffffff' : '#374151',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  {aspect === 'free' ? 'Original Ratio' : aspect}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Image Preview Box */}
-          <div
-            style={{
-              position: 'relative',
-              width: '100%',
-              height: '340px',
-              backgroundColor: '#111827',
-              borderRadius: '6px',
-              overflow: 'hidden',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              ref={imgRef}
-              src={previewSrc}
-              alt="Crop target preview"
-              style={{
-                maxWidth: '100%',
-                maxHeight: '100%',
-                objectFit: 'contain',
-                transform: `scale(${zoom}) rotate(${rotation}deg)`,
-                transition: 'transform 0.1s ease',
-              }}
-            />
-
-            {/* Visual Crop Guideline Overlay */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: '16px',
-                border: '1.5px dashed rgba(255, 255, 255, 0.45)',
-                borderRadius: '4px',
-                pointerEvents: 'none',
-              }}
-            />
-          </div>
-
-          {/* Quick Zoom & Rotation */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginTop: '1rem',
-              padding: '0.5rem 0',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <button
-                type="button"
-                onClick={() => setZoom((z) => Math.max(0.5, z - 0.1))}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                ref={imgRef}
+                src={src}
+                alt="Photo being cropped"
+                crossOrigin={crossOrigin}
+                draggable={false}
+                onLoad={(e) => setNat({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })}
+                onError={() => setError('This photo could not be opened. Please choose a JPG, PNG or WebP file.')}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                  padding: '0.35rem 0.65rem',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: '#ffffff',
-                  fontSize: '0.75rem',
-                  cursor: 'pointer',
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width: nat ? nat.w * scale : 'auto',
+                  height: nat ? nat.h * scale : 'auto',
+                  maxWidth: 'none',
+                  transform: `translate(${offset.x}px, ${offset.y}px)`,
+                  pointerEvents: 'none',
                 }}
-              >
-                <ZoomOut size={14} /> Zoom -
-              </button>
-              <button
-                type="button"
-                onClick={() => setZoom((z) => Math.min(2.5, z + 0.1))}
+              />
+              {/* rule-of-thirds guides */}
+              <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                  padding: '0.35rem 0.65rem',
-                  borderRadius: '4px',
-                  border: '1px solid #d1d5db',
-                  backgroundColor: '#ffffff',
-                  fontSize: '0.75rem',
-                  cursor: 'pointer',
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  backgroundImage:
+                    'linear-gradient(to right, transparent 33.2%, rgba(255,255,255,.35) 33.3%, transparent 33.5%, transparent 66.5%, rgba(255,255,255,.35) 66.6%, transparent 66.8%), linear-gradient(to bottom, transparent 33.2%, rgba(255,255,255,.35) 33.3%, transparent 33.5%, transparent 66.5%, rgba(255,255,255,.35) 66.6%, transparent 66.8%)',
                 }}
-              >
-                <ZoomIn size={14} /> Zoom +
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#059669', fontSize: '0.75rem' }}>
-              <Sparkles size={14} />
-              <span>Auto-optimizes to High-Res WebP</span>
+              />
+              {!nat && !error && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '0.8125rem' }}>
+                  Loading photo…
+                </div>
+              )}
             </div>
           </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '1rem', maxWidth: frame.w, marginLeft: 'auto', marginRight: 'auto' }}>
+            <button type="button" aria-label="Zoom out" onClick={() => changeZoom(zoom - 0.25)} style={zoomBtn}>
+              <ZoomOut size={16} />
+            </button>
+            <input
+              type="range"
+              min={1}
+              max={MAX_ZOOM}
+              step={0.01}
+              value={zoom}
+              onChange={(e) => changeZoom(Number(e.target.value))}
+              aria-label="Zoom"
+              style={{ flex: 1 }}
+            />
+            <button type="button" aria-label="Zoom in" onClick={() => changeZoom(zoom + 0.25)} style={zoomBtn}>
+              <ZoomIn size={16} />
+            </button>
+          </div>
+          <p style={{ margin: '0.6rem 0 0', textAlign: 'center', fontSize: '0.75rem', color: '#6b7280', display: 'flex', gap: '0.35rem', alignItems: 'center', justifyContent: 'center' }}>
+            <Move size={13} /> Photo is saved in this exact shape, so the website shows it without stretching or zooming.
+          </p>
+          {error && (
+            <p role="alert" style={{ margin: '0.75rem 0 0', color: '#b91c1c', fontSize: '0.8125rem', textAlign: 'center' }}>
+              {error}
+            </p>
+          )}
         </div>
 
-        {/* Footer Actions */}
-        <div
-          style={{
-            padding: '1rem 1.75rem',
-            borderTop: '1px solid #e5e7eb',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            gap: '0.75rem',
-            backgroundColor: '#f9fafb',
-          }}
-        >
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              padding: '0.55rem 1.25rem',
-              borderRadius: '4px',
-              border: '1px solid #d1d5db',
-              backgroundColor: '#ffffff',
-              color: '#374151',
-              fontSize: '0.8125rem',
-              fontWeight: 500,
-              cursor: 'pointer',
-            }}
-          >
+        <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid #e5e7eb', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', backgroundColor: '#f9fafb' }}>
+          <button type="button" onClick={onClose} style={{ padding: '0.55rem 1.25rem', borderRadius: '4px', border: '1px solid #d1d5db', backgroundColor: '#fff', color: '#374151', fontSize: '0.8125rem', fontWeight: 500, cursor: 'pointer' }}>
             Cancel
           </button>
           <button
             type="button"
             onClick={handleApply}
-            disabled={isProcessing}
+            disabled={busy || !nat}
             style={{
               padding: '0.55rem 1.5rem',
               borderRadius: '4px',
               border: 'none',
               backgroundColor: '#111827',
-              color: '#ffffff',
+              color: '#fff',
               fontSize: '0.8125rem',
               fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
               gap: '0.45rem',
-              cursor: isProcessing ? 'wait' : 'pointer',
-              opacity: isProcessing ? 0.7 : 1,
+              cursor: busy || !nat ? 'not-allowed' : 'pointer',
+              opacity: busy || !nat ? 0.6 : 1,
             }}
           >
-            {isProcessing ? 'Optimizing...' : (
-              <>
-                <Check size={15} /> Apply &amp; Optimize
-              </>
-            )}
+            <Check size={15} /> {busy ? 'Saving…' : 'Use this crop'}
           </button>
         </div>
       </div>
     </div>
   );
+};
+
+const zoomBtn: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 34,
+  height: 34,
+  borderRadius: 6,
+  border: '1px solid #d1d5db',
+  backgroundColor: '#fff',
+  cursor: 'pointer',
 };

@@ -68,7 +68,13 @@ async function uploadToSupabase(cfg: { url: string; key: string }, filename: str
     res = await doUpload();
   }
   if (!res.ok) {
-    throw new Error(`Supabase Storage upload failed (${res.status}): ${(await res.text()).slice(0, 200)}`);
+    const detail = (await res.text()).slice(0, 200);
+    if (res.status === 400 || res.status === 401 || res.status === 403) {
+      throw new Error(
+        'Supabase rejected the storage key. Check that SUPABASE_SERVICE_ROLE_KEY (Vercel -> Settings -> Environment Variables) is the current secret key of THIS Supabase project, with no extra spaces or quotes, then redeploy.'
+      );
+    }
+    throw new Error(`Supabase Storage upload failed (${res.status}): ${detail}`);
   }
   return `${cfg.url}/storage/v1/object/public/${BUCKET}/${encodeURIComponent(filename)}`;
 }

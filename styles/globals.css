@@ -1057,13 +1057,16 @@ a {
 
 /* Product Detail Hero Luminaire Stage */
 .product-hero-stage {
-  height: clamp(380px, 50vh, 560px);
+  /* Always 16:9 so the admin's 16:9 crop is shown whole (no zoom, on every screen). */
+  aspect-ratio: 16 / 9;
+  height: auto;
 }
 
 /* Product Detail Page Responsive Classes */
 @media (max-width: 900px) {
   .product-hero-stage {
-    height: clamp(260px, 42vh, 380px) !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9 !important;
   }
   .product-hero-arrow {
     display: none !important;
@@ -1110,16 +1113,9 @@ a {
   .photo-grid-container {
     gap: 3px !important;
   }
-  .photo-grid-half,
-  .photo-grid-third {
-    grid-column: span 6 !important;
-    height: auto !important;
-    aspect-ratio: 1 / 1 !important;
-  }
-  .photo-grid-wide-mobile {
+  /* Mobile: one photo per row, each keeps its own crop ratio (never zoomed or squashed) */
+  .photo-grid-slot {
     grid-column: span 12 !important;
-    height: auto !important;
-    aspect-ratio: 16 / 10 !important;
   }
   .photo-grid-overlay {
     bottom: 0.65rem !important;
@@ -1136,12 +1132,7 @@ a {
     text-overflow: ellipsis !important;
     max-width: 100% !important;
   }
-  .photo-grid-half .photo-grid-caption,
-  .photo-grid-third:not(.photo-grid-wide-mobile) .photo-grid-caption {
-    display: none !important;
-  }
-  .photo-grid-wide-mobile .photo-grid-caption {
-    display: block !important;
+  .photo-grid-caption {
     font-size: 0.75rem !important;
     line-height: 1.35 !important;
     max-width: 85% !important;

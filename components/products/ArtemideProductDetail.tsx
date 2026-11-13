@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Product, ProductSpecification } from '@/types/product';
 import { ChevronLeft, ChevronRight, Download, X, Maximize2 } from 'lucide-react';
+import { gridLayout, ratioCss, MAX_GRID_PHOTOS } from '@/lib/photo-grid';
 import { FacebookIcon, XTwitterIcon, LinkedinIcon, InstagramIcon } from '@/components/ui/Icons';
 
 export interface ArtemideProductDetailProps {
@@ -68,75 +69,24 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
     }
   };
 
-  // Curated pool of high-res architectural lighting perspectives
-  const architecturalPool = [
-    {
-      url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} spatial interior installation view`,
-      tag: '01 / ARCHITECTURAL SPACE',
-      caption: 'Seamless architectural integration delivering balanced horizontal and vertical illumination.',
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} wall grazing light pattern`,
-      tag: '02 / OPTICAL DIFFUSER',
-      caption: 'Micro-engineered fractal apertures delivering zero-glare, high visual comfort emission.',
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} contemporary architectural pavilion`,
-      tag: '03 / GRAZING EMISSION',
-      caption: 'High-uniformity beam distribution accentuating monolithic masonry and textures.',
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} twilight ambient atmosphere`,
-      tag: '04 / AMBIENT WARMTH',
-      caption: 'Warm spectral balance creating emotionally resonant transitions between interior and exterior.',
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1600&q=85',
-      alt: `${product.name} refined material craftsmanship and finish`,
-      tag: '05 / TACTILE CRAFTSMANSHIP',
-      caption: 'Concealed mechanical junction and pure material finishing with microscopic tolerances.',
-    },
-  ];
-
-  // Guarantee 5 distinct, deduplicated images
-  const usedUrls = new Set<string>();
+  // Photo grid = exactly the photos the admin added (1-6). Nothing is auto-added: the layout
+  // is picked from the number of photos, and every slot shows its photo at the exact crop ratio.
   const productPhotos: { url: string; alt: string; tag: string; caption: string }[] = [];
-
-  const rawProductImgs = [
-    product.heroImage,
-    ...(product.heroCarouselImages || []),
-    ...(product.gallery || []),
-  ].filter(Boolean);
-  for (const img of rawProductImgs) {
-    if (img && img.url && !usedUrls.has(img.url) && productPhotos.length < 5) {
-      usedUrls.add(img.url);
-      const tagIndex = productPhotos.length;
+  {
+    const seen = new Set<string>();
+    for (const img of product.gallery || []) {
+      if (!img || !img.url || seen.has(img.url) || productPhotos.length >= MAX_GRID_PHOTOS) continue;
+      seen.add(img.url);
+      const n = productPhotos.length + 1;
       productPhotos.push({
         url: img.url,
-        alt: img.alt || `${product.name} architectural view ${tagIndex + 1}`,
-        tag: architecturalPool[tagIndex]?.tag || `0${tagIndex + 1} / DETAIL PERSPECTIVE`,
-        caption: img.caption || architecturalPool[tagIndex]?.caption || 'Precision architectural luminaire optical performance.',
+        alt: img.alt || `${product.name} view ${n}`,
+        tag: `0${n} / PERSPECTIVE`,
+        caption: img.caption || '',
       });
     }
   }
-
-  for (const poolItem of architecturalPool) {
-    if (productPhotos.length >= 5) break;
-    if (!usedUrls.has(poolItem.url)) {
-      usedUrls.add(poolItem.url);
-      const tagIndex = productPhotos.length;
-      productPhotos.push({
-        url: poolItem.url,
-        alt: poolItem.alt,
-        tag: `0${tagIndex + 1} / ${poolItem.tag.split('/ ')[1] || 'PERSPECTIVE'}`,
-        caption: poolItem.caption,
-      });
-    }
-  }
+  const photoSlots = gridLayout(productPhotos.length || 1);
 
   return (
     <div style={{ backgroundColor: '#ffffff', minHeight: '100vh', overflowX: 'hidden' }}>
@@ -157,7 +107,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
         }}
       >
         {allImages.length > 0 && (
-          <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <div style={{ position: 'absolute', inset: 0 }}>
             <Image
               src={allImages[currentImageIndex].url}
               alt={allImages[currentImageIndex].alt || product.name}
@@ -801,6 +751,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
       {/* ========================================================= */}
       {/* 4. UNIQUE PRODUCT PERSPECTIVES PHOTO GRID (FRAMED WITH BALANCED RATIOS) */}
       {/* ========================================================= */}
+      {productPhotos.length > 0 && (
       <section
         id="product-gallery-grid"
         style={{
@@ -855,7 +806,7 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
           </p>
         </div>
 
-        {/* ELEGANT MODULAR ZERO-GAP PHOTO GRID WITH BALANCED RATIOS */}
+        {/* PHOTO GRID: layout comes from the number of photos; each slot has a fixed ratio */}
         <div
           className="photo-grid-container"
           style={{
@@ -863,498 +814,120 @@ export const ArtemideProductDetail: React.FC<ArtemideProductDetailProps> = ({
             display: 'grid',
             gridTemplateColumns: 'repeat(12, 1fr)',
             gap: 0,
-            margin: 0,
-            padding: 0,
             backgroundColor: '#0A0A09',
             borderRadius: '4px',
             overflow: 'hidden',
           }}
         >
-          {/* Photo 1: Panel 1 (Span 6 on desktop, Span 6 on mobile) */}
-          <div
-            className="photo-grid-item photo-grid-half group"
-            onClick={() => setSelectedPhoto(productPhotos[0])}
-            style={{
-              gridColumn: 'span 6',
-              position: 'relative',
-              height: '460px',
-              overflow: 'hidden',
-              borderRadius: 0,
-              border: 'none',
-              backgroundColor: '#151514',
-              cursor: 'pointer',
-            }}
-          >
-            <Image
-              src={productPhotos[0].url}
-              alt={productPhotos[0].alt}
-              fill
-              sizes="(max-width: 900px) 50vw, 50vw"
-              style={{
-                objectFit: 'cover',
-                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-              className="group-hover:scale-105"
-            />
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(180deg, transparent 40%, rgba(10, 10, 9, 0.82) 100%)',
-              }}
-            />
-            <div
-              className="photo-grid-overlay"
-              style={{
-                position: 'absolute',
-                bottom: '1.75rem',
-                left: '2rem',
-                right: '2rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-              }}
-            >
-              <div>
-                <span
-                  className="photo-grid-badge"
-                  style={{
-                    display: 'inline-block',
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    padding: '0.3rem 0.65rem',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.6875rem',
-                    fontWeight: 600,
-                    color: '#111827',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.5rem',
-                    borderRadius: '2px',
-                  }}
-                >
-                  {productPhotos[0].tag}
-                </span>
-                <p
-                  className="photo-grid-caption"
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.875rem',
-                    color: '#ffffff',
-                    margin: 0,
-                    textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                    maxWidth: '480px',
-                  }}
-                >
-                  {productPhotos[0].caption}
-                </p>
-              </div>
-              <div
-                className="photo-grid-zoom-btn"
+          {productPhotos.map((photo, i) => {
+            const slot = photoSlots[i];
+            return (
+              <button
+                key={photo.url}
+                type="button"
+                className="photo-grid-item photo-grid-slot group"
+                onClick={() => setSelectedPhoto(photo)}
+                aria-label={`Enlarge photo ${i + 1}: ${photo.alt}`}
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  flexShrink: 0,
+                  gridColumn: `span ${slot.span}`,
+                  position: 'relative',
+                  aspectRatio: ratioCss(slot.ratio),
+                  overflow: 'hidden',
+                  border: 'none',
+                  padding: 0,
+                  backgroundColor: '#151514',
+                  cursor: 'pointer',
+                  display: 'block',
+                  textAlign: 'left',
                 }}
               >
-                <Maximize2 size={16} />
-              </div>
-            </div>
-          </div>
-
-          {/* Photo 2: Panel 2 (Span 6 on desktop, Span 6 on mobile) */}
-          <div
-            className="photo-grid-item photo-grid-half group"
-            onClick={() => setSelectedPhoto(productPhotos[1])}
-            style={{
-              gridColumn: 'span 6',
-              position: 'relative',
-              height: '460px',
-              overflow: 'hidden',
-              borderRadius: 0,
-              border: 'none',
-              backgroundColor: '#151514',
-              cursor: 'pointer',
-            }}
-          >
-            <Image
-              src={productPhotos[1].url}
-              alt={productPhotos[1].alt}
-              fill
-              sizes="(max-width: 900px) 50vw, 50vw"
-              style={{
-                objectFit: 'cover',
-                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-              className="group-hover:scale-105"
-            />
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(180deg, transparent 40%, rgba(10, 10, 9, 0.82) 100%)',
-              }}
-            />
-            <div
-              className="photo-grid-overlay"
-              style={{
-                position: 'absolute',
-                bottom: '1.75rem',
-                left: '2rem',
-                right: '2rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-              }}
-            >
-              <div>
-                <span
-                  className="photo-grid-badge"
+                <Image
+                  src={photo.url}
+                  alt={photo.alt}
+                  fill
+                  sizes={slot.span === 12 ? '100vw' : slot.span === 6 ? '(max-width: 900px) 100vw, 50vw' : '(max-width: 900px) 100vw, 33vw'}
+                  style={{ objectFit: 'cover', transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)' }}
+                  className="group-hover:scale-105"
+                />
+                <div
                   style={{
-                    display: 'inline-block',
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    padding: '0.3rem 0.65rem',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.6875rem',
-                    fontWeight: 600,
-                    color: '#111827',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.5rem',
-                    borderRadius: '2px',
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
+                  }}
+                />
+                <div
+                  className="photo-grid-overlay"
+                  style={{
+                    position: 'absolute',
+                    bottom: '1.5rem',
+                    left: '1.75rem',
+                    right: '1.75rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end',
+                    gap: '0.75rem',
                   }}
                 >
-                  {productPhotos[1].tag}
-                </span>
-                <p
-                  className="photo-grid-caption"
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.875rem',
-                    color: '#ffffff',
-                    margin: 0,
-                    textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                    maxWidth: '480px',
-                  }}
-                >
-                  {productPhotos[1].caption}
-                </p>
-              </div>
-              <div
-                className="photo-grid-zoom-btn"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  flexShrink: 0,
-                }}
-              >
-                <Maximize2 size={16} />
-              </div>
-            </div>
-          </div>
-
-          {/* Photo 3: Panel 3 (Span 4 on desktop, Span 6 on mobile) */}
-          <div
-            className="photo-grid-item photo-grid-third group"
-            onClick={() => setSelectedPhoto(productPhotos[2])}
-            style={{
-              gridColumn: 'span 4',
-              position: 'relative',
-              height: '360px',
-              overflow: 'hidden',
-              borderRadius: 0,
-              border: 'none',
-              backgroundColor: '#151514',
-              cursor: 'pointer',
-            }}
-          >
-            <Image
-              src={productPhotos[2].url}
-              alt={productPhotos[2].alt}
-              fill
-              sizes="(max-width: 900px) 50vw, 33vw"
-              style={{
-                objectFit: 'cover',
-                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-              className="group-hover:scale-105"
-            />
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
-              }}
-            />
-            <div
-              className="photo-grid-overlay"
-              style={{
-                position: 'absolute',
-                bottom: '1.5rem',
-                left: '1.75rem',
-                right: '1.75rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-              }}
-            >
-              <div>
-                <span
-                  className="photo-grid-badge"
-                  style={{
-                    display: 'inline-block',
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    padding: '0.25rem 0.55rem',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.625rem',
-                    fontWeight: 600,
-                    color: '#111827',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.35rem',
-                    borderRadius: '2px',
-                  }}
-                >
-                  {productPhotos[2].tag}
-                </span>
-                <p
-                  className="photo-grid-caption"
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.8125rem',
-                    color: '#ffffff',
-                    margin: 0,
-                  }}
-                >
-                  {productPhotos[2].caption}
-                </p>
-              </div>
-              <div
-                className="photo-grid-zoom-btn"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  flexShrink: 0,
-                }}
-              >
-                <Maximize2 size={14} />
-              </div>
-            </div>
-          </div>
-
-          {/* Photo 4: Panel 4 (Span 4 on desktop, Span 6 on mobile) */}
-          <div
-            className="photo-grid-item photo-grid-third group"
-            onClick={() => setSelectedPhoto(productPhotos[3])}
-            style={{
-              gridColumn: 'span 4',
-              position: 'relative',
-              height: '360px',
-              overflow: 'hidden',
-              borderRadius: 0,
-              border: 'none',
-              backgroundColor: '#151514',
-              cursor: 'pointer',
-            }}
-          >
-            <Image
-              src={productPhotos[3].url}
-              alt={productPhotos[3].alt}
-              fill
-              sizes="(max-width: 900px) 50vw, 33vw"
-              style={{
-                objectFit: 'cover',
-                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-              className="group-hover:scale-105"
-            />
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
-              }}
-            />
-            <div
-              className="photo-grid-overlay"
-              style={{
-                position: 'absolute',
-                bottom: '1.5rem',
-                left: '1.75rem',
-                right: '1.75rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-              }}
-            >
-              <div>
-                <span
-                  className="photo-grid-badge"
-                  style={{
-                    display: 'inline-block',
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    padding: '0.25rem 0.55rem',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.625rem',
-                    fontWeight: 600,
-                    color: '#111827',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.35rem',
-                    borderRadius: '2px',
-                  }}
-                >
-                  {productPhotos[3].tag}
-                </span>
-                <p
-                  className="photo-grid-caption"
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.8125rem',
-                    color: '#ffffff',
-                    margin: 0,
-                  }}
-                >
-                  {productPhotos[3].caption}
-                </p>
-              </div>
-              <div
-                className="photo-grid-zoom-btn"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  flexShrink: 0,
-                }}
-              >
-                <Maximize2 size={14} />
-              </div>
-            </div>
-          </div>
-
-          {/* Photo 5: Panel 5 (Span 4 on desktop, Span 12 panoramic banner on mobile) */}
-          <div
-            className="photo-grid-item photo-grid-third photo-grid-wide-mobile group"
-            onClick={() => setSelectedPhoto(productPhotos[4])}
-            style={{
-              gridColumn: 'span 4',
-              position: 'relative',
-              height: '360px',
-              overflow: 'hidden',
-              borderRadius: 0,
-              border: 'none',
-              backgroundColor: '#151514',
-              cursor: 'pointer',
-            }}
-          >
-            <Image
-              src={productPhotos[4].url}
-              alt={productPhotos[4].alt}
-              fill
-              sizes="(max-width: 900px) 100vw, 33vw"
-              style={{
-                objectFit: 'cover',
-                transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-              className="group-hover:scale-105"
-            />
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(180deg, transparent 45%, rgba(10, 10, 9, 0.78) 100%)',
-              }}
-            />
-            <div
-              className="photo-grid-overlay"
-              style={{
-                position: 'absolute',
-                bottom: '1.5rem',
-                left: '1.75rem',
-                right: '1.75rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-              }}
-            >
-              <div>
-                <span
-                  className="photo-grid-badge"
-                  style={{
-                    display: 'inline-block',
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    padding: '0.25rem 0.55rem',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.625rem',
-                    fontWeight: 600,
-                    color: '#111827',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.35rem',
-                    borderRadius: '2px',
-                  }}
-                >
-                  {productPhotos[4].tag}
-                </span>
-                <p
-                  className="photo-grid-caption"
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.8125rem',
-                    color: '#ffffff',
-                    margin: 0,
-                  }}
-                >
-                  {productPhotos[4].caption}
-                </p>
-              </div>
-              <div
-                className="photo-grid-zoom-btn"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(8px)',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  flexShrink: 0,
-                }}
-              >
-                <Maximize2 size={14} />
-              </div>
-            </div>
-          </div>
+                  <div style={{ minWidth: 0 }}>
+                    <span
+                      className="photo-grid-badge"
+                      style={{
+                        display: 'inline-block',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        padding: '0.3rem 0.65rem',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: '#111827',
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        marginBottom: photo.caption ? '0.5rem' : 0,
+                        borderRadius: '2px',
+                      }}
+                    >
+                      {photo.tag}
+                    </span>
+                    {photo.caption && (
+                      <p
+                        className="photo-grid-caption"
+                        style={{
+                          fontFamily: 'var(--font-sans)',
+                          fontSize: '0.875rem',
+                          color: '#ffffff',
+                          margin: 0,
+                          textShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                          maxWidth: '480px',
+                        }}
+                      >
+                        {photo.caption}
+                      </p>
+                    )}
+                  </div>
+                  <div
+                    className="photo-grid-zoom-btn"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      backdropFilter: 'blur(8px)',
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#ffffff',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Maximize2 size={16} />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </section>
+      )}
 
       {/* ========================================================= */}
       {/* 5. FAMILIAR PRODUCTS (Related Luminaire Families) */}

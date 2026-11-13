@@ -644,7 +644,7 @@ function AdminDashboardContent() {
         shortDescription: '',
         fullDescription: '',
         editorialStory: '',
-        designer: 'ZENVORA Studio',
+        designer: '',
         heroImage: {
           id: `hero-${Date.now()}`,
           url: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=1600&q=80',
@@ -3284,7 +3284,7 @@ function AdminDashboardContent() {
                       </h4>
                     </div>
                     <p style={{ margin: 0, fontSize: '0.75rem', color: '#475569', maxWidth: '640px', lineHeight: 1.45 }}>
-                      Manage the top full-width slider shown at the very top of the product sub-page.
+                      Photos for the big slider at the top of the product page. They are shown in a wide 16:9 shape, and you crop each one to exactly that shape when you upload, so nothing gets zoomed.
                       Click <strong>&quot;📌 Pin this one to show on product page&quot;</strong> on any image to designate it as the primary card image shown on catalog listing pages (<code>/dry-goods</code>, <code>/wet-goods</code>, <code>/products</code>).
                     </p>
                   </div>
@@ -3315,7 +3315,7 @@ function AdminDashboardContent() {
                         boxShadow: '0 1px 3px rgba(37,99,235,0.2)',
                       }}
                     >
-                      <Upload size={14} /> Upload &amp; Crop (WebP)
+                      <Upload size={14} /> Upload &amp; crop to 16:9
                     </button>
                   </div>
                 </div>
@@ -3415,7 +3415,7 @@ function AdminDashboardContent() {
                           }}
                         >
                           {/* Image Thumbnail with Overlay Badges */}
-                          <div style={{ position: 'relative', width: '100%', height: '150px', backgroundColor: '#e2e8f0' }}>
+                          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', backgroundColor: '#e2e8f0' }}>
                             <Image
                               src={cImg.url}
                               alt={cImg.alt || `Slide ${cIdx + 1}`}
@@ -3812,7 +3812,7 @@ function AdminDashboardContent() {
                     Architectural Photo Gallery Grid ({editingProduct.gallery?.length || 0} configured)
                   </h4>
                   <p style={{ margin: 0, fontSize: '0.75rem', color: '#3b82f6' }}>
-                    Configure the unique collage grid (templates, cropping ratios, slot (+) add icons).
+                    Choose how many photos to show (1 to 6) and add them. Each box has a fixed shape, and you crop to it.
                   </p>
                 </div>
 
@@ -4225,7 +4225,7 @@ function AdminDashboardContent() {
                           gap: '0.4rem',
                         }}
                       >
-                        <Upload size={14} /> Upload &amp; Crop (WebP)
+                        <Upload size={14} /> Upload &amp; crop to 16:9
                         <input
                           type="file"
                           accept="image/*"
