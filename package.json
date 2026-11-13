@@ -9,8 +9,7 @@
     "lint": "eslint",
     "test:e2e": "node scripts/full-test-suite.mjs",
     "db:setup": "node scripts/setup-db.mjs",
-    "test:sync": "node scripts/verify-admin-to-frontend-sync.mjs",
-    "images:externalize": "node scripts/externalize-inline-images.mjs"
+    "test:sync": "node scripts/verify-admin-to-frontend-sync.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.90.2",

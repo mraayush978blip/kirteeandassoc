@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pool, PoolConfig } from 'pg';
-import fs from 'fs/promises';
-import path from 'path';
 import { Product } from '@/types/product';
 import { externalizeDataUrl } from '@/lib/media-storage';
-import { writeFileAtomic } from '@/lib/fs-atomic';
-import { products as fallbackProducts, categories as fallbackCategories } from '@/lib/data/products';
 
 // Connection String Resolution
 const connectionString =
@@ -106,16 +102,15 @@ export async function checkDatabaseConnection(): Promise<{
   error?: string;
 }> {
   if (!connectionString || connectionString.includes('[YOUR-PASSWORD]') || connectionString.includes('yourpassword')) {
-    const local = await getLocalProducts();
     return {
       connected: false,
       isConfigured: false,
       error: connectionString.includes('[YOUR-PASSWORD]')
-        ? 'DATABASE_URL contains placeholder [YOUR-PASSWORD]. Operating in resilient local storage mode.'
-        : 'No DATABASE_URL configured. Operating in offline catalog mode.',
+        ? 'DATABASE_URL contains placeholder [YOUR-PASSWORD]. The database is required.'
+        : 'No DATABASE_URL configured. The database is required.',
       counts: {
-        products: local.length || fallbackProducts.length,
-        categories: fallbackCategories.length,
+        products: 0,
+        categories: 0,
         media: 0,
         submissions: 0,
       },
@@ -179,23 +174,6 @@ export async function checkDatabaseConnection(): Promise<{
   }
 }
 
-const LOCAL_PRODUCTS_FILE = path.join(process.cwd(), 'data', 'products.json');
-
-async function getLocalProducts(): Promise<Product[]> {
-  try {
-    const raw = await fs.readFile(LOCAL_PRODUCTS_FILE, 'utf-8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-async function saveLocalProducts(products: Product[]): Promise<void> {
-  // Throws on failure so callers can report persistence honestly.
-  await writeFileAtomic(LOCAL_PRODUCTS_FILE, JSON.stringify(products, null, 2));
-}
-
 // High-speed in-memory product catalog cache (serves catalogue in <0.5ms)
 let cachedProducts: { data: Product[]; timestamp: number } | null = null;
 // Kept very short on purpose: each serverless/route instance has its own copy of this cache, and
@@ -209,7 +187,7 @@ export function invalidateProductsCache(): void {
 }
 
 // -------------------------------------------------------------
-// Products API (DB with static fallback)
+// Products API (database only: there is no local/bundled catalog)
 // -------------------------------------------------------------
 export async function getProductsFromDb(): Promise<Product[]> {
   // 1. Check ultra-fast in-memory cache
@@ -293,54 +271,22 @@ export async function getProductsFromDb(): Promise<Product[]> {
         updatedAt: r.updated_at ? new Date(r.updated_at).toISOString() : new Date().toISOString(),
       }));
 
-      // Cache in memory and locally for offline resilience
       cachedProducts = { data: dbProducts, timestamp: Date.now() };
-      // Optional offline-fallback mirror of the live catalog into data/products.json.
-      // Off by default: it rewrites tracked repo files on every read.
-      if (process.env.MIRROR_DB_TO_LOCAL === 'true' && !process.env.VERCEL) {
-        saveLocalProducts(dbProducts).catch(() => {});
-      }
       return dbProducts;
     }
 
-    // DB is reachable but the catalog table is empty.
-    // First time only: seed it from the bundled catalog. If it was seeded before, empty means empty.
-    const seeded = await query(`SELECT 1 FROM site_settings WHERE key = 'catalog_seeded' LIMIT 1`);
-    if (seeded.rows.length > 0) {
-      cachedProducts = { data: [], timestamp: Date.now() };
-      return [];
-    }
-    const seedSource = (await getLocalProducts());
-    const toSeed = seedSource.length > 0 ? seedSource : fallbackProducts;
-    for (const prod of toSeed) {
-      await saveProductToDb(prod);
-    }
-    await query(
-      `INSERT INTO site_settings (key, value) VALUES ('catalog_seeded', 'true'::jsonb) ON CONFLICT (key) DO NOTHING`
-    );
-    cachedProducts = { data: toSeed, timestamp: Date.now() };
-    return toSeed;
-  } catch {
-    console.warn('[DB Catalog Warning]: Database unreachable or offline, checking local file fallback.');
+    // Reachable database with no products yet: the catalog is simply empty.
+    cachedProducts = { data: [], timestamp: Date.now() };
+    return [];
+  } catch (err) {
+    // Database unreachable: show an empty catalog rather than stale/bundled demo products.
+    console.warn('[DB Catalog Warning]: database unreachable:', err instanceof Error ? err.message : err);
+    return [];
   }
-
-  // 2. Check local JSON file
-  const local = await getLocalProducts();
-  if (local.length > 0) {
-    cachedProducts = { data: local, timestamp: Date.now() };
-    return local;
-  }
-
-  // 3. Fallback to default in-memory catalog
-  cachedProducts = { data: fallbackProducts, timestamp: Date.now() };
-  return fallbackProducts;
 }
 
 export async function getProductBySlugFromDb(slug: string): Promise<Product | undefined> {
   const all = await getProductsFromDb();
-  if (slug === 'outdoor-in-ground-ingraze-frame') {
-    return all.find((p) => p.slug === 'ingraze-frame-1000' && p.status === 'published');
-  }
   return all.find((p) => p.slug === slug && p.status === 'published');
 }
 
@@ -404,24 +350,7 @@ export async function saveProductToDb(input: Partial<Product>): Promise<{ succes
     updatedAt: new Date().toISOString(),
   };
 
-  // 1. Save to local JSON (dev / self-hosted fallback)
-  let localOk = false;
-  try {
-    const existing = await getLocalProducts();
-    const list = existing.length > 0 ? existing : [...fallbackProducts];
-    const idx = list.findIndex((p) => p.id === id || p.slug === slug);
-    if (idx >= 0) {
-      list[idx] = { ...list[idx], ...fullProduct };
-    } else {
-      list.push(fullProduct);
-    }
-    await saveLocalProducts(list);
-    localOk = true;
-  } catch (err) {
-    console.warn('[DB Products Local Save Warning]:', err instanceof Error ? err.message : err);
-  }
-
-  // 2. Sync to PostgreSQL. Try the full column set first, then the legacy column set
+  // Save to PostgreSQL. Try the full column set first, then the legacy column set
   //    (for databases that have not run the latest ALTER TABLE migrations yet).
   const baseCols: [string, unknown][] = [
     ['id', id],
@@ -490,20 +419,14 @@ export async function saveProductToDb(input: Partial<Product>): Promise<{ succes
 
   invalidateProductsCache();
 
-  if (!persistenceOk(localOk, dbOk)) {
+  if (!dbOk) {
     return {
       success: false,
       id,
-      error: dbError
-        ? `Could not save to the database: ${dbError}`
-        : 'Could not save: no writable storage is available.',
+      error: dbError ? `Could not save to the database: ${dbError}` : 'Could not save: the database is not configured.',
     };
   }
-  return {
-    success: true,
-    id,
-    warning: dbOk ? undefined : `Saved locally only; database sync failed (${dbError || 'not configured'}).`,
-  };
+  return { success: true, id };
 }
 
 /** Moves inline base64 images to storage so product rows/pages stay small. */
@@ -536,15 +459,6 @@ export async function deleteProductFromDb(
   const target = all.find((p) => p.id === id || p.slug === id);
   if (!target) return { success: false, notFound: true, error: 'Product not found.' };
 
-  let localOk = false;
-  try {
-    const existing = await getLocalProducts();
-    await saveLocalProducts(existing.filter((p) => p.id !== target.id && p.slug !== target.slug));
-    localOk = true;
-  } catch {
-    /* read-only filesystem */
-  }
-
   let dbOk = false;
   let dbError = '';
   try {
@@ -555,8 +469,8 @@ export async function deleteProductFromDb(
   }
 
   invalidateProductsCache();
-  if (!persistenceOk(localOk, dbOk)) {
-    return { success: false, error: dbError ? `Could not delete from the database: ${dbError}` : 'Could not delete: no writable storage.' };
+  if (!dbOk) {
+    return { success: false, error: dbError ? `Could not delete from the database: ${dbError}` : 'Could not delete: the database is not configured.' };
   }
   return { success: true, slug: target.slug };
 }

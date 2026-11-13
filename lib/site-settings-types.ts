@@ -141,60 +141,8 @@ export const DEFAULT_HERO_SLIDES: HeroSlideConfig[] = [
   },
 ];
 
-export const DEFAULT_PROJECTS: ProjectConfig[] = [
-  {
-    id: 'proj-1',
-    num: '01',
-    title: 'PRIVATE RESIDENCE',
-    location: 'Mumbai, India',
-    category: 'Residential',
-    year: '2025',
-    description: 'Precision recessed linear grazing and bespoke bronze pendant luminaires accentuating monolithic limestone walls.',
-    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    slug: 'private-residence-mumbai',
-    order: 1,
-    isFeatured: true,
-  },
-  {
-    id: 'proj-2',
-    num: '02',
-    title: 'BOUTIQUE HOTEL',
-    location: 'Dubai, UAE',
-    category: 'Hospitality',
-    year: '2024',
-    description: 'Custom acoustic luminaire arrays delivering warm glare-free ambient illumination in double-height atrium.',
-    imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80',
-    slug: 'boutique-hotel-dubai',
-    order: 2,
-    isFeatured: true,
-  },
-  {
-    id: 'proj-3',
-    num: '03',
-    title: 'ARCHITECTURAL INTERIOR',
-    location: 'London, UK',
-    category: 'Commercial',
-    year: '2024',
-    description: 'Ultra-low glare UGR < 10 downlight arrays integrated invisibly within acoustic architectural timber slats.',
-    imageUrl: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80',
-    slug: 'architectural-interior-london',
-    order: 3,
-    isFeatured: true,
-  },
-  {
-    id: 'proj-4',
-    num: '04',
-    title: 'CULTURAL PAVILION',
-    location: 'Milan, Italy',
-    category: 'Cultural',
-    year: '2025',
-    description: 'Dynamic tunable white grazing systems engineered for gallery exhibition spaces.',
-    imageUrl: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=80',
-    slug: 'cultural-pavilion-milan',
-    order: 4,
-    isFeatured: true,
-  },
-];
+/** Projects live only in the database. Nothing is bundled with the code. */
+export const DEFAULT_PROJECTS: ProjectConfig[] = [];
 
 export const DEFAULT_CONTACT: ContactConfig = {
   heading: 'Contact us',

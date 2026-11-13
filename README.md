@@ -47,7 +47,6 @@ kirteeandassoc/
 │   ├── designTokens.ts       # Design system token definitions
 │   └── site.ts               # Brand, contact, and navigation configuration
 ├── lib/                      # Core business logic & repositories
-│   └── data/                 # Product catalogue & CMS initial content
 ├── payload/                  # Payload CMS collections & globals
 │   ├── collections/          # Users, Products, Categories, Media, Submissions
 │   └── globals/              # SiteSettings, HomePage, ContactPage
@@ -80,8 +79,8 @@ For admin image uploads on Vercel also set `SUPABASE_SERVICE_ROLE_KEY` (server-o
 npm install
 npm run db:setup      # applies schema.sql to DATABASE_URL (safe to re-run)
 ```
-The product catalog and site settings seed themselves from `data/*.json` the first time the app
-reads an empty database.
+Products and projects live only in the database (nothing is bundled with the code). Sign in at `/ad`
+and add them there.
 
 ### 3. Run
 ```bash

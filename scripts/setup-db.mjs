@@ -14,7 +14,7 @@ try {
   await client.query(fs.readFileSync('schema.sql', 'utf-8'));
   const { rows } = await client.query("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY 1");
   console.log('Schema applied. Tables:', rows.map((r) => r.table_name).join(', '));
-  console.log('Start the app: the product catalog and settings seed themselves from data/*.json on first load.');
+  console.log('Start the app, sign in to /ad and add your products and projects there (nothing is bundled with the code).');
 } catch (e) {
   console.error('Setup failed:', e.message);
   process.exitCode = 1;

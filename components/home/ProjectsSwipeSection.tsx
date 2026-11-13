@@ -1,68 +1,21 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useSiteImages } from '@/lib/useSiteImages';
+import { ArrowRight, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface ProjectItem {
   id: string;
-  slotId: string;
-  num: string;
+  slotId?: string;
+  num?: string;
   title: string;
   location: string;
+  category?: string;
+  year?: string;
+  description?: string;
   imageUrl: string;
-  slug: string;
+  slug?: string;
 }
-
-const projects: ProjectItem[] = [
-  {
-    id: 'proj-1',
-    slotId: 'project-1',
-    num: '01',
-    title: 'PRIVATE RESIDENCE',
-    location: 'Mumbai, India',
-    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    slug: 'private-residence-mumbai',
-  },
-  {
-    id: 'proj-2',
-    slotId: 'project-2',
-    num: '02',
-    title: 'BOUTIQUE HOTEL',
-    location: 'Dubai, UAE',
-    imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80',
-    slug: 'boutique-hotel-dubai',
-  },
-  {
-    id: 'proj-3',
-    slotId: 'project-3',
-    num: '03',
-    title: 'ARCHITECTURAL INTERIOR',
-    location: 'London, UK',
-    imageUrl: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80',
-    slug: 'architectural-interior-london',
-  },
-  {
-    id: 'proj-4',
-    slotId: 'project-4',
-    num: '04',
-    title: 'CULTURAL PAVILION',
-    location: 'Milan, Italy',
-    imageUrl: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&w=1200&q=80',
-    slug: 'cultural-pavilion-milan',
-  },
-  {
-    id: 'proj-5',
-    slotId: 'project-5',
-    num: '05',
-    title: 'CIVIC GALLERIA',
-    location: 'Kyoto, Japan',
-    imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
-    slug: 'civic-galleria-kyoto',
-  },
-];
 
 export interface ProjectsSwipeSectionProps {
   initialProjects?: any[];
@@ -70,7 +23,6 @@ export interface ProjectsSwipeSectionProps {
 }
 
 export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ initialProjects, settings }) => {
-  const { getImage } = useSiteImages();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -78,8 +30,24 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
     Boolean(settings?.showOnWebsite)
   );
   const [projectList, setProjectList] = useState<ProjectItem[]>(
-    initialProjects && initialProjects.length > 0 ? initialProjects : projects
+    Array.isArray(initialProjects) ? initialProjects : []
   );
+  const [openProject, setOpenProject] = useState<ProjectItem | null>(null);
+
+  // Popup: close on Escape and stop the page behind it from scrolling
+  React.useEffect(() => {
+    if (!openProject) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenProject(null);
+    };
+    document.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [openProject]);
 
   // Sync state if settings prop changes
   React.useEffect(() => {
@@ -97,7 +65,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
           if (data.data.settings && data.data.settings.showOnWebsite !== undefined) {
             setShowProjects(Boolean(data.data.settings.showOnWebsite));
           }
-          if (data.data.projects && Array.isArray(data.data.projects) && data.data.projects.length > 0) {
+          if (data.data.projects && Array.isArray(data.data.projects)) {
             setProjectList(data.data.projects);
           }
         }
@@ -116,7 +84,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
   };
 
   // If master toggle is OFF, gracefully hide section from website
-  if (!showProjects) {
+  if (!showProjects || projectList.length === 0) {
     return null;
   }
 
@@ -180,29 +148,6 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <Link
-              href="/products"
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: '#111827',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                borderBottom: '1px solid rgba(17, 24, 39, 0.3)',
-                paddingBottom: '0.4rem',
-                transition: 'border-color 0.2s ease',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#111827')}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(17, 24, 39, 0.3)')}
-            >
-              <span>VIEW ALL PROJECTS</span>
-              <ArrowRight size={15} />
-            </Link>
-
             {/* Left/Right Swipe Navigation Buttons */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <button
@@ -279,12 +224,21 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                 scrollSnapAlign: 'start',
               }}
             >
-              <Link
-                href="/products"
+              <button
+                type="button"
+                onClick={() => setOpenProject(proj)}
+                aria-haspopup="dialog"
+                aria-label={`Read about ${proj.title}`}
                 style={{
                   display: 'block',
-                  textDecoration: 'none',
+                  width: '100%',
+                  textAlign: 'left',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  font: 'inherit',
                   color: 'inherit',
+                  cursor: 'pointer',
                 }}
                 className="group"
               >
@@ -300,9 +254,10 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                     marginBottom: '1.25rem',
                   }}
                 >
+                  {proj.imageUrl ? (
                   <Image
-                    src={proj.imageUrl || getImage(proj.slotId, proj.imageUrl, proj.title).url}
-                    alt={getImage(proj.slotId, proj.imageUrl, proj.title).alt || proj.title}
+                    src={proj.imageUrl}
+                    alt={proj.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     style={{
@@ -311,6 +266,7 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
                     }}
                     className="project-img"
                   />
+                  ) : null}
                 </div>
 
                 {/* Project Info */}
@@ -356,11 +312,123 @@ export const ProjectsSwipeSection: React.FC<ProjectsSwipeSectionProps> = ({ init
 
                   <ArrowRight size={16} color="#6b7280" style={{ marginTop: '0.5rem', flexShrink: 0 }} />
                 </div>
-              </Link>
+              </button>
             </div>
           ))}
         </div>
       </div>
+
+      {openProject && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={openProject.title}
+          onClick={() => setOpenProject(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            backgroundColor: 'rgba(17, 24, 39, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'clamp(0.75rem, 3vw, 2rem)',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '720px',
+              maxHeight: '92vh',
+              overflowY: 'auto',
+              backgroundColor: '#ffffff',
+              color: '#111827',
+              borderRadius: '4px',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setOpenProject(null)}
+              aria-label="Close"
+              autoFocus
+              style={{
+                position: 'absolute',
+                top: '0.75rem',
+                right: '0.75rem',
+                zIndex: 2,
+                width: '38px',
+                height: '38px',
+                borderRadius: '50%',
+                border: 'none',
+                backgroundColor: 'rgba(255,255,255,0.92)',
+                color: '#111827',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              }}
+            >
+              <X size={18} />
+            </button>
+
+            {openProject.imageUrl && (
+              <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 11', backgroundColor: '#f3f4f6' }}>
+                <Image src={openProject.imageUrl} alt={openProject.title} fill sizes="(max-width: 768px) 100vw, 720px" style={{ objectFit: 'cover' }} />
+              </div>
+            )}
+
+            <div style={{ padding: 'clamp(1.25rem, 3vw, 2rem)' }}>
+              {(openProject.category || openProject.year) && (
+                <span
+                  style={{
+                    display: 'block',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.75rem',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: '#6b7280',
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  {[openProject.category, openProject.year].filter(Boolean).join(' · ')}
+                </span>
+              )}
+              <h3
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  fontWeight: 500,
+                  lineHeight: 1.15,
+                  margin: '0 0 0.35rem 0',
+                  color: '#111827',
+                  overflowWrap: 'break-word',
+                }}
+              >
+                {openProject.title}
+              </h3>
+              <p style={{ margin: '0 0 1.1rem 0', fontSize: '0.875rem', color: '#4b5563' }}>{openProject.location}</p>
+              {openProject.description ? (
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: '1rem',
+                    lineHeight: 1.7,
+                    color: '#374151',
+                    whiteSpace: 'pre-line',
+                    overflowWrap: 'break-word',
+                  }}
+                >
+                  {openProject.description}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar {

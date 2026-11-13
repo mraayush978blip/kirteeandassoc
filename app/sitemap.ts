@@ -1,10 +1,12 @@
 import { MetadataRoute } from 'next';
-import { getAllProducts } from '@/lib/data/products';
+import { getProductsFromDb } from '@/lib/db';
 import { siteConfig } from '@/config/site';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteConfig.url;
-  const products = getAllProducts();
+  const products = (await getProductsFromDb()).filter((p) => p.status === 'published');
 
   const productUrls: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,

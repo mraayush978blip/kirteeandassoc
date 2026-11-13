@@ -22,6 +22,9 @@ export function isAllowedSettingKey(key: unknown): key is (typeof ALLOWED_SETTIN
   return typeof key === 'string' && (ALLOWED_SETTING_KEYS as readonly string[]).includes(key);
 }
 
+/** These live ONLY in the database: never read from or written to local files. */
+const DB_ONLY_KEYS: readonly string[] = ['site_projects', 'project_settings'];
+
 const LOCAL_STORAGE_DIR = path.join(process.cwd(), 'data');
 
 // High-speed in-memory cache (eliminates repeat Supabase roundtrips; <0.5ms lookup)
@@ -37,6 +40,7 @@ export function invalidateSettingsCache(key?: string): void {
 }
 
 async function getLocalSettings<T>(key: string, fallback: T): Promise<T> {
+  if (DB_ONLY_KEYS.includes(key)) return fallback;
   try {
     const filePath = path.join(LOCAL_STORAGE_DIR, `${key}.json`);
     const data = await fs.readFile(filePath, 'utf-8');
@@ -47,7 +51,7 @@ async function getLocalSettings<T>(key: string, fallback: T): Promise<T> {
 }
 
 async function setLocalSettings<T>(key: string, value: T): Promise<boolean> {
-  if (!isAllowedSettingKey(key)) return false;
+  if (!isAllowedSettingKey(key) || DB_ONLY_KEYS.includes(key)) return false;
   try {
     await writeFileAtomic(path.join(LOCAL_STORAGE_DIR, `${key}.json`), JSON.stringify(value, null, 2));
     return true;

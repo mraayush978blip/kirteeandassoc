@@ -2334,13 +2334,13 @@ function AdminDashboardContent() {
                 onClick={() => {
                   setEditingProject({
                     id: `proj-${Date.now()}`,
-                    num: `0${projectsList.length + 1}`,
-                    title: 'NEW ARCHITECTURAL PROJECT',
-                    location: 'City, Country',
-                    category: 'Hospitality',
-                    year: '2025',
-                    description: 'Custom bespoke luminaire installations delivering seamless architectural lighting.',
-                    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+                    num: String(projectsList.length + 1).padStart(2, '0'),
+                    title: '',
+                    location: '',
+                    category: '',
+                    year: String(new Date().getFullYear()),
+                    description: '',
+                    imageUrl: '',
                     slug: `project-${Date.now()}`,
                     order: projectsList.length + 1,
                     isFeatured: true,
@@ -2447,7 +2447,7 @@ function AdminDashboardContent() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
                     <div style={{ width: '80px', height: '60px', position: 'relative', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#111827', flexShrink: 0 }}>
-                      <Image src={proj.imageUrl} alt={proj.title} fill style={{ objectFit: 'cover' }} sizes="160px" />
+                      {proj.imageUrl ? <Image src={proj.imageUrl} alt={proj.title} fill style={{ objectFit: 'cover' }} sizes="160px" /> : <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6875rem', color: '#9ca3af' }}>No photo</span>}
                     </div>
 
                     <div>
@@ -4107,13 +4107,21 @@ function AdminDashboardContent() {
               />
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>Narrative Description</label>
+                <label htmlFor="project-description" style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                  Project description (shown in a popup when a visitor taps this project)
+                </label>
                 <textarea
-                  rows={2}
-                  value={editingProject.description}
+                  id="project-description"
+                  rows={6}
+                  maxLength={2000}
+                  placeholder="Write a short paragraph about this project: the place, what you did, and the lighting you used."
+                  value={editingProject.description || ''}
                   onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
-                  style={{ width: '100%', padding: '0.55rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.8125rem', resize: 'none' }}
+                  style={{ width: '100%', padding: '0.6rem', borderRadius: '4px', border: '1px solid #d1d5db', fontSize: '0.875rem', lineHeight: 1.5, resize: 'vertical', fontFamily: 'var(--font-sans)' }}
                 />
+                <span style={{ display: 'block', marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' }}>
+                  {(editingProject.description || '').length} / 2000 characters. Press Enter for a new paragraph.
+                </span>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
@@ -4127,6 +4135,10 @@ function AdminDashboardContent() {
                 <button
                   type="button"
                   onClick={() => {
+                    if (!editingProject.title.trim()) {
+                      showToast('Please enter a project title first.', 'error');
+                      return;
+                    }
                     const exists = projectsList.some((p) => p.id === editingProject.id);
                     let updated: ProjectConfig[];
                     if (exists) {
